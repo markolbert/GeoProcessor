@@ -1,0 +1,14 @@
+{
+  "Logging": {
+    "EventElements": "All",
+    "SourceRootPath": "C:/Programming/SurveyPlanet/",
+    "Channels": {
+      "Debug": {
+        "MinimumLevel": "Information"
+      },
+      "Console": {
+        "MinimumLevel": "Information"
+      }
+    }
+  }
+}

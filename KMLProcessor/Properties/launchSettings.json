@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "KML2Excel": {
+      "commandName": "Project",
+      "commandLineArgs": "-k \"Tweaked 2.kml\""
+    }
+  }
+}
