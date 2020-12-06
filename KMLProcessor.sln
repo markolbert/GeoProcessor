@@ -7,6 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KMLProcessor", "KMLProcesso
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "extern", "extern", "{5AD3F041-D553-492B-948D-E58BDA4373CF}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DependencyInjection", "..\ProgrammingUtilities\DependencyInjection\DependencyInjection.csproj", "{A80A75DD-DB4C-472D-8166-FE8F86FD7BF1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoFacJ4JLogging", "..\J4JLogging\AutoFacJ4JLogging\AutoFacJ4JLogging.csproj", "{656BACBE-548A-4D21-9911-02BFFC11DE21}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "J4JLogging", "..\J4JLogging\J4JLogging\J4JLogging.csproj", "{70E3D3D7-4BFA-414E-806C-D007CD9342DC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,9 +23,26 @@ Global
 		{D75857D9-9FFA-4CD8-8EBB-9F363DD1099E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D75857D9-9FFA-4CD8-8EBB-9F363DD1099E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D75857D9-9FFA-4CD8-8EBB-9F363DD1099E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A80A75DD-DB4C-472D-8166-FE8F86FD7BF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A80A75DD-DB4C-472D-8166-FE8F86FD7BF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A80A75DD-DB4C-472D-8166-FE8F86FD7BF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A80A75DD-DB4C-472D-8166-FE8F86FD7BF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{656BACBE-548A-4D21-9911-02BFFC11DE21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{656BACBE-548A-4D21-9911-02BFFC11DE21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{656BACBE-548A-4D21-9911-02BFFC11DE21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{656BACBE-548A-4D21-9911-02BFFC11DE21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70E3D3D7-4BFA-414E-806C-D007CD9342DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70E3D3D7-4BFA-414E-806C-D007CD9342DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70E3D3D7-4BFA-414E-806C-D007CD9342DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70E3D3D7-4BFA-414E-806C-D007CD9342DC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A80A75DD-DB4C-472D-8166-FE8F86FD7BF1} = {5AD3F041-D553-492B-948D-E58BDA4373CF}
+		{656BACBE-548A-4D21-9911-02BFFC11DE21} = {5AD3F041-D553-492B-948D-E58BDA4373CF}
+		{70E3D3D7-4BFA-414E-806C-D007CD9342DC} = {5AD3F041-D553-492B-948D-E58BDA4373CF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FE44BCE1-11E4-4584-BACC-44570810FB77}

@@ -4,7 +4,6 @@ using System.IO;
 using System.Threading.Tasks;
 using Autofac;
 using J4JSoftware.DependencyInjection;
-using J4JSoftware.Excel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -48,8 +47,6 @@ namespace J4JSoftware.KMLProcessor
                     })
                     .AsImplementedInterfaces()
                     .SingleInstance();
-
-                builder.RegisterModule(new ExcelExportAutofacModule());
             });
 
             hostBuilder.ConfigureServices((context, services) =>
