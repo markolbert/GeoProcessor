@@ -2,8 +2,8 @@
 {
     public interface IAppConfig
     {
-        string KmlFile { get; }
-        string OutputFolder { get; }
+        string InputFile { get; }
+        string OutputFile { get; }
         bool IsValid( out string? error );
     }
 }

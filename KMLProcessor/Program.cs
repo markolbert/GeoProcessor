@@ -15,10 +15,10 @@ namespace J4JSoftware.KMLProcessor
         private static Dictionary<string, string> _cmdLineMappings =
             new Dictionary<string, string>()
             {
-                { "-k", "Configuration:KmlFile" },
-                { "--KmlFile", "Configuration:KmlFile" },
-                { "-o", "Configuration:OutputFolder" },
-                { "--outputPath", "Configuration:OutputFolder" }
+                { "-i", "Configuration:InputFile" },
+                { "--inputFile", "Configuration:InputFile" },
+                { "-o", "Configuration:OutputFile" },
+                { "--outputFile", "Configuration:OutputFile" }
             };
 
         static async Task Main(string[] args)
