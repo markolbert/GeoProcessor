@@ -40,7 +40,7 @@ namespace J4JSoftware.KMLProcessor
                 return;
             }
 
-            using var stream = File.OpenText( _config.KmlFile );
+            using var stream = File.OpenText( _config.InputFile );
             var xDoc = await XDocument.LoadAsync( stream, LoadOptions.None, cancellationToken );
 
             var rawCoords = xDoc.Descendants()

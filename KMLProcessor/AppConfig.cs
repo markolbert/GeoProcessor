@@ -5,20 +5,39 @@ namespace J4JSoftware.KMLProcessor
 {
     public class AppConfig : IAppConfig
     {
-        public string KmlFile { get; set; } = string.Empty;
-        public string OutputFolder { get; set; } = Environment.CurrentDirectory;
+        private string? _outFile;
+
+        public string InputFile { get; set; } = string.Empty;
+
+        public string OutputFile
+        {
+            get
+            {
+                if( string.IsNullOrEmpty( _outFile ) && !string.IsNullOrEmpty( InputFile ) )
+                {
+                    var dir = Path.GetDirectoryName( InputFile );
+                    var noExt = Path.GetFileNameWithoutExtension( InputFile );
+
+                    _outFile = Path.Combine( dir!, $"{noExt}-processed{Path.GetExtension( InputFile )}" );
+                }
+
+                return _outFile ?? string.Empty;
+            }
+
+            set => _outFile = value;
+        }
 
         public bool IsValid( out string? error )
         {
-            if( !File.Exists( KmlFile ) )
+            if( !File.Exists( InputFile ) )
             {
-                error = $"Source file '{KmlFile}' is not accessible";
+                error = $"Source file '{InputFile}' is not accessible";
                 return false;
             }
 
-            if( !Directory.Exists( OutputFolder ) )
+            if( !Directory.Exists( OutputFile ) )
             {
-                error = $"Output directory '{OutputFolder}' is not accessible";
+                error = $"Output directory '{OutputFile}' is not accessible";
                 return false;
             }
 
