@@ -7,6 +7,11 @@ namespace J4JSoftware.KMLProcessor
     {
         private string? _outFile;
 
+        public double CoalesceValue { get; set; } = 10;
+        public UnitTypes CoalesceUnit { get; set; } = UnitTypes.Feet;
+
+        public double MaxBearingStdDev { get; set; } = 2.0;
+
         public string InputFile { get; set; } = string.Empty;
 
         public string OutputFile
@@ -32,12 +37,6 @@ namespace J4JSoftware.KMLProcessor
             if( !File.Exists( InputFile ) )
             {
                 error = $"Source file '{InputFile}' is not accessible";
-                return false;
-            }
-
-            if( !Directory.Exists( OutputFile ) )
-            {
-                error = $"Output directory '{OutputFile}' is not accessible";
                 return false;
             }
 

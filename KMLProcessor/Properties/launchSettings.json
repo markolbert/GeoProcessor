@@ -2,7 +2,7 @@
   "profiles": {
     "KML2Excel": {
       "commandName": "Project",
-      "commandLineArgs": "-k \"Tweaked 2.kml\""
+      "commandLineArgs": "-i \"Tweaked 2.kml\" -m 10 -u feet"
     }
   }
 }

@@ -18,7 +18,11 @@ namespace J4JSoftware.KMLProcessor
                 { "-i", "Configuration:InputFile" },
                 { "--inputFile", "Configuration:InputFile" },
                 { "-o", "Configuration:OutputFile" },
-                { "--outputFile", "Configuration:OutputFile" }
+                { "--outputFile", "Configuration:OutputFile" },
+                { "-m", "Configuration:CoalesceValue" },
+                { "--minDistanceValue", "Configuration:CoalesceValue" },
+                { "-u", "Configuration:CoalesceUnit" },
+                { "--minDistanceUnit", "Configuration:CoalesceUnit" }
             };
 
         static async Task Main(string[] args)
