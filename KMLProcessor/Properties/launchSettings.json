@@ -2,7 +2,7 @@
   "profiles": {
     "KML2Excel": {
       "commandName": "Project",
-      "commandLineArgs": "-i \"Tweaked 2.kml\" -m 10 -u feet"
+      "commandLineArgs": "-i \"C:\\Users\\Mark\\Desktop\\web\\Clear Lake to Home.kml\" -m 10 -u feet"
     }
   }
 }

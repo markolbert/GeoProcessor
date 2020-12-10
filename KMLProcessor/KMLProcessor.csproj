@@ -1,10 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>J4JSoftware.KMLProcessor</RootNamespace>
     <Nullable>enable</Nullable>
+    <UserSecretsId>bddc2ef2-9330-48ea-b316-40fc738a4e28</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,7 +13,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.0" />
+    <PackageReference Include="BingMapsRESTToolkit" Version="1.1.4" />
+    <PackageReference Include="GoogleApi" Version="3.10.5" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
   </ItemGroup>
 
   <ItemGroup>

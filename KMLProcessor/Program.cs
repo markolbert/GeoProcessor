@@ -27,38 +27,52 @@ namespace J4JSoftware.KMLProcessor
 
         static async Task Main(string[] args)
         {
-            var hostBuilder = new J4JHostBuilder();
+            var hostBuilder = InitializeHostBuilder();
 
-            hostBuilder.AddJ4JLogging<LoggingChannelConfig>();
+            await hostBuilder.RunConsoleAsync();
+        }
 
-            hostBuilder.ConfigureHostConfiguration(builder =>
+        private static IHostBuilder InitializeHostBuilder()
+        {
+            var retVal = new J4JHostBuilder();
+
+            retVal.AddJ4JLogging<LoggingChannelConfig>();
+
+            retVal.ConfigureHostConfiguration(builder =>
             {
                 builder
                     .SetBasePath(Environment.CurrentDirectory)
+                    .AddUserSecrets<AppConfig>()
                     .AddJsonFile(Path.Combine(Environment.CurrentDirectory, "appConfig.json"), false, false)
-                    .AddCommandLine(args, _cmdLineMappings);
+                    .AddCommandLine(Environment.GetCommandLineArgs(), _cmdLineMappings);
             });
 
-            hostBuilder.ConfigureContainer<ContainerBuilder>((context, builder) =>
+            retVal.ConfigureContainer<ContainerBuilder>((context, builder) =>
             {
                 builder.Register(c =>
                     {
-                        var retVal = context.Configuration
+                        var temp = context.Configuration
                             .GetSection("Configuration")
                             .Get<AppConfig>();
 
-                        return retVal ?? new AppConfig();
+                        return temp ?? new AppConfig();
                     })
                     .AsImplementedInterfaces()
                     .SingleInstance();
+
+                builder.RegisterType<KmlDocument>()
+                    .AsSelf();
+
+                builder.RegisterType<BingSnapRouteProcessor>()
+                    .AsImplementedInterfaces();
             });
 
-            hostBuilder.ConfigureServices((context, services) =>
+            retVal.ConfigureServices((context, services) =>
             {
                 services.AddHostedService<App>();
             });
 
-            await hostBuilder.RunConsoleAsync();
+            return retVal;
         }
     }
 }

@@ -1,5 +1,5 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
+#pragma warning disable 8618
 
 namespace J4JSoftware.KMLProcessor
 {
@@ -7,10 +7,13 @@ namespace J4JSoftware.KMLProcessor
     {
         private string? _outFile;
 
+        public string BingMapsKey { get; set; }
+
+        public CoalesenceTypes CoalesenceTypes { get; set; } = CoalesenceTypes.Distance;
         public double CoalesceValue { get; set; } = 10;
         public UnitTypes CoalesceUnit { get; set; } = UnitTypes.Feet;
-
-        public double MaxBearingStdDev { get; set; } = 2.0;
+        public Distance CoalesenceDistance => new Distance( CoalesceUnit, CoalesceValue );
+        public double MaxBearingDelta { get; set; } = 5.0;
 
         public string InputFile { get; set; } = string.Empty;
 

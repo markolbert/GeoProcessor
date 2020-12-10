@@ -6,6 +6,20 @@ namespace J4JSoftware.KMLProcessor
 {
     public static class CoordinateExtensions
     {
+        public static Coordinate TargetCoordinate = new Coordinate( 38.49203, -122.65806 );
+
+        public static bool NearTargetPoint( this Coordinate point )
+        {
+            if( Math.Abs( point.Latitude - TargetCoordinate.Latitude ) < .00001
+                && Math.Abs( point.Longitude - TargetCoordinate.Longitude ) < .00001 )
+                return true;
+
+            return false;
+
+            //if (GetDistance(TargetCoordinate, point).GetValue(UnitTypes.Miles) < 0.1)
+            //    System.Diagnostics.Debugger.Break();
+        }
+
         public static Distance GetDistance(Coordinate c1, Coordinate c2)
         {
             var deltaLat = c2.LatitudeRadians - c1.LatitudeRadians;
