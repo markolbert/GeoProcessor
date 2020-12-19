@@ -6,14 +6,14 @@ using Microsoft.Extensions.Hosting;
 
 namespace J4JSoftware.KMLProcessor
 {
-    public class App : IHostedService
+    public class SnapApp : IHostedService
     {
-        private readonly IHost _host;
         private readonly IAppConfig _config;
+        private readonly IHost _host;
         private readonly IHostApplicationLifetime _lifetime;
         private readonly IJ4JLogger _logger;
 
-        public App( 
+        public SnapApp(
             IHost host,
             IAppConfig config,
             IHostApplicationLifetime lifetime,
@@ -25,14 +25,14 @@ namespace J4JSoftware.KMLProcessor
             _lifetime = lifetime;
 
             _logger = logger;
-            _logger.SetLoggedType( this.GetType() );
+            _logger.SetLoggedType( GetType() );
         }
 
         public async Task StartAsync( CancellationToken cancellationToken )
         {
             if( !_config.IsValid( out var error ) )
             {
-                _logger.Fatal(error!);
+                _logger.Fatal( error! );
                 _lifetime.StopApplication();
 
                 return;
@@ -40,7 +40,7 @@ namespace J4JSoftware.KMLProcessor
 
             var kDoc = _host.Services.GetRequiredService<KmlDocument>();
 
-            if( !await kDoc.LoadAsync( _config.InputFile, cancellationToken ) )
+            if( !await kDoc.LoadAsync( _config.InputFile!, cancellationToken ) )
                 return;
 
             var numCoalesced = ( _config.CoalesenceTypes & CoalesenceTypes.Distance ) == CoalesenceTypes.Distance
@@ -49,11 +49,11 @@ namespace J4JSoftware.KMLProcessor
 
             _logger.Information( "Coalesced {0:n0} points based on distance", numCoalesced );
 
-            numCoalesced = ( _config.CoalesenceTypes & CoalesenceTypes.Distance ) == CoalesenceTypes.Distance
+            numCoalesced = ( _config.CoalesenceTypes & CoalesenceTypes.Bearing ) == CoalesenceTypes.Bearing
                 ? kDoc.CoalescePointsByBearing( _config.MaxBearingDelta )
                 : 0;
 
-            _logger.Information("Coalesced {0:n0} points based on bearing", numCoalesced);
+            _logger.Information( "Coalesced {0:n0} points based on bearing", numCoalesced );
 
             _logger.Information( "{0:n0} points are in the track before route binding", kDoc.Count );
 
@@ -63,10 +63,10 @@ namespace J4JSoftware.KMLProcessor
                 _logger.Error( "Writing un-snapped points to file" );
             else _logger.Information( "Route expanded to include {0:n0} points", numCoalesced );
 
-            if (!await kDoc.SaveAsync(_config.OutputFile, cancellationToken))
+            if( !await kDoc.SaveAsync( _config.OutputFile, cancellationToken ) )
                 return;
 
-            _logger.Information<string>("Wrote file '{0}'", _config.OutputFile);
+            _logger.Information<string>( "Wrote file '{0}'", _config.OutputFile );
 
             _lifetime.StopApplication();
         }

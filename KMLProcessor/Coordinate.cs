@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.Json.Serialization;
+using BingMapsRESTToolkit;
 
 namespace J4JSoftware.KMLProcessor
 {
@@ -9,7 +10,7 @@ namespace J4JSoftware.KMLProcessor
         {
         }
 
-        public Coordinate( BingMapsRESTToolkit.SnappedPoint bingPt )
+        public Coordinate( SnappedPoint bingPt )
         {
             Latitude = bingPt.Coordinate.Latitude;
             Longitude = bingPt.Coordinate.Longitude;
@@ -40,11 +41,13 @@ namespace J4JSoftware.KMLProcessor
         [ JsonIgnore ]
         public double LongitudeRadians => Longitude.ToRadians();
 
-        public BingMapsRESTToolkit.Coordinate ToBingMapsCoordinate() =>
-            new BingMapsRESTToolkit.Coordinate
+        public BingMapsRESTToolkit.Coordinate ToBingMapsCoordinate()
+        {
+            return new BingMapsRESTToolkit.Coordinate
             {
                 Latitude = Latitude,
                 Longitude = Longitude
             };
+        }
     }
 }

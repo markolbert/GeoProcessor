@@ -10,22 +10,11 @@ using Microsoft.Extensions.Hosting;
 
 namespace J4JSoftware.KMLProcessor
 {
-    class Program
+    internal class Program
     {
-        private static Dictionary<string, string> _cmdLineMappings =
-            new Dictionary<string, string>()
-            {
-                { "-i", "Configuration:InputFile" },
-                { "--inputFile", "Configuration:InputFile" },
-                { "-o", "Configuration:OutputFile" },
-                { "--outputFile", "Configuration:OutputFile" },
-                { "-m", "Configuration:CoalesceValue" },
-                { "--minDistanceValue", "Configuration:CoalesceValue" },
-                { "-u", "Configuration:CoalesceUnit" },
-                { "--minDistanceUnit", "Configuration:CoalesceUnit" }
-            };
+        public static string AppName = "GPS Track Processor";
 
-        static async Task Main(string[] args)
+        private static async Task Main( string[] args )
         {
             var hostBuilder = InitializeHostBuilder();
 
@@ -38,25 +27,31 @@ namespace J4JSoftware.KMLProcessor
 
             retVal.AddJ4JLogging<LoggingChannelConfig>();
 
-            retVal.ConfigureHostConfiguration(builder =>
+            retVal.ConfigureHostConfiguration( builder =>
             {
                 builder
-                    .SetBasePath(Environment.CurrentDirectory)
+                    .SetBasePath( Environment.CurrentDirectory )
                     .AddUserSecrets<AppConfig>()
-                    .AddJsonFile(Path.Combine(Environment.CurrentDirectory, "appConfig.json"), false, false)
-                    .AddCommandLine(Environment.GetCommandLineArgs(), _cmdLineMappings);
-            });
+                    .AddJsonFile( Path.Combine( Environment.CurrentDirectory, "appConfig.json" ), false, false )
+                    .AddJsonFile( Path.Combine(
+                            Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ),
+                            AppName,
+                            "userConfig.json" ),
+                        true, false )
+                    .AddCommandLine( J4JHostBuilder.ExpandUnvaluedCommandLineSwitches(),
+                        AppConfig.CommandLineMappings );
+            } );
 
-            retVal.ConfigureContainer<ContainerBuilder>((context, builder) =>
+            retVal.ConfigureContainer<ContainerBuilder>( ( context, builder ) =>
             {
-                builder.Register(c =>
+                builder.Register( c =>
                     {
                         var temp = context.Configuration
-                            .GetSection("Configuration")
+                            .GetSection( "Configuration" )
                             .Get<AppConfig>();
 
                         return temp ?? new AppConfig();
-                    })
+                    } )
                     .AsImplementedInterfaces()
                     .SingleInstance();
 
@@ -64,13 +59,21 @@ namespace J4JSoftware.KMLProcessor
                     .AsSelf();
 
                 builder.RegisterType<BingSnapRouteProcessor>()
+                    .Keyed<ISnapRouteProcessor>( SnapProcessorType.Bing )
                     .AsImplementedInterfaces();
-            });
+            } );
 
-            retVal.ConfigureServices((context, services) =>
+            retVal.ConfigureServices( ( context, services ) =>
             {
-                services.AddHostedService<App>();
-            });
+                var config = context.Configuration
+                    .GetSection( "Configuration" )
+                    .Get<AppConfig>();
+
+                if( config.StoreAPIKey )
+                    services.AddHostedService<StoreKeyApp>();
+                else
+                    services.AddHostedService<SnapApp>();
+            } );
 
             return retVal;
         }

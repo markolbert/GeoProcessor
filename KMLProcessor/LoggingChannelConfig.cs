@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using J4JSoftware.Logging;
+
 #pragma warning disable 8618
 
 namespace J4JSoftware.KMLProcessor

@@ -1,25 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using BingMapsRESTToolkit;
 using J4JSoftware.Logging;
 
 namespace J4JSoftware.KMLProcessor
 {
     public abstract class SnapRouteProcessor : ISnapRouteProcessor
     {
-        protected SnapRouteProcessor( 
+        protected SnapRouteProcessor(
             IAppConfig config,
             IJ4JLogger logger
-            )
+        )
         {
             Configuration = config;
 
             Logger = logger;
-            Logger.SetLoggedType( this.GetType() );
+            Logger.SetLoggedType( GetType() );
         }
 
         protected IJ4JLogger Logger { get; }
@@ -28,7 +26,7 @@ namespace J4JSoftware.KMLProcessor
         public abstract Distance MaxSeparation { get; }
         public abstract int PointsPerRequest { get; }
 
-        public async Task<LinkedList<Coordinate>?> ProcessAsync( 
+        public async Task<LinkedList<Coordinate>?> ProcessAsync(
             LinkedList<Coordinate> nodes,
             CancellationToken cancellationToken )
         {
@@ -37,10 +35,8 @@ namespace J4JSoftware.KMLProcessor
             var chunks = ChunkPoints( InterpolatePoints( nodes ) );
 
             foreach( var chunk in chunks )
-            {
                 if( !await ProcessChunkAsync( chunk, snappedList, cancellationToken ) )
                     return null;
-            }
 
             return snappedList;
         }
@@ -79,13 +75,11 @@ namespace J4JSoftware.KMLProcessor
                 var deltaLong = ( curPt.Longitude - prevPt.Longitude ) / numPtsNeeded;
 
                 for( var idx = 0; idx < numPtsNeeded; idx++ )
-                {
                     retVal.Add( new Coordinate
                     {
                         Latitude = prevPt.Latitude + ( idx + 1 ) * deltaLat,
                         Longitude = prevPt.Longitude + ( idx + 1 ) * deltaLong
                     } );
-                }
 
                 prevPt = curPt;
             }
@@ -113,8 +107,8 @@ namespace J4JSoftware.KMLProcessor
             return retVal;
         }
 
-        protected virtual async Task<bool> ProcessChunkAsync( 
-            List<Coordinate> chunk, 
+        protected virtual async Task<bool> ProcessChunkAsync(
+            List<Coordinate> chunk,
             LinkedList<Coordinate> outputNodes,
             CancellationToken cancellationToken )
         {
@@ -131,22 +125,20 @@ namespace J4JSoftware.KMLProcessor
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         protected virtual async Task<List<Coordinate>?> ExecuteRequestAsync(
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
-            List<Coordinate> chunk, 
+            List<Coordinate> chunk,
             CancellationToken cancellationToken )
         {
             return null;
         }
 
-        protected virtual void UpdateOutputList(List<Coordinate> snappedPts, LinkedList<Coordinate> linkedList )
+        protected virtual void UpdateOutputList( List<Coordinate> snappedPts, LinkedList<Coordinate> linkedList )
         {
             var prevNode = linkedList.Count == 0 ? null : linkedList.Last;
 
             foreach( var snappedPt in snappedPts )
-            {
                 prevNode = prevNode == null
-                    ? linkedList.AddFirst(snappedPt)
-                    : linkedList.AddAfter(prevNode, snappedPt);
-            }
+                    ? linkedList.AddFirst( snappedPt )
+                    : linkedList.AddAfter( prevNode, snappedPt );
         }
     }
 }

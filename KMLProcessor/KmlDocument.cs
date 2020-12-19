@@ -6,24 +6,26 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Autofac.Features.Indexed;
 using J4JSoftware.Logging;
 
 namespace J4JSoftware.KMLProcessor
 {
     public class KmlDocument
     {
-        private readonly ISnapRouteProcessor _snapRouteProc;
         private readonly IJ4JLogger _logger;
+        private readonly ISnapRouteProcessor _snapRouteProc;
 
-        public KmlDocument( 
-            ISnapRouteProcessor snapRouteProc,
-            IJ4JLogger logger 
-            )
+        public KmlDocument(
+            IAppConfig config,
+            IIndex<SnapProcessorType, ISnapRouteProcessor> snapProcessors,
+            IJ4JLogger logger
+        )
         {
-            _snapRouteProc = snapRouteProc;
+            _snapRouteProc = snapProcessors[ config.SnapProcessorType ];
 
             _logger = logger;
-            _logger.SetLoggedType( this.GetType() );
+            _logger.SetLoggedType( GetType() );
         }
 
         protected XElement? CoordinatesElement { get; private set; }
@@ -57,12 +59,12 @@ namespace J4JSoftware.KMLProcessor
 
             if( cancellationToken.IsCancellationRequested )
             {
-                _logger.Information("File load cancelled");
+                _logger.Information( "File load cancelled" );
                 return false;
             }
 
             CoordinatesElement = XDocument.Descendants()
-                .SingleOrDefault(x => x.Name.LocalName == "coordinates");
+                .SingleOrDefault( x => x.Name.LocalName == "coordinates" );
 
             if( CoordinatesElement == null )
             {
@@ -70,28 +72,28 @@ namespace J4JSoftware.KMLProcessor
                 return false;
             }
 
-            var coordRaw = CoordinatesElement.Value.Replace("\t", "")
-                .Replace("\n", "");
+            var coordRaw = CoordinatesElement.Value.Replace( "\t", "" )
+                .Replace( "\n", "" );
 
-            if (cancellationToken.IsCancellationRequested)
+            if( cancellationToken.IsCancellationRequested )
             {
-                _logger.Information("File load cancelled");
+                _logger.Information( "File load cancelled" );
                 return false;
             }
 
             Points = new LinkedList<Coordinate>();
             LinkedListNode<Coordinate>? prevPoint = null;
 
-            foreach (var coordText in coordRaw.Split(' ', StringSplitOptions.RemoveEmptyEntries))
+            foreach( var coordText in coordRaw.Split( ' ', StringSplitOptions.RemoveEmptyEntries ) )
             {
                 prevPoint = Points.Count == 0
-                    ? Points.AddFirst(new Coordinate(coordText))
-                    : Points.AddAfter(prevPoint!, new Coordinate(coordText));
+                    ? Points.AddFirst( new Coordinate( coordText ) )
+                    : Points.AddAfter( prevPoint!, new Coordinate( coordText ) );
 
-                if( !cancellationToken.IsCancellationRequested ) 
+                if( !cancellationToken.IsCancellationRequested )
                     continue;
 
-                _logger.Information("File load cancelled");
+                _logger.Information( "File load cancelled" );
                 return false;
             }
 
@@ -102,27 +104,25 @@ namespace J4JSoftware.KMLProcessor
         {
             if( !IsValid )
             {
-                _logger.Error("Cannot save invalid KmlDocument"  );
+                _logger.Error( "Cannot save invalid KmlDocument" );
                 return false;
             }
 
             var sb = new StringBuilder();
             sb.AppendLine();
 
-            foreach (var point in Points)
-            {
+            foreach( var point in Points )
                 // having NO SPACES between these three arguments is INCREDIBLY IMPORTANT.
                 // the Google Earth importer parses based on spaces (but ignores tabs, linefeeds & newlines)
                 // also note that LONGITUDE is emitted FIRST!!!
-                sb.AppendLine($"\t\t\t{point.Longitude},{point.Latitude},0 ");
-            }
+                sb.AppendLine( $"\t\t\t{point.Longitude},{point.Latitude},0 " );
 
             CoordinatesElement!.Value = sb.ToString();
 
             await using var writeStream = File.CreateText( outputFile );
 
-            await XDocument!.SaveAsync(writeStream, SaveOptions.None, cancellationToken);
-            
+            await XDocument!.SaveAsync( writeStream, SaveOptions.None, cancellationToken );
+
             await writeStream.FlushAsync();
             writeStream.Close();
 
@@ -192,36 +192,32 @@ namespace J4JSoftware.KMLProcessor
 
             var sameBearing = new List<LinkedListNode<Coordinate>>();
 
-            while (curStartingPoint?.Next != null)
+            while( curStartingPoint?.Next != null )
             {
                 var curEndingPoint = curStartingPoint.Next;
 
                 sameBearing.Clear();
 
-                while (curEndingPoint != null)
+                while( curEndingPoint != null )
                 {
-                    var (avgBearing, sdBearing) = curStartingPoint.GetBearingStatistics(curEndingPoint!);
+                    var (avgBearing, sdBearing) = curStartingPoint.GetBearingStatistics( curEndingPoint! );
 
                     var mostRecentBearing = CoordinateExtensions.GetBearing(
                         curEndingPoint!.Previous!.Value,
-                        curEndingPoint.Value);
+                        curEndingPoint.Value );
 
-                    if (Math.Abs(avgBearing - mostRecentBearing) > maxBearingDelta)
+                    if( Math.Abs( avgBearing - mostRecentBearing ) > maxBearingDelta )
                     {
                         curStartingPoint = curEndingPoint;
 
-                        if (sameBearing.Count > 1)
-                        {
-                            foreach (var node in sameBearing)
-                            {
-                                Points.Remove(node);
-                            }
-                        }
+                        if( sameBearing.Count > 1 )
+                            foreach( var node in sameBearing )
+                                Points.Remove( node );
 
                         break;
                     }
 
-                    sameBearing.Add(curEndingPoint);
+                    sameBearing.Add( curEndingPoint );
 
                     curEndingPoint = curEndingPoint.Next;
                 }
@@ -236,7 +232,7 @@ namespace J4JSoftware.KMLProcessor
 
             if( routePts == null )
             {
-                _logger.Error("Snapping points to a route failed");
+                _logger.Error( "Snapping points to a route failed" );
                 return 0;
             }
 
