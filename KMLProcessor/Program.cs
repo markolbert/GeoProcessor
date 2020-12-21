@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Autofac;
+using J4JSoftware.CommandLine;
 using J4JSoftware.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -38,8 +39,14 @@ namespace J4JSoftware.KMLProcessor
                             AppName,
                             "userConfig.json" ),
                         true, false )
-                    .AddCommandLine( J4JHostBuilder.ExpandUnvaluedCommandLineSwitches(),
-                        AppConfig.CommandLineMappings );
+                    .AddJ4JCommandLineWindows( Environment.CommandLine, out var options, out var errors );
+
+                ConfigureCommandLineOptions( options );
+
+                foreach( var error in errors )
+                {
+                    Console.WriteLine( error );
+                }
             } );
 
             retVal.ConfigureContainer<ContainerBuilder>( ( context, builder ) =>
@@ -54,6 +61,12 @@ namespace J4JSoftware.KMLProcessor
                     } )
                     .AsImplementedInterfaces()
                     .SingleInstance();
+
+                builder.RegisterType<OptionCollection>()
+                    .AsSelf();
+
+                builder.RegisterType<Allocator>()
+                    .As<IAllocator>();
 
                 builder.RegisterType<KmlDocument>()
                     .AsSelf();
@@ -76,6 +89,11 @@ namespace J4JSoftware.KMLProcessor
             } );
 
             return retVal;
+        }
+
+        private static void ConfigureCommandLineOptions( OptionCollection options )
+        {
+
         }
     }
 }
