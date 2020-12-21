@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using J4JSoftware.Logging;
@@ -39,11 +41,13 @@ namespace J4JSoftware.KMLProcessor
             {
                 _logger.Fatal( error! );
                 _lifetime.StopApplication();
-
                 return;
             }
 
-            Console.Write( $"Enter the {_config.SnapProcessorType} API key:" );
+            if( !_config.StoreAPIKey )
+                return;
+
+            Console.Write( $"Enter the {_config.SnapProcessorType} API key: " );
             var apiKey = Console.ReadLine();
 
             if( string.IsNullOrEmpty( apiKey ) )
@@ -52,7 +56,7 @@ namespace J4JSoftware.KMLProcessor
                 _lifetime.StopApplication();
             }
 
-            if( !_config.Encrypt( apiKey!, out var encrypted ) )
+            if( !KMLExtensions.Encrypt( apiKey!, out var encrypted ) )
             {
                 _logger.Error( "Couldn't encrypt API key, configuration not updated" );
                 _lifetime.StopApplication();
@@ -65,18 +69,16 @@ namespace J4JSoftware.KMLProcessor
                     new SnapProcessorAPIKey
                     {
                         Type = _config.SnapProcessorType,
-                        APIKey = encrypted
+                        EncryptedAPIKey = encrypted!
                     } );
-            else apiConfig.APIKey = encrypted;
+            else apiConfig.EncryptedAPIKey = encrypted!;
 
-            var serialized = JsonSerializer.Serialize( _config, new JsonSerializerOptions { WriteIndented = true } );
+            var jsonOptions = new JsonSerializerOptions { WriteIndented = true };
+            jsonOptions.Converters.Add( new JsonStringEnumConverter() );
 
-            var userConfigFile = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                Program.AppName,
-                "userConfig.json");
+            var serialized = JsonSerializer.Serialize( _config, jsonOptions);
 
-            await File.WriteAllTextAsync( userConfigFile, serialized, cancellationToken );
+            await File.WriteAllTextAsync( Program.AppUserConfigFile, serialized, cancellationToken );
 
             _logger.Information( "{0} API key updated", _config.SnapProcessorType );
 

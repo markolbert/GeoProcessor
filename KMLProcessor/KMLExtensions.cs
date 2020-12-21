@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace J4JSoftware.KMLProcessor
 {
-    public static class CoordinateExtensions
+    public static class KMLExtensions
     {
         public static Coordinate TargetCoordinate = new Coordinate( 38.49203, -122.65806 );
 
@@ -85,6 +87,52 @@ namespace J4JSoftware.KMLProcessor
         public static double ToDegrees( this double radians )
         {
             return 180 * radians / Math.PI;
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Interoperability",
+            "CA1416:Validate platform compatibility",
+            Justification = "<Pending>")]
+        public static bool Encrypt(string data, out string? result)
+        {
+            result = null;
+
+            var byteData = Encoding.UTF8.GetBytes(data);
+
+            try
+            {
+                var encrypted = ProtectedData.Protect(byteData, null, scope: DataProtectionScope.CurrentUser);
+                result = Encoding.UTF8.GetString(encrypted);
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Interoperability",
+            "CA1416:Validate platform compatibility",
+            Justification = "<Pending>")]
+        public static bool Decrypt(string data, out string? result)
+        {
+            result = null;
+
+            var byteData = Encoding.UTF8.GetBytes(data);
+
+            try
+            {
+                var decrypted = ProtectedData.Unprotect(byteData, null, scope: DataProtectionScope.CurrentUser);
+                result = Encoding.UTF8.GetString(decrypted);
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

@@ -145,10 +145,10 @@ namespace J4JSoftware.KMLProcessor
 
                 while( curEndingPoint != null )
                 {
-                    var mostRecentDistance = CoordinateExtensions
+                    var mostRecentDistance = KMLExtensions
                         .GetDistance( curEndingPoint.Previous!.Value, curEndingPoint.Value );
 
-                    var distanceFromOrigin = CoordinateExtensions
+                    var distanceFromOrigin = KMLExtensions
                         .GetDistance( curStartingPoint.Value, curEndingPoint.Value );
 
                     if( mostRecentDistance > maxDist || distanceFromOrigin > origDistanceMultiplier * maxDist )
@@ -202,7 +202,7 @@ namespace J4JSoftware.KMLProcessor
                 {
                     var (avgBearing, sdBearing) = curStartingPoint.GetBearingStatistics( curEndingPoint! );
 
-                    var mostRecentBearing = CoordinateExtensions.GetBearing(
+                    var mostRecentBearing = KMLExtensions.GetBearing(
                         curEndingPoint!.Previous!.Value,
                         curEndingPoint.Value );
 

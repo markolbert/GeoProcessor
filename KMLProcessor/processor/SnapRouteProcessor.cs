@@ -57,7 +57,7 @@ namespace J4JSoftware.KMLProcessor
                     continue;
                 }
 
-                var distance = CoordinateExtensions.GetDistance( prevPt, curPt );
+                var distance = KMLExtensions.GetDistance( prevPt, curPt );
 
                 if( distance <= MaxSeparation )
                 {

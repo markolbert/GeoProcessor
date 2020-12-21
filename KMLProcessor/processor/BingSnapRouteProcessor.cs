@@ -25,7 +25,9 @@ namespace J4JSoftware.KMLProcessor
         {
             var request = new SnapToRoadRequest
             {
-                BingMapsKey = Configuration.APIKeys.FirstOrDefault( k => k.Type == SnapProcessorType.Bing )?.APIKey,
+                BingMapsKey = Configuration.APIKeys
+                    .FirstOrDefault( k => k.Type == SnapProcessorType.Bing )
+                    ?.EncryptedAPIKey,
                 IncludeSpeedLimit = false,
                 IncludeTruckSpeedLimit = false,
                 Interpolate = true,

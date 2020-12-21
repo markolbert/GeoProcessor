@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace J4JSoftware.KMLProcessor
 {
@@ -6,21 +7,21 @@ namespace J4JSoftware.KMLProcessor
     {
         SnapProcessorType SnapProcessorType { get; }
         List<SnapProcessorAPIKey> APIKeys { get; }
+
+        [JsonIgnore]
         bool StoreAPIKey { get; }
 
-        CoalesenceTypes CoalesenceTypes { get; }
+        CoalesenceType CoalesenceType { get; }
         double CoalesceValue { get; }
         UnitTypes CoalesceUnit { get; }
         Distance CoalesenceDistance { get; }
         double MaxBearingDelta { get; }
 
+        [JsonIgnore]
         string? InputFile { get; }
         bool ZipOutputFile { get; }
         string? OutputFile { get; }
 
         bool IsValid( out string? error );
-
-        bool Encrypt( string data, out string? result );
-        bool Decrypt( string data, out string? result );
     }
 }

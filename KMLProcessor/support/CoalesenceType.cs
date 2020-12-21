@@ -3,7 +3,7 @@
 namespace J4JSoftware.KMLProcessor
 {
     [ Flags ]
-    public enum CoalesenceTypes
+    public enum CoalesenceType
     {
         Distance = 1 << 0,
         Bearing = 1 << 1,

@@ -38,18 +38,21 @@ namespace J4JSoftware.KMLProcessor
                 return;
             }
 
+            if( _config.StoreAPIKey )
+                return;
+
             var kDoc = _host.Services.GetRequiredService<KmlDocument>();
 
             if( !await kDoc.LoadAsync( _config.InputFile!, cancellationToken ) )
                 return;
 
-            var numCoalesced = ( _config.CoalesenceTypes & CoalesenceTypes.Distance ) == CoalesenceTypes.Distance
+            var numCoalesced = ( _config.CoalesenceType & CoalesenceType.Distance ) == CoalesenceType.Distance
                 ? kDoc.CoalescePointsByDistance( _config.CoalesenceDistance )
                 : 0;
 
             _logger.Information( "Coalesced {0:n0} points based on distance", numCoalesced );
 
-            numCoalesced = ( _config.CoalesenceTypes & CoalesenceTypes.Bearing ) == CoalesenceTypes.Bearing
+            numCoalesced = ( _config.CoalesenceType & CoalesenceType.Bearing ) == CoalesenceType.Bearing
                 ? kDoc.CoalescePointsByBearing( _config.MaxBearingDelta )
                 : 0;
 
