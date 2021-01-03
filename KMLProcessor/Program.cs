@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using J4JSoftware.CommandLine;
+using J4JSoftware.Configuration.CommandLine;
 using J4JSoftware.DependencyInjection;
+using J4JSoftware.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -23,28 +25,36 @@ namespace J4JSoftware.KMLProcessor
 
         public static string AppUserConfigFile = Path.Combine( AppUserFolder, "userConfig.json" );
 
+        private static readonly J4JCachedLogger _cachedLogger = new J4JCachedLogger();
+        private static CancellationToken _cancellationToken = new CancellationToken();
+
         private static async Task Main( string[] args )
         {
             Directory.CreateDirectory( AppUserFolder );
             
             var hostBuilder = InitializeHostBuilder();
+            
+            var host = hostBuilder.Build();
 
-            await hostBuilder.RunConsoleAsync();
+            // output any log events cached during configuration/startup
+            var logger = host.Services.GetRequiredService<IJ4JLogger>();
+            logger.OutputCache( _cachedLogger.Cache );
+
+            await host.RunAsync( _cancellationToken );
         }
 
         private static IHostBuilder InitializeHostBuilder()
         {
             var retVal = new HostBuilder();
+            retVal.UseConsoleLifetime();
 
             retVal.UseServiceProviderFactory( new AutofacServiceProviderFactory() );
 
-            retVal.AddJ4JLogging<LoggingChannelConfig>();
-
             retVal.ConfigureHostConfiguration( builder =>
             {
-                var options = new OptionCollection();
+                var options = new OptionCollection( CommandLineStyle.Linux, () => _cachedLogger);
 
-                options.SetTypePrefix<AppConfig>( "Configuration" );
+                //options.SetTypePrefix<AppConfig>( "Configuration" );
 
                 options.Bind<AppConfig, string?>(x => x.InputFile, "i", "inputFile");
                 options.Bind<AppConfig, bool>(x => x.ZipOutputFile, "z", "zipOutput");
@@ -52,14 +62,6 @@ namespace J4JSoftware.KMLProcessor
                 options.Bind<AppConfig, UnitTypes>(x => x.CoalesceUnit, "u", "minDistanceUnit");
                 options.Bind<AppConfig, bool>(x => x.StoreAPIKey, "k", "storeApiKey");
                 options.Bind<AppConfig, SnapProcessorType>(x => x.SnapProcessorType, "p", "snapProcessor");
-
-                if( options.Log.HasMessages() )
-                {
-                    foreach( var logEntry in options.Log.GetMessages() )
-                    {
-                        Console.WriteLine( logEntry );
-                    }
-                }
 
                 builder.SetBasePath( Environment.CurrentDirectory )
                     .AddUserSecrets<AppConfig>()
@@ -70,16 +72,21 @@ namespace J4JSoftware.KMLProcessor
 
             retVal.ConfigureContainer<ContainerBuilder>( ( context, builder ) =>
             {
-                builder.Register( c =>
-                    {
-                        var temp = context.Configuration
-                            .GetSection( "Configuration" )
-                            .Get<AppConfig>();
+                //builder.Register( c =>
+                //    {
+                //        var temp = context.Configuration
+                //                       .Get<AppConfig>();
 
-                        return temp ?? new AppConfig();
-                    } )
-                    .AsImplementedInterfaces()
-                    .SingleInstance();
+                //        if( temp != null ) 
+                //            return temp;
+
+                //        _cachedLogger.Error("Failed to retrieve Configuration object from IConfiguration");
+                //        temp = new AppConfig();
+
+                //        return temp;
+                //    } )
+                //    .AsImplementedInterfaces()
+                //    .SingleInstance();
 
                 builder.RegisterType<KmlDocument>()
                     .AsSelf();
@@ -87,25 +94,32 @@ namespace J4JSoftware.KMLProcessor
                 builder.RegisterType<BingSnapRouteProcessor>()
                     .Keyed<ISnapRouteProcessor>( SnapProcessorType.Bing )
                     .AsImplementedInterfaces();
+
+                var factory = new ChannelFactory( context.Configuration, "Logging", false );
+
+                factory.AddChannel<ConsoleConfig>( "Logging:Channels:Console" );
+                factory.AddChannel<DebugConfig>("Logging:Channels:Debug");
+
+                builder.RegisterJ4JLogging<J4JLoggerConfiguration>( factory );
             } );
 
             retVal.ConfigureServices( ( context, services ) =>
             {
+                services.AddOptions();
+                services.Configure<AppConfig>( context.Configuration );
+
                 AppConfig? config;
 
                 try
                 {
                     config = context.Configuration
-                        .GetSection( "Configuration" )
                         .Get<AppConfig>();
                 }
                 catch( Exception e )
                 {
-                    Console.WriteLine("Failed to parse configuration information. Message was:");
-                    Console.WriteLine(e.Message);
-
-                    if( e.InnerException != null )
-                        Console.WriteLine( e.InnerException.Message );
+                    _cachedLogger.Fatal<string>( 
+                        "Failed to parse configuration information. Message was: {0}",
+                        e.Message );
 
                     return;
                 }
@@ -115,20 +129,6 @@ namespace J4JSoftware.KMLProcessor
                 else
                     services.AddHostedService<SnapApp>();
             } );
-
-            return retVal;
-        }
-
-        private static OptionCollection ConfigureCommandLineOptions()
-        {
-            var retVal = new OptionCollection();
-
-            retVal.Bind<AppConfig, string?>( x => x.InputFile, "i", "inputFile" );
-            retVal.Bind<AppConfig, bool>(x => x.ZipOutputFile, "z", "zipOutput");
-            retVal.Bind<AppConfig, double>( x => x.CoalesceValue, "d", "minDistanceValue" );
-            retVal.Bind<AppConfig, UnitTypes>(x => x.CoalesceUnit, "u", "minDistanceUnit");
-            retVal.Bind<AppConfig, bool>(x => x.StoreAPIKey, "k", "storeApiKey");
-            retVal.Bind<AppConfig, SnapProcessorType>(x => x.SnapProcessorType, "p", "snapProcessor");
 
             return retVal;
         }

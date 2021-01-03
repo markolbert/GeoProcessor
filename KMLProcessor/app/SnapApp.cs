@@ -1,27 +1,29 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using J4JSoftware.Configuration.CommandLine;
 using J4JSoftware.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace J4JSoftware.KMLProcessor
 {
     public class SnapApp : IHostedService
     {
-        private readonly IAppConfig _config;
+        private readonly AppConfig _config;
         private readonly IHost _host;
         private readonly IHostApplicationLifetime _lifetime;
         private readonly IJ4JLogger _logger;
 
         public SnapApp(
             IHost host,
-            IAppConfig config,
+            IOptions<AppConfig> config,
             IHostApplicationLifetime lifetime,
             IJ4JLogger logger
         )
         {
             _host = host;
-            _config = config;
+            _config = config.Value;
             _lifetime = lifetime;
 
             _logger = logger;
@@ -30,11 +32,9 @@ namespace J4JSoftware.KMLProcessor
 
         public async Task StartAsync( CancellationToken cancellationToken )
         {
-            if( !_config.IsValid( out var error ) )
+            if( !_config.IsValid( _logger ) )
             {
-                _logger.Fatal( error! );
                 _lifetime.StopApplication();
-
                 return;
             }
 

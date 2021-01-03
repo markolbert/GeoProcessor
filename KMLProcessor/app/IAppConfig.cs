@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using J4JSoftware.Logging;
 
 namespace J4JSoftware.KMLProcessor
 {
@@ -22,6 +23,8 @@ namespace J4JSoftware.KMLProcessor
         bool ZipOutputFile { get; }
         string? OutputFile { get; }
 
-        bool IsValid( out string? error );
+        J4JLoggerConfiguration Logging { get; }
+
+        bool IsValid( IJ4JLogger? logger );
     }
 }

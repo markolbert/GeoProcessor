@@ -4,13 +4,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using BingMapsRESTToolkit;
 using J4JSoftware.Logging;
+using Microsoft.Extensions.Options;
 
 namespace J4JSoftware.KMLProcessor
 {
     public class BingSnapRouteProcessor : SnapRouteProcessor
     {
         public BingSnapRouteProcessor(
-            IAppConfig config,
+            IOptions<AppConfig> config,
             IJ4JLogger logger
         )
             : base( config, logger )
@@ -27,7 +28,7 @@ namespace J4JSoftware.KMLProcessor
             {
                 BingMapsKey = Configuration.APIKeys
                     .FirstOrDefault( k => k.Type == SnapProcessorType.Bing )
-                    ?.EncryptedAPIKey,
+                    ?.APIKey,
                 IncludeSpeedLimit = false,
                 IncludeTruckSpeedLimit = false,
                 Interpolate = true,

@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="app\IAppConfig.cs" />
     <Compile Remove="Coordinates.cs" />
   </ItemGroup>
 

@@ -2,18 +2,24 @@
 {
     public class SnapProcessorAPIKey
     {
+        private string _encryptedKey = string.Empty;
+
         public SnapProcessorType Type { get; set; }
-        public string EncryptedAPIKey { get; set; } = string.Empty;
 
-        public string GetAPIKey()
+        public string EncryptedAPIKey
         {
-            if( string.IsNullOrEmpty( EncryptedAPIKey ) )
-                return string.Empty;
+            get => _encryptedKey;
 
-            if( !KMLExtensions.Decrypt( EncryptedAPIKey, out var retVal ) )
-                return string.Empty;
+            set
+            {
+                _encryptedKey = value;
 
-            return retVal!;
+                APIKey = KMLExtensions.Decrypt( _encryptedKey, out var decryptedKey ) 
+                    ? decryptedKey! 
+                    : string.Empty;
+            }
         }
+
+        public string APIKey { get; set; } = string.Empty;
     }
 }

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Autofac.Features.Indexed;
 using J4JSoftware.Logging;
+using Microsoft.Extensions.Options;
 
 namespace J4JSoftware.KMLProcessor
 {
@@ -17,12 +18,12 @@ namespace J4JSoftware.KMLProcessor
         private readonly ISnapRouteProcessor _snapRouteProc;
 
         public KmlDocument(
-            IAppConfig config,
+            IOptions<AppConfig> config,
             IIndex<SnapProcessorType, ISnapRouteProcessor> snapProcessors,
             IJ4JLogger logger
         )
         {
-            _snapRouteProc = snapProcessors[ config.SnapProcessorType ];
+            _snapRouteProc = snapProcessors[ config.Value.SnapProcessorType ];
 
             _logger = logger;
             _logger.SetLoggedType( GetType() );

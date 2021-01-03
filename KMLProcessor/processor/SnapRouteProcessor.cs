@@ -4,17 +4,18 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using J4JSoftware.Logging;
+using Microsoft.Extensions.Options;
 
 namespace J4JSoftware.KMLProcessor
 {
     public abstract class SnapRouteProcessor : ISnapRouteProcessor
     {
         protected SnapRouteProcessor(
-            IAppConfig config,
+            IOptions<AppConfig> config,
             IJ4JLogger logger
         )
         {
-            Configuration = config;
+            Configuration = config.Value;
 
             Logger = logger;
             Logger.SetLoggedType( GetType() );
@@ -22,7 +23,7 @@ namespace J4JSoftware.KMLProcessor
 
         protected IJ4JLogger Logger { get; }
 
-        public IAppConfig Configuration { get; }
+        public AppConfig Configuration { get; }
         public abstract Distance MaxSeparation { get; }
         public abstract int PointsPerRequest { get; }
 

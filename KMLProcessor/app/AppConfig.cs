@@ -5,13 +5,14 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json.Serialization;
+using J4JSoftware.Logging;
 
 namespace J4JSoftware.KMLProcessor
 {
-    public class AppConfig : IAppConfig
+    public class AppConfig
     {
         public SnapProcessorType SnapProcessorType { get; set; } = SnapProcessorType.Undefined;
-        public List<SnapProcessorAPIKey> APIKeys { get; set; } = new List<SnapProcessorAPIKey>();
+        public List<SnapProcessorAPIKey> APIKeys { get; set; }
         
         public bool StoreAPIKey { get; set; }
 
@@ -22,7 +23,7 @@ namespace J4JSoftware.KMLProcessor
         public double MaxBearingDelta { get; set; } = 5.0;
 
         public string? InputFile { get; set; }
-
+        
         public bool ZipOutputFile { get; set; }
 
         public string? OutputFile
@@ -39,40 +40,33 @@ namespace J4JSoftware.KMLProcessor
             }
         }
 
-        public bool IsValid( out string? error )
-        {
-            error = null;
+        public J4JLoggerConfiguration Logging { get; set; }
 
+        public bool IsValid( IJ4JLogger? logger )
+        {
             // if we're storing an API key we must have a SnapProcessorType defined
             if( StoreAPIKey )
             {
                 if( SnapProcessorType != SnapProcessorType.Undefined )
                     return true;
-                
-                error = "Undefined SnapProcessorType";
+
+                logger?.Error( "Undefined SnapProcessorType" );
                 return false;
             }
 
             if( !File.Exists( InputFile ) )
             {
-                error = $"Source file '{InputFile}' is not accessible";
+                logger?.Error<string>( "Source file '{)}' is not accessible", InputFile );
                 return false;
             }
 
-            if( string.IsNullOrEmpty( APIKeys.FirstOrDefault( k => k.Type == SnapProcessorType )?.EncryptedAPIKey ) )
+            if( !APIKeys.Any( k => k.Type == SnapProcessorType && !string.IsNullOrEmpty(k.APIKey) ) )
             {
-                error = "API key is not defined";
+                logger?.Error( "{0} API key is not defined", SnapProcessorType );
                 return false;
             }
 
-            error = SnapProcessorType switch
-            {
-                SnapProcessorType.Google => null,
-                SnapProcessorType.Bing => null,
-                _ => "Unsupported snap to route processor"
-            };
-
-            return error != null;
+            return true;
         }
     }
 }
