@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -14,123 +15,118 @@ namespace J4JSoftware.KMLProcessor
 {
     public class KmlDocument
     {
-        private readonly IJ4JLogger _logger;
-        private readonly IRouteProcessor _distProc;
-        private readonly IRouteProcessor _routeProc;
-
-        public KmlDocument(
-            AppConfig config,
-            IIndex<ProcessorType, IRouteProcessor> snapProcessors,
-            IJ4JLogger logger
-        )
+        public KmlDocument(AppConfig config)
         {
-            _distProc = snapProcessors[ProcessorType.Distance];
-            _routeProc = snapProcessors[ config.ProcessorType ];
-
-            _logger = logger;
-            _logger.SetLoggedType( GetType() );
+            RouteName = config.DefaultRouteName;
+            RouteWidth = config.RouteWidth;
+            RouteColor = config.RouteColor;
+            RouteHighlightColor = config.RouteHighlightColor;
         }
 
         protected XElement? CoordinatesElement { get; private set; }
 
-        public bool IsValid => FilePath != null && XDocument != null && CoordinatesElement != null && Points.Count > 0;
-        public string? FilePath { get; private set; }
-        public XDocument? XDocument { get; private set; }
+        //public bool IsValid => FilePath != null && XDocument != null && CoordinatesElement != null && Points.Count > 0;
+        //public string? FilePath { get; private set; }
+        //public XDocument? XDocument { get; private set; }
         public LinkedList<Coordinate> Points { get; set; } = new LinkedList<Coordinate>();
         public int Count => Points.Count;
+        public string RouteName { get; set; }
+        public int RouteWidth { get; set; }
+        public Color RouteColor { get; set; }
+        public Color RouteHighlightColor { get; set; }
 
-        public async Task<bool> LoadAsync( string filePath, CancellationToken cancellationToken )
-        {
-            if( !File.Exists( filePath ) )
-            {
-                _logger.Error<string>( "File '{0}' does not exist", filePath );
-                return false;
-            }
+        //public async Task<bool> LoadAsync( string filePath, CancellationToken cancellationToken )
+        //{
+            //if( !File.Exists( filePath ) )
+            //{
+            //    _logger.Error<string>( "File '{0}' does not exist", filePath );
+            //    return false;
+            //}
 
-            FilePath = filePath;
+            //FilePath = filePath;
 
-            try
-            {
-                using var readStream = File.OpenText( FilePath );
-                XDocument = await XDocument.LoadAsync( readStream, LoadOptions.None, cancellationToken );
-            }
-            catch( Exception e )
-            {
-                _logger.Error<string, string>( "Could not load file '{0}', exception was '{1}'", FilePath, e.Message );
-                return false;
-            }
+            //try
+            //{
+            //    using var readStream = File.OpenText( FilePath );
+            //    XDocument = await XDocument.LoadAsync( readStream, LoadOptions.None, cancellationToken );
+            //}
+            //catch( Exception e )
+            //{
+            //    _logger.Error<string, string>( "Could not load file '{0}', exception was '{1}'", FilePath, e.Message );
+            //    return false;
+            //}
 
-            if( cancellationToken.IsCancellationRequested )
-            {
-                _logger.Information( "File load cancelled" );
-                return false;
-            }
+            //if( cancellationToken.IsCancellationRequested )
+            //{
+            //    _logger.Information( "File load cancelled" );
+            //    return false;
+            //}
 
-            CoordinatesElement = XDocument.Descendants()
-                .SingleOrDefault( x => x.Name.LocalName == "coordinates" );
+            //CoordinatesElement = XDocument.Descendants()
+            //    .SingleOrDefault( x => x.Name.LocalName == "coordinates" );
 
-            if( CoordinatesElement == null )
-            {
-                _logger.Error( "Could not find 'coordinates' element in XDocument" );
-                return false;
-            }
+            //if( CoordinatesElement == null )
+            //{
+            //    _logger.Error( "Could not find 'coordinates' element in XDocument" );
+            //    return false;
+            //}
 
-            var coordRaw = CoordinatesElement.Value.Replace( "\t", "" )
-                .Replace( "\n", "" );
+            //var coordRaw = CoordinatesElement.Value.Replace( "\t", "" )
+            //    .Replace( "\n", "" );
 
-            if( cancellationToken.IsCancellationRequested )
-            {
-                _logger.Information( "File load cancelled" );
-                return false;
-            }
+            //if( cancellationToken.IsCancellationRequested )
+            //{
+            //    _logger.Information( "File load cancelled" );
+            //    return false;
+            //}
 
-            Points = new LinkedList<Coordinate>();
-            LinkedListNode<Coordinate>? prevPoint = null;
+            //Points = new LinkedList<Coordinate>();
+            //LinkedListNode<Coordinate>? prevPoint = null;
 
-            foreach( var coordText in coordRaw.Split( ' ', StringSplitOptions.RemoveEmptyEntries ) )
-            {
-                prevPoint = Points.Count == 0
-                    ? Points.AddFirst( new Coordinate( coordText ) )
-                    : Points.AddAfter( prevPoint!, new Coordinate( coordText ) );
+            //foreach( var coordText in coordRaw.Split( ' ', StringSplitOptions.RemoveEmptyEntries ) )
+            //{
+            //    prevPoint = Points.Count == 0
+            //        ? Points.AddFirst( new Coordinate( coordText ) )
+            //        : Points.AddAfter( prevPoint!, new Coordinate( coordText ) );
 
-                if( !cancellationToken.IsCancellationRequested )
-                    continue;
+            //    if( !cancellationToken.IsCancellationRequested )
+            //        continue;
 
-                _logger.Information( "File load cancelled" );
-                return false;
-            }
+            //    _logger.Information( "File load cancelled" );
+            //    return false;
+            //}
 
-            return true;
-        }
+            //return true;
+        //}
 
-        public async Task<bool> SaveAsync( string outputFile, CancellationToken cancellationToken )
-        {
-            if( !IsValid )
-            {
-                _logger.Error( "Cannot save invalid KmlDocument" );
-                return false;
-            }
+        //public async Task<bool> SaveAsync( string outputFile, CancellationToken cancellationToken )
+        //{
+        //    if( !IsValid )
+        //    {
+        //        _logger.Error( "Cannot save invalid KmlDocument" );
+        //        return false;
+        //    }
 
-            var sb = new StringBuilder();
-            sb.AppendLine();
+        //    var sb = new StringBuilder();
+        //    sb.AppendLine();
 
-            foreach( var point in Points )
-                // having NO SPACES between these three arguments is INCREDIBLY IMPORTANT.
-                // the Google Earth importer parses based on spaces (but ignores tabs, linefeeds & newlines)
-                // also note that LONGITUDE is emitted FIRST!!!
-                sb.AppendLine( $"\t\t\t{point.Longitude},{point.Latitude},0 " );
+        //    foreach( var point in Points )
+        //        // having NO SPACES between these three arguments is INCREDIBLY IMPORTANT.
+        //        // the Google Earth importer parses based on spaces (but ignores tabs, linefeeds & newlines)
+        //        // also note that LONGITUDE is emitted FIRST!!!
+        //        sb.AppendLine( $"\t\t\t{point.Longitude},{point.Latitude},0 " );
 
-            CoordinatesElement!.Value = sb.ToString();
+        //    CoordinatesElement!.Value = sb.ToString();
 
-            await using var writeStream = File.CreateText( outputFile );
+        //    await using var writeStream = File.CreateText( outputFile );
 
-            await XDocument!.SaveAsync( writeStream, SaveOptions.None, cancellationToken );
+        //    await XDocument!.SaveAsync( writeStream, SaveOptions.None, cancellationToken );
 
-            await writeStream.FlushAsync();
-            writeStream.Close();
+        //    await writeStream.FlushAsync();
+        //    writeStream.Close();
 
-            return true;
-        }
+        //    return true;
+        //}
 
         //public int CoalescePointsByDistance( Distance maxDist, double origDistanceMultiplier = 3.0 )
         //{

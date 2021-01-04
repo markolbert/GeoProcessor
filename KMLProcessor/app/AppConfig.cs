@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -18,6 +19,11 @@ namespace J4JSoftware.KMLProcessor
         public bool StoreAPIKey { get; set; }
         public string? InputFile { get; set; }
         public bool ZipOutputFile { get; set; }
+
+        public string DefaultRouteName { get; set; } = "Unnamed Route";
+        public int RouteWidth { get; set; } = 4;
+        public Color RouteColor { get; set; } = Color.Red;
+        public Color RouteHighlightColor { get; set; } = Color.DarkTurquoise;
 
         public string? OutputFile
         {

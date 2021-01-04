@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
@@ -26,10 +28,37 @@ namespace J4JSoftware.KMLProcessor
         public static string AppUserConfigFile = Path.Combine( AppUserFolder, "userConfig.json" );
 
         private static readonly J4JCachedLogger _cachedLogger = new J4JCachedLogger();
-        private static CancellationToken _cancellationToken = new CancellationToken();
+        private static readonly CancellationToken _cancellationToken = new CancellationToken();
 
         private static async Task Main( string[] args )
         {
+            //var color = KMLExtensions.ToAbgrHex( Color.DarkTurquoise );
+
+            //var colorTable = Enum.GetValues<KnownColor>()
+            //    .Cast<KnownColor>()
+            //    .Select(Color.FromKnownColor)
+            //    .ToLookup(x => x.ToArgb());
+
+            //var crap = KMLExtensions.ToAbgrHex(Color.Blue);
+            //var junk = KMLExtensions.ToColor(crap);
+            //var known = colorTable[junk.ToArgb()].ToList();
+
+            //crap = KMLExtensions.ToAbgrHex(Color.Red);
+            //junk = KMLExtensions.ToColor(crap);
+            //known = colorTable[junk.ToArgb()].ToList();
+
+            //crap = KMLExtensions.ToAbgrHex(Color.Green);
+            //junk = KMLExtensions.ToColor(crap);
+            //known = colorTable[junk.ToArgb()].ToList();
+
+            //crap = KMLExtensions.ToAbgrHex(Color.Violet);
+            //junk = KMLExtensions.ToColor(crap);
+            //known = colorTable[junk.ToArgb()].ToList();
+
+            //crap = KMLExtensions.ToAbgrHex(Color.DarkTurquoise);
+            //junk = KMLExtensions.ToColor(crap);
+            //known = colorTable[junk.ToArgb()].ToList();
+
             Directory.CreateDirectory( AppUserFolder );
             
             var hostBuilder = InitializeHostBuilder();
@@ -53,8 +82,6 @@ namespace J4JSoftware.KMLProcessor
             retVal.ConfigureHostConfiguration( builder =>
             {
                 var options = new OptionCollection( CommandLineStyle.Linux, () => _cachedLogger);
-
-                //options.SetTypePrefix<AppConfig>( "Configuration" );
 
                 options.Bind<AppConfig, string?>(x => x.InputFile, "i", "inputFile");
                 options.Bind<AppConfig, bool>(x => x.ZipOutputFile, "z", "zipOutput");
@@ -104,6 +131,11 @@ namespace J4JSoftware.KMLProcessor
 
                 builder.RegisterType<DistanceProcessor>()
                     .Keyed<IRouteProcessor>( ProcessorType.Distance )
+                    .AsImplementedInterfaces()
+                    .SingleInstance();
+
+                builder.RegisterType<KMLHandler>()
+                    .Keyed<IImportExport>(FileType.KML)
                     .AsImplementedInterfaces()
                     .SingleInstance();
 

@@ -27,6 +27,8 @@ namespace J4JSoftware.KMLProcessor
                          ?.Value
                      ?? string.Empty;
 
+            Processor = config.ProcessorType;
+
             Logger = logger;
             Logger.SetLoggedType( GetType() );
         }
@@ -35,6 +37,7 @@ namespace J4JSoftware.KMLProcessor
 
         protected ProcessorInfo Configuration { get; }
         protected string APIKey { get; }
+        protected ProcessorType Processor { get; }
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         protected virtual async Task<List<Coordinate>?> ExecuteRequestAsync(

@@ -24,9 +24,18 @@ namespace J4JSoftware.KMLProcessor
 
             var chunks = ChunkPoints(InterpolatePoints(nodes));
 
+            var pointsProcessed = 0;
+
             foreach (var coordinates in chunks)
+            {
                 if (!await ProcessChunkAsync(coordinates, retVal!, cancellationToken))
                     return null;
+
+                pointsProcessed += coordinates.Count;
+
+                if( pointsProcessed % ( 5 * Configuration.MaxPointsPerRequest ) == 0 )
+                    Logger.Information( "Processed {0:n0} points via {1}", pointsProcessed, Processor );
+            }
 
             return retVal;
         }

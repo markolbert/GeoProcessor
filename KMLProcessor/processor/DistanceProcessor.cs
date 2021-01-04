@@ -56,6 +56,9 @@ namespace J4JSoftware.KMLProcessor
 
             for( var idx = 1; idx < coordinates.Count; idx++ )
             {
+                if( idx % 1000 == 0 )
+                    Logger.Information( "Coalesced {0:n0} points by distance", idx );
+
                 var mostRecentDistance = KMLExtensions
                     .GetDistance(coordinates[idx - 1], coordinates[idx]);
 
@@ -68,12 +71,6 @@ namespace J4JSoftware.KMLProcessor
 
                 retVal.Add( coordinates[ idx ] );
                 curStartingIdx = idx;
-
-                //if ( KMLExtensions.GetDistance( coordinates[ idx-1 ], coordinates[ idx ] ) 
-                //     < Configuration.MaxSeparation )
-                //    continue;
-
-                //retVal.Add( coordinates[ idx ] );
             }
 
             return retVal;
