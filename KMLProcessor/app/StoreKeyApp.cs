@@ -23,13 +23,13 @@ namespace J4JSoftware.KMLProcessor
 
         public StoreKeyApp(
             IHost host,
-            IOptions<AppConfig> config,
+            AppConfig config,
             IHostApplicationLifetime lifetime,
             IJ4JLogger logger
         )
         {
             _host = host;
-            _config = config.Value;
+            _config = config;
             _lifetime = lifetime;
 
             _logger = logger;
@@ -47,7 +47,7 @@ namespace J4JSoftware.KMLProcessor
             if( !_config.StoreAPIKey )
                 return;
 
-            Console.Write( $"Enter the {_config.SnapProcessorType} API key: " );
+            Console.Write( $"Enter the {_config.ProcessorType} API key: " );
             var apiKey = Console.ReadLine();
 
             if( string.IsNullOrEmpty( apiKey ) )
@@ -56,22 +56,17 @@ namespace J4JSoftware.KMLProcessor
                 _lifetime.StopApplication();
             }
 
-            if( !KMLExtensions.Encrypt( apiKey!, out var encrypted ) )
+            _config.APIKeys ??= new Dictionary<ProcessorType, APIKey>();
+
+            var newKey = new APIKey
             {
-                _logger.Error( "Couldn't encrypt API key, configuration not updated" );
-                _lifetime.StopApplication();
-            }
+                Type = _config.ProcessorType,
+                Value = apiKey!
+            };
 
-            var apiConfig = _config.APIKeys.FirstOrDefault( k => k.Type == _config.SnapProcessorType );
-
-            if( apiConfig == null )
-                _config.APIKeys.Add(
-                    new SnapProcessorAPIKey
-                    {
-                        Type = _config.SnapProcessorType,
-                        EncryptedAPIKey = encrypted!
-                    } );
-            else apiConfig.EncryptedAPIKey = encrypted!;
+            if( _config.APIKeys.ContainsKey( _config.ProcessorType ) )
+                _config.APIKeys.Add( _config.ProcessorType, newKey );
+            else _config.APIKeys[ _config.ProcessorType ] = newKey;
 
             var jsonOptions = new JsonSerializerOptions { WriteIndented = true };
             jsonOptions.Converters.Add( new JsonStringEnumConverter() );
@@ -80,7 +75,7 @@ namespace J4JSoftware.KMLProcessor
 
             await File.WriteAllTextAsync( Program.AppUserConfigFile, serialized, cancellationToken );
 
-            _logger.Information( "{0} API key updated", _config.SnapProcessorType );
+            _logger.Information( "{0} API key updated", _config.ProcessorType );
 
             _lifetime.StopApplication();
         }

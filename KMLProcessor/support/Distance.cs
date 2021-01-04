@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace J4JSoftware.KMLProcessor
 {
-    public class Distance
+    public partial class Distance
     {
         public Distance( UnitTypes unit, double originalValue )
         {
@@ -14,6 +14,8 @@ namespace J4JSoftware.KMLProcessor
         public UnitTypes Unit { get; }
         public double OriginalValue { get; }
 
+        public override string ToString() => $"{OriginalValue} {Unit}";
+
         public double GetValue( UnitTypes outUnit )
         {
             if( outUnit == Unit )
@@ -21,32 +23,32 @@ namespace J4JSoftware.KMLProcessor
 
             return Unit switch
             {
-                UnitTypes.Feet => outUnit switch
+                UnitTypes.ft => outUnit switch
                 {
-                    UnitTypes.Miles => OriginalValue / 5280,
-                    UnitTypes.Meters => OriginalValue * 0.3048,
-                    UnitTypes.Kilometers => OriginalValue * 0.0003048,
+                    UnitTypes.mi => OriginalValue / 5280,
+                    UnitTypes.m => OriginalValue * 0.3048,
+                    UnitTypes.km => OriginalValue * 0.0003048,
                     _ => throw new InvalidEnumArgumentException( $"Unsupported unit type '{Unit}'" )
                 },
-                UnitTypes.Kilometers => outUnit switch
+                UnitTypes.km => outUnit switch
                 {
-                    UnitTypes.Miles => OriginalValue * 0.62137119223733,
-                    UnitTypes.Meters => OriginalValue * 1000,
-                    UnitTypes.Feet => OriginalValue * 3280.8398950131,
+                    UnitTypes.mi => OriginalValue * 0.62137119223733,
+                    UnitTypes.m => OriginalValue * 1000,
+                    UnitTypes.ft => OriginalValue * 3280.8398950131,
                     _ => throw new InvalidEnumArgumentException( $"Unsupported unit type '{Unit}'" )
                 },
-                UnitTypes.Meters => outUnit switch
+                UnitTypes.m => outUnit switch
                 {
-                    UnitTypes.Miles => OriginalValue * 0.00062137119223733,
-                    UnitTypes.Kilometers => OriginalValue / 1000,
-                    UnitTypes.Feet => OriginalValue * 3.2808398950131,
+                    UnitTypes.mi => OriginalValue * 0.00062137119223733,
+                    UnitTypes.km => OriginalValue / 1000,
+                    UnitTypes.ft => OriginalValue * 3.2808398950131,
                     _ => throw new InvalidEnumArgumentException( $"Unsupported unit type '{Unit}'" )
                 },
-                UnitTypes.Miles => outUnit switch
+                UnitTypes.mi => outUnit switch
                 {
-                    UnitTypes.Meters => OriginalValue * 1609.344,
-                    UnitTypes.Kilometers => OriginalValue * 1.609344,
-                    UnitTypes.Feet => OriginalValue * 5280,
+                    UnitTypes.m => OriginalValue * 1609.344,
+                    UnitTypes.km => OriginalValue * 1.609344,
+                    UnitTypes.ft => OriginalValue * 5280,
                     _ => throw new InvalidEnumArgumentException( $"Unsupported unit type '{Unit}'" )
                 },
                 _ => throw new InvalidEnumArgumentException( $"Unsupported unit type '{Unit}'" )

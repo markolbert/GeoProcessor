@@ -15,15 +15,17 @@ namespace J4JSoftware.KMLProcessor
     public class KmlDocument
     {
         private readonly IJ4JLogger _logger;
-        private readonly ISnapRouteProcessor _snapRouteProc;
+        private readonly IRouteProcessor _distProc;
+        private readonly IRouteProcessor _routeProc;
 
         public KmlDocument(
-            IOptions<AppConfig> config,
-            IIndex<SnapProcessorType, ISnapRouteProcessor> snapProcessors,
+            AppConfig config,
+            IIndex<ProcessorType, IRouteProcessor> snapProcessors,
             IJ4JLogger logger
         )
         {
-            _snapRouteProc = snapProcessors[ config.Value.SnapProcessorType ];
+            _distProc = snapProcessors[ProcessorType.Distance];
+            _routeProc = snapProcessors[ config.ProcessorType ];
 
             _logger = logger;
             _logger.SetLoggedType( GetType() );
@@ -34,7 +36,7 @@ namespace J4JSoftware.KMLProcessor
         public bool IsValid => FilePath != null && XDocument != null && CoordinatesElement != null && Points.Count > 0;
         public string? FilePath { get; private set; }
         public XDocument? XDocument { get; private set; }
-        public LinkedList<Coordinate> Points { get; private set; } = new LinkedList<Coordinate>();
+        public LinkedList<Coordinate> Points { get; set; } = new LinkedList<Coordinate>();
         public int Count => Points.Count;
 
         public async Task<bool> LoadAsync( string filePath, CancellationToken cancellationToken )
@@ -130,116 +132,131 @@ namespace J4JSoftware.KMLProcessor
             return true;
         }
 
-        public int CoalescePointsByDistance( Distance maxDist, double origDistanceMultiplier = 3.0 )
-        {
-            var pointSet = new List<Coordinate>();
+        //public int CoalescePointsByDistance( Distance maxDist, double origDistanceMultiplier = 3.0 )
+        //{
+        //    var pointSet = new List<Coordinate>();
 
-            var curStartingPoint = Points.First;
-            var origCount = Count;
+        //    var curStartingPoint = Points.First;
+        //    var origCount = Count;
 
-            while( curStartingPoint?.Next != null )
-            {
-                pointSet.Clear();
-                pointSet.Add( curStartingPoint.Value );
+        //    while( curStartingPoint?.Next != null )
+        //    {
+        //        pointSet.Clear();
+        //        pointSet.Add( curStartingPoint.Value );
 
-                var curEndingPoint = curStartingPoint!.Next;
+        //        var curEndingPoint = curStartingPoint!.Next;
 
-                while( curEndingPoint != null )
-                {
-                    var mostRecentDistance = KMLExtensions
-                        .GetDistance( curEndingPoint.Previous!.Value, curEndingPoint.Value );
+        //        while( curEndingPoint != null )
+        //        {
+        //            var mostRecentDistance = KMLExtensions
+        //                .GetDistance( curEndingPoint.Previous!.Value, curEndingPoint.Value );
 
-                    var distanceFromOrigin = KMLExtensions
-                        .GetDistance( curStartingPoint.Value, curEndingPoint.Value );
+        //            var distanceFromOrigin = KMLExtensions
+        //                .GetDistance( curStartingPoint.Value, curEndingPoint.Value );
 
-                    if( mostRecentDistance > maxDist || distanceFromOrigin > origDistanceMultiplier * maxDist )
-                    {
-                        Points.Remove( curStartingPoint );
+        //            if( mostRecentDistance > maxDist || distanceFromOrigin > origDistanceMultiplier * maxDist )
+        //            {
+        //                Points.Remove( curStartingPoint );
 
-                        break;
-                    }
+        //                break;
+        //            }
 
-                    var nextEnd = curEndingPoint.Next;
+        //            var nextEnd = curEndingPoint.Next;
 
-                    Points.Remove( curEndingPoint );
+        //            Points.Remove( curEndingPoint );
 
-                    pointSet.Add( curEndingPoint.Value );
+        //            pointSet.Add( curEndingPoint.Value );
 
-                    curEndingPoint = nextEnd;
-                }
+        //            curEndingPoint = nextEnd;
+        //        }
 
-                if( pointSet.Count > 0 )
-                {
-                    var avg = new Coordinate(
-                        pointSet.Average( x => x.Latitude ),
-                        pointSet.Average( x => x.Longitude )
-                    );
+        //        if( pointSet.Count > 0 )
+        //        {
+        //            var avg = new Coordinate(
+        //                pointSet.Average( x => x.Latitude ),
+        //                pointSet.Average( x => x.Longitude )
+        //            );
 
-                    if( curEndingPoint == null )
-                        Points.AddLast( avg );
-                    else Points.AddBefore( curEndingPoint!, avg );
-                }
+        //            if( curEndingPoint == null )
+        //                Points.AddLast( avg );
+        //            else Points.AddBefore( curEndingPoint!, avg );
+        //        }
 
-                curStartingPoint = curEndingPoint;
-            }
+        //        curStartingPoint = curEndingPoint;
+        //    }
 
-            return origCount - Count;
-        }
+        //    return origCount - Count;
+        //}
 
-        public int CoalescePointsByBearing( double maxBearingDelta )
-        {
-            var curStartingPoint = Points.First;
-            var origCount = Count;
+        //public int CoalescePointsByBearing( double maxBearingDelta )
+        //{
+        //    var curStartingPoint = Points.First;
+        //    var origCount = Count;
 
-            var sameBearing = new List<LinkedListNode<Coordinate>>();
+        //    var sameBearing = new List<LinkedListNode<Coordinate>>();
 
-            while( curStartingPoint?.Next != null )
-            {
-                var curEndingPoint = curStartingPoint.Next;
+        //    while( curStartingPoint?.Next != null )
+        //    {
+        //        var curEndingPoint = curStartingPoint.Next;
 
-                sameBearing.Clear();
+        //        sameBearing.Clear();
 
-                while( curEndingPoint != null )
-                {
-                    var (avgBearing, sdBearing) = curStartingPoint.GetBearingStatistics( curEndingPoint! );
+        //        while( curEndingPoint != null )
+        //        {
+        //            var (avgBearing, sdBearing) = curStartingPoint.GetBearingStatistics( curEndingPoint! );
 
-                    var mostRecentBearing = KMLExtensions.GetBearing(
-                        curEndingPoint!.Previous!.Value,
-                        curEndingPoint.Value );
+        //            var mostRecentBearing = KMLExtensions.GetBearing(
+        //                curEndingPoint!.Previous!.Value,
+        //                curEndingPoint.Value );
 
-                    if( Math.Abs( avgBearing - mostRecentBearing ) > maxBearingDelta )
-                    {
-                        curStartingPoint = curEndingPoint;
+        //            if( Math.Abs( avgBearing - mostRecentBearing ) > maxBearingDelta )
+        //            {
+        //                curStartingPoint = curEndingPoint;
 
-                        if( sameBearing.Count > 1 )
-                            foreach( var node in sameBearing )
-                                Points.Remove( node );
+        //                if( sameBearing.Count > 1 )
+        //                    foreach( var node in sameBearing )
+        //                        Points.Remove( node );
 
-                        break;
-                    }
+        //                break;
+        //            }
 
-                    sameBearing.Add( curEndingPoint );
+        //            sameBearing.Add( curEndingPoint );
 
-                    curEndingPoint = curEndingPoint.Next;
-                }
-            }
+        //            curEndingPoint = curEndingPoint.Next;
+        //        }
+        //    }
 
-            return origCount - Count;
-        }
+        //    return origCount - Count;
+        //}
 
-        public async Task<int> SnapToRoute( CancellationToken cancellationToken )
-        {
-            var routePts = await _snapRouteProc.ProcessAsync( Points, cancellationToken );
+        //public async Task<int> CoalescePoints(CancellationToken cancellationToken)
+        //{
+        //    var routePts = await _distProc.ProcessAsync(Points, cancellationToken);
 
-            if( routePts == null )
-            {
-                _logger.Error( "Snapping points to a route failed" );
-                return 0;
-            }
+        //    if (routePts == null)
+        //    {
+        //        _logger.Error("Coalescing nearby points failed");
+        //        return 0;
+        //    }
 
-            Points = routePts;
+        //    Points = routePts;
 
-            return Points.Count;
-        }
+        //    return Points.Count;
+        //}
+
+        //public async Task<int> SnapToRoute( CancellationToken cancellationToken )
+        //{
+        //    var routePts = await _routeProc.ProcessAsync( Points, cancellationToken );
+
+        //    if( routePts == null )
+        //    {
+        //        _logger.Error( "Snapping points to a route failed" );
+        //        return 0;
+        //    }
+
+        //    Points = routePts;
+
+        //    return Points.Count;
+        //}
     }
 }

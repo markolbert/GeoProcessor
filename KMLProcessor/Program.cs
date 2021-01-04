@@ -58,42 +58,54 @@ namespace J4JSoftware.KMLProcessor
 
                 options.Bind<AppConfig, string?>(x => x.InputFile, "i", "inputFile");
                 options.Bind<AppConfig, bool>(x => x.ZipOutputFile, "z", "zipOutput");
-                options.Bind<AppConfig, double>(x => x.CoalesceValue, "d", "minDistanceValue");
-                options.Bind<AppConfig, UnitTypes>(x => x.CoalesceUnit, "u", "minDistanceUnit");
                 options.Bind<AppConfig, bool>(x => x.StoreAPIKey, "k", "storeApiKey");
-                options.Bind<AppConfig, SnapProcessorType>(x => x.SnapProcessorType, "p", "snapProcessor");
+                options.Bind<AppConfig, ProcessorType>(x => x.ProcessorType, "p", "snapProcessor");
 
                 builder.SetBasePath( Environment.CurrentDirectory )
-                    .AddUserSecrets<AppConfig>()
                     .AddJsonFile( Path.Combine( Environment.CurrentDirectory, "appConfig.json" ), false, false )
                     .AddJsonFile( AppUserConfigFile, true, false )
+                    .AddUserSecrets<AppConfig>()
                     .AddJ4JCommandLine( Environment.CommandLine, options );
             } );
 
             retVal.ConfigureContainer<ContainerBuilder>( ( context, builder ) =>
             {
-                //builder.Register( c =>
-                //    {
-                //        var temp = context.Configuration
-                //                       .Get<AppConfig>();
+                builder.Register( c =>
+                    {
+                        AppConfig? config = null;
 
-                //        if( temp != null ) 
-                //            return temp;
+                        try
+                        {
+                            config = context.Configuration.Get<AppConfig>();
+                        }
+                        catch( Exception e )
+                        {
+                            _cachedLogger.Fatal<string>(
+                                "Failed to parse configuration information. Message was: {0}",
+                                e.Message);
+                        }
 
-                //        _cachedLogger.Error("Failed to retrieve Configuration object from IConfiguration");
-                //        temp = new AppConfig();
+                        config ??= new AppConfig();
 
-                //        return temp;
-                //    } )
-                //    .AsImplementedInterfaces()
-                //    .SingleInstance();
+                        context.Properties.Add( "config", config );
+
+                        return config;
+                    } )
+                    .AsSelf()
+                    .SingleInstance();
 
                 builder.RegisterType<KmlDocument>()
                     .AsSelf();
 
-                builder.RegisterType<BingSnapRouteProcessor>()
-                    .Keyed<ISnapRouteProcessor>( SnapProcessorType.Bing )
-                    .AsImplementedInterfaces();
+                builder.RegisterType<BingProcessor>()
+                    .Keyed<IRouteProcessor>( ProcessorType.Bing )
+                    .AsImplementedInterfaces()
+                    .SingleInstance();
+
+                builder.RegisterType<DistanceProcessor>()
+                    .Keyed<IRouteProcessor>( ProcessorType.Distance )
+                    .AsImplementedInterfaces()
+                    .SingleInstance();
 
                 var factory = new ChannelFactory( context.Configuration, "Logging", false );
 
@@ -105,29 +117,15 @@ namespace J4JSoftware.KMLProcessor
 
             retVal.ConfigureServices( ( context, services ) =>
             {
-                services.AddOptions();
-                services.Configure<AppConfig>( context.Configuration );
+                //services.AddOptions();
+                //services.Configure<AppConfig>( context.Configuration );
 
-                AppConfig? config;
+                var config = context.Configuration.Get<AppConfig>();
 
-                try
-                {
-                    config = context.Configuration
-                        .Get<AppConfig>();
-                }
-                catch( Exception e )
-                {
-                    _cachedLogger.Fatal<string>( 
-                        "Failed to parse configuration information. Message was: {0}",
-                        e.Message );
-
-                    return;
-                }
-
-                if( config!.StoreAPIKey )
+                if ( config!.StoreAPIKey )
                     services.AddHostedService<StoreKeyApp>();
                 else
-                    services.AddHostedService<SnapApp>();
+                    services.AddHostedService<RouteApp>();
             } );
 
             return retVal;

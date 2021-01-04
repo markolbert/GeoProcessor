@@ -18,7 +18,7 @@ namespace J4JSoftware.KMLProcessor
 
             return false;
 
-            //if (GetDistance(TargetCoordinate, point).GetValue(UnitTypes.Miles) < 0.1)
+            //if (GetDistance(TargetCoordinate, point).GetValue(UnitTypes.mi) < 0.1)
             //    System.Diagnostics.Debugger.Break();
         }
 
@@ -33,7 +33,7 @@ namespace J4JSoftware.KMLProcessor
 
             var h2 = 2 * Math.Asin( Math.Min( 1, Math.Sqrt( h1 ) ) );
 
-            return new Distance( UnitTypes.Miles, h2 * 3958.8 );
+            return new Distance( UnitTypes.mi, h2 * 3958.8 );
         }
 
         public static double GetBearing( Coordinate c1, Coordinate c2 )

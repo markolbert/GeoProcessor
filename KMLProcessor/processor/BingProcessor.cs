@@ -8,33 +8,29 @@ using Microsoft.Extensions.Options;
 
 namespace J4JSoftware.KMLProcessor
 {
-    public class BingSnapRouteProcessor : SnapRouteProcessor
+    public class BingProcessor : CloudRouteProcessor
     {
-        public BingSnapRouteProcessor(
-            IOptions<AppConfig> config,
+        public BingProcessor(
+            AppConfig config,
             IJ4JLogger logger
         )
             : base( config, logger )
         {
         }
 
-        public override Distance MaxSeparation { get; } = new Distance( UnitTypes.Kilometers, 2.5 );
-        public override int PointsPerRequest { get; } = 100;
-
-        protected override async Task<List<Coordinate>?> ExecuteRequestAsync( List<Coordinate> chunk,
+        protected override async Task<List<Coordinate>?> ExecuteRequestAsync( 
+            List<Coordinate> coordinates,
             CancellationToken cancellationToken )
         {
             var request = new SnapToRoadRequest
             {
-                BingMapsKey = Configuration.APIKeys
-                    .FirstOrDefault( k => k.Type == SnapProcessorType.Bing )
-                    ?.APIKey,
+                BingMapsKey = APIKey,
                 IncludeSpeedLimit = false,
                 IncludeTruckSpeedLimit = false,
                 Interpolate = true,
                 SpeedUnit = SpeedUnitType.MPH,
                 TravelMode = TravelModeType.Driving,
-                Points = chunk.Select( p => p.ToBingMapsCoordinate() ).ToList()
+                Points = coordinates.Select( p => p.ToBingMapsCoordinate() ).ToList()
             };
 
             var result = await request.Execute();

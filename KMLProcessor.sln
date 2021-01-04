@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KMLProcessor", "KMLProcessor\KMLProcessor.csproj", "{D75857D9-9FFA-4CD8-8EBB-9F363DD1099E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "extern", "extern", "{5AD3F041-D553-492B-948D-E58BDA4373CF}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\Users\Mark\AppData\Local\J4JSoftware\GPS Track Processor\userConfig.json = ..\..\Users\Mark\AppData\Local\J4JSoftware\GPS Track Processor\userConfig.json
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DependencyInjection", "..\ProgrammingUtilities\DependencyInjection\DependencyInjection.csproj", "{A80A75DD-DB4C-472D-8166-FE8F86FD7BF1}"
 EndProject

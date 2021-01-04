@@ -1,7 +1,18 @@
 {
+  "Processors": {
+    "Distance": {
+      "MaxDistanceMultiplier": 3, 
+      "MaxPointsPerRequest": -1,
+      "MaxSeparation": "100 ft"
+    },
+    "Bing": {
+      "MaxPointsPerRequest": 100,
+      "MaxSeparation": "2 km"
+    }
+  },
   "Logging": {
     "EventElements": "All",
-    "SourceRootPath": "C:/Programming/SurveyPlanet/",
+    "SourceRootPath": "C:/Programming/KMLProcessor/",
     "Channels": {
       "Debug": {
         "MinimumLevel": "Information"

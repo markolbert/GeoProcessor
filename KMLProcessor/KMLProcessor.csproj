@@ -11,6 +11,7 @@
   <ItemGroup>
     <Compile Remove="app\IAppConfig.cs" />
     <Compile Remove="Coordinates.cs" />
+    <Compile Remove="support\LoggingChannelConfig.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,7 +31,7 @@
 
   <ItemGroup>
     <None Update="appConfig.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Clear Lake to Home.kml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -2,9 +2,9 @@
 {
     public enum UnitTypes
     {
-        Feet,
-        Miles,
-        Meters,
-        Kilometers
+        ft,
+        mi,
+        m,
+        km
     }
 }
