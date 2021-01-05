@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using J4JSoftware.Logging;
-using Microsoft.Extensions.Options;
 
 namespace J4JSoftware.KMLProcessor
 {
+    [RouteProcessor(ProcessorType.Distance)]
     public class DistanceProcessor : RouteProcessor
     {
         public DistanceProcessor(
@@ -17,7 +15,10 @@ namespace J4JSoftware.KMLProcessor
         )
             : base( config, logger )
         {
+            Type = KMLExtensions.GetTargetType<RouteProcessorAttribute>(GetType())!.Type;
         }
+
+        public ProcessorType Type { get; }
 
         public override async Task<LinkedList<Coordinate>?> ProcessAsync(
             LinkedList<Coordinate> nodes,

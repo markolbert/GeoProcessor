@@ -2,40 +2,88 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.Json.Serialization;
 using J4JSoftware.Logging;
 
 namespace J4JSoftware.KMLProcessor
 {
     public class AppConfig
     {
+        private string? _outputFile = null;
+        private ExportType _exportType = ExportType.KML;
+
         public ProcessorType ProcessorType { get; set; } = ProcessorType.Undefined;
         public Dictionary<ProcessorType, ProcessorInfo>? Processors { get; set; }
         public Dictionary<ProcessorType, APIKey>? APIKeys { get; set; }
         
         public bool StoreAPIKey { get; set; }
         public string? InputFile { get; set; }
-        public bool ZipOutputFile { get; set; }
 
         public string DefaultRouteName { get; set; } = "Unnamed Route";
         public int RouteWidth { get; set; } = 4;
         public Color RouteColor { get; set; } = Color.Red;
         public Color RouteHighlightColor { get; set; } = Color.DarkTurquoise;
 
+        public ExportType ExportType
+        {
+            get => _exportType;
+
+            set
+            {
+                _exportType = value;
+
+                if( _outputFile == null )
+                    return;
+
+                // adjust the output file name
+                var dir = Path.GetDirectoryName(_outputFile);
+                var noExt = Path.GetFileNameWithoutExtension(_outputFile);
+
+                _outputFile = Path.Combine( dir!, $"{noExt}{( _exportType == ExportType.KMZ ? ".kmz" : ".kml" )}" );
+            }
+        }
+
         public string? OutputFile
         {
             get
             {
-                if( string.IsNullOrEmpty( InputFile ) )
-                    return null;
+                if( _outputFile != null ) 
+                    return _outputFile;
+
+                if( InputFile == null )
+                    return _outputFile;
 
                 var dir = Path.GetDirectoryName( InputFile );
                 var noExt = Path.GetFileNameWithoutExtension( InputFile );
 
-                return Path.Combine( dir!, $"{noExt}-processed{( ZipOutputFile ? ".kmz" : ".kml" )}" );
+                _outputFile = Path.Combine( dir!,
+                    $"{noExt}-processed{( ExportType == ExportType.KMZ ? ".kmz" : ".kml" )}" );
+
+                return _outputFile;
+            }
+
+            set
+            {
+                // adjust the _exportType to be consistent with the file name we were given
+                var ext = Path.GetExtension(value);
+
+                var priorExportType = _exportType;
+
+                if( ext?.Length >=1 
+                    && Enum.TryParse( typeof(ExportType), ext[1..], true, out var valueExportType ) )
+                {
+                    _exportType = (ExportType) valueExportType!;
+
+                    if( priorExportType == _exportType )
+                    {
+                        _outputFile = value;
+                        return;
+                    }
+                }
+
+                var dir = Path.GetDirectoryName(value);
+                var noExt = Path.GetFileNameWithoutExtension(value);
+
+                _outputFile = Path.Combine( dir!, $"{noExt}{( ExportType == ExportType.KMZ ? ".kmz" : ".kml" )}" );
             }
         }
 

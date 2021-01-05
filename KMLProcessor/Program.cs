@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
-using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using J4JSoftware.Configuration.CommandLine;
-using J4JSoftware.DependencyInjection;
 using J4JSoftware.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,32 +29,7 @@ namespace J4JSoftware.KMLProcessor
 
         private static async Task Main( string[] args )
         {
-            //var color = KMLExtensions.ToAbgrHex( Color.DarkTurquoise );
-
-            //var colorTable = Enum.GetValues<KnownColor>()
-            //    .Cast<KnownColor>()
-            //    .Select(Color.FromKnownColor)
-            //    .ToLookup(x => x.ToArgb());
-
-            //var crap = KMLExtensions.ToAbgrHex(Color.Blue);
-            //var junk = KMLExtensions.ToColor(crap);
-            //var known = colorTable[junk.ToArgb()].ToList();
-
-            //crap = KMLExtensions.ToAbgrHex(Color.Red);
-            //junk = KMLExtensions.ToColor(crap);
-            //known = colorTable[junk.ToArgb()].ToList();
-
-            //crap = KMLExtensions.ToAbgrHex(Color.Green);
-            //junk = KMLExtensions.ToColor(crap);
-            //known = colorTable[junk.ToArgb()].ToList();
-
-            //crap = KMLExtensions.ToAbgrHex(Color.Violet);
-            //junk = KMLExtensions.ToColor(crap);
-            //known = colorTable[junk.ToArgb()].ToList();
-
-            //crap = KMLExtensions.ToAbgrHex(Color.DarkTurquoise);
-            //junk = KMLExtensions.ToColor(crap);
-            //known = colorTable[junk.ToArgb()].ToList();
+            Console.WriteLine(Environment.CommandLine);
 
             Directory.CreateDirectory( AppUserFolder );
             
@@ -84,7 +56,8 @@ namespace J4JSoftware.KMLProcessor
                 var options = new OptionCollection( CommandLineStyle.Linux, () => _cachedLogger);
 
                 options.Bind<AppConfig, string?>(x => x.InputFile, "i", "inputFile");
-                options.Bind<AppConfig, bool>(x => x.ZipOutputFile, "z", "zipOutput");
+                options.Bind<AppConfig, string?>(x => x.OutputFile, "o", "outputFile");
+                options.Bind<AppConfig, ExportType>(x => x.ExportType, "t", "outputType");
                 options.Bind<AppConfig, bool>(x => x.StoreAPIKey, "k", "storeApiKey");
                 options.Bind<AppConfig, ProcessorType>(x => x.ProcessorType, "p", "snapProcessor");
 
@@ -92,7 +65,7 @@ namespace J4JSoftware.KMLProcessor
                     .AddJsonFile( Path.Combine( Environment.CurrentDirectory, "appConfig.json" ), false, false )
                     .AddJsonFile( AppUserConfigFile, true, false )
                     .AddUserSecrets<AppConfig>()
-                    .AddJ4JCommandLine( Environment.CommandLine, options );
+                    .AddJ4JCommandLine( options );
             } );
 
             retVal.ConfigureContainer<ContainerBuilder>( ( context, builder ) =>
@@ -125,17 +98,27 @@ namespace J4JSoftware.KMLProcessor
                     .AsSelf();
 
                 builder.RegisterType<BingProcessor>()
-                    .Keyed<IRouteProcessor>( ProcessorType.Bing )
+                    .Keyed<IRouteProcessor>(KMLExtensions.GetTargetType<BingProcessor, RouteProcessorAttribute>()!.Type)
                     .AsImplementedInterfaces()
                     .SingleInstance();
 
                 builder.RegisterType<DistanceProcessor>()
-                    .Keyed<IRouteProcessor>( ProcessorType.Distance )
+                    .Keyed<IRouteProcessor>(KMLExtensions.GetTargetType<DistanceProcessor, RouteProcessorAttribute>()!.Type)
                     .AsImplementedInterfaces()
                     .SingleInstance();
 
-                builder.RegisterType<KMLHandler>()
-                    .Keyed<IImportExport>(FileType.KML)
+                builder.RegisterType<KMLImporter>()
+                    .Keyed<IImport>( KMLExtensions.GetTargetType<KMLImporter, ImporterAttribute>()!.Type )
+                    .AsImplementedInterfaces()
+                    .SingleInstance();
+
+                builder.RegisterType<GPXImporter>()
+                    .Keyed<IImport>(KMLExtensions.GetTargetType<GPXImporter, ImporterAttribute>()!.Type)
+                    .AsImplementedInterfaces()
+                    .SingleInstance();
+
+                builder.RegisterType<KMLExporter>()
+                    .Keyed<IExport>(KMLExtensions.GetTargetType<KMLExporter, ExporterAttribute>()!.Type)
                     .AsImplementedInterfaces()
                     .SingleInstance();
 

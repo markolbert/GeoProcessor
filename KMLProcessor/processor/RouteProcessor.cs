@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using J4JSoftware.Logging;
-using Microsoft.Extensions.Options;
-using Org.BouncyCastle.Crypto.Tls;
 
 namespace J4JSoftware.KMLProcessor
 {

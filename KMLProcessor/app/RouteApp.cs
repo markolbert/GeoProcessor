@@ -1,14 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Autofac.Features.Indexed;
-using J4JSoftware.Configuration.CommandLine;
 using J4JSoftware.Logging;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 
 namespace J4JSoftware.KMLProcessor
 {
@@ -17,7 +15,8 @@ namespace J4JSoftware.KMLProcessor
         private readonly AppConfig _config;
         private readonly IHost _host;
         private readonly IHostApplicationLifetime _lifetime;
-        private readonly IIndex<FileType, IImportExport> _fileProcessors;
+        private readonly IIndex<ImportType, IImport> _importers;
+        private readonly IExport _exporter;
         private readonly IRouteProcessor _distProc;
         private readonly IRouteProcessor _routeProc;
         private readonly IJ4JLogger _logger;
@@ -26,7 +25,8 @@ namespace J4JSoftware.KMLProcessor
             IHost host,
             AppConfig config,
             IHostApplicationLifetime lifetime,
-            IIndex<FileType, IImportExport> fileProcessors,
+            IIndex<ImportType, IImport> importers,
+            IIndex<ExportType, IExport> exporters,
             IIndex<ProcessorType, IRouteProcessor> snapProcessors,
             IJ4JLogger logger
         )
@@ -34,10 +34,12 @@ namespace J4JSoftware.KMLProcessor
             _host = host;
             _config = config;
             _lifetime = lifetime;
-            _fileProcessors = fileProcessors;
+            _importers = importers;
 
-            _distProc = snapProcessors[ProcessorType.Distance];
-            _routeProc = snapProcessors[config.ProcessorType];
+            _exporter = exporters[ config.ExportType ];
+
+            _distProc = snapProcessors[ ProcessorType.Distance ];
+            _routeProc = snapProcessors[ config.ProcessorType ];
 
             _logger = logger;
             _logger.SetLoggedType( GetType() );
@@ -56,37 +58,36 @@ namespace J4JSoftware.KMLProcessor
 
             // import the file; start by seeing if we can determine the file type
             // from the file extension
-            FileType? fileType = null;
+            ImportType? importType = null;
             var fileExt = Path.GetExtension( _config.InputFile );
 
             if( fileExt != null 
-                && Enum.TryParse( typeof(FileType), fileExt[1..], true, out var temp ) )
-                fileType = (FileType) temp!;
+                && Enum.TryParse( typeof(ImportType), fileExt[1..], true, out var temp ) )
+                importType = (ImportType) temp!;
 
-            fileType ??= FileType.Unknown;
+            importType ??= ImportType.Unknown;
 
-            KmlDocument? kDoc = null;
+            List<KmlDocument>? kDocs = null;
 
-            if( fileType != FileType.Unknown )
-                kDoc = await LoadFileAsync( fileType.Value, cancellationToken );
+            if( importType != ImportType.Unknown )
+                kDocs = await LoadFileAsync( importType.Value, cancellationToken );
 
             // if the import based on the extension failed, try all our importers
-            if( kDoc == null )
+            if( kDocs == null )
             {
-                foreach( var fType in Enum.GetValues<FileType>()
-                    .Where( ft => ft != fileType && ft != FileType.Unknown ) )
+                foreach( var fType in Enum.GetValues<ImportType>()
+                    .Where( ft => ft != importType && ft != ImportType.Unknown ) )
                 {
-                    kDoc = await LoadFileAsync( fType, cancellationToken );
+                    kDocs = await LoadFileAsync( fType, cancellationToken );
 
-                    if( kDoc == null ) 
+                    if( kDocs == null ) 
                         continue;
 
-                    fileType = fType;
                     break;
                 }
             }
 
-            if( kDoc == null )
+            if( kDocs == null )
             {
                 _logger.Error<string>( "Could not load file '{0}'", _config.InputFile! );
 
@@ -94,35 +95,23 @@ namespace J4JSoftware.KMLProcessor
                 return;
             }
 
-            var prevPts = kDoc.Points.Count;
-
-            if( !await RunRouteProcessor( kDoc, _distProc, cancellationToken ) )
+            for( var idx = 0; idx < kDocs.Count; idx++ )
             {
+                if( await ProcessDocument( kDocs[idx], cancellationToken ) )
+                    continue;
+
+                _logger.Error<string, int>("Failed to process KMLDocument '{0}' ({1})", kDocs[idx].RouteName, idx);
                 _lifetime.StopApplication();
+
                 return;
             }
 
-            _logger.Information( "Reduced points from {0:n0} to {1:n0} by coalescing nearby points", 
-                prevPts,
-                kDoc.Points.Count );
-
-            prevPts = kDoc.Points.Count;
-
-            if( !await RunRouteProcessor( kDoc, _routeProc, cancellationToken ) )
+            for( var idx = 0; idx < kDocs.Count; idx++ )
             {
-                _lifetime.StopApplication();
-                return;
+                if( await _exporter.ExportAsync( kDocs[ idx ], idx, cancellationToken ) )
+                    _logger.Information<string>( "Wrote file '{0}'", _exporter.GetNumberedFilePath( idx ) );
+                else _logger.Information<string>( "Export to file '{0}' failed", _exporter.GetNumberedFilePath( idx ) );
             }
-
-            _logger.Information( "Snapping to route changed point count from {0:n0} to {1:n0}", 
-                prevPts,
-                kDoc.Points.Count );
-
-            var exporter = _fileProcessors[ fileType.Value ]!;
-
-            if( await exporter.ExportAsync( kDoc, _config.OutputFile!, cancellationToken ) )
-                _logger.Information<string>( "Wrote file '{0}'", _config.OutputFile! );
-            else _logger.Information<string>("Export to file '{0}' failed", _config.OutputFile!);
 
             _lifetime.StopApplication();
         }
@@ -134,12 +123,35 @@ namespace J4JSoftware.KMLProcessor
             _lifetime.StopApplication();
         }
 
-        private async Task<KmlDocument?> LoadFileAsync( FileType fileType, CancellationToken cancellationToken )
+        private async Task<List<KmlDocument>?> LoadFileAsync( ImportType importType, CancellationToken cancellationToken )
         {
-            if( !_fileProcessors.TryGetValue( fileType, out var importer ) )
+            if( !_importers.TryGetValue( importType, out var importer ) )
                 return null;
 
             return await importer!.ImportAsync( _config.InputFile!, cancellationToken );
+        }
+
+        private async Task<bool> ProcessDocument( KmlDocument kDoc, CancellationToken cancellationToken )
+        {
+            var prevPts = kDoc.Points.Count;
+
+            if (!await RunRouteProcessor(kDoc, _distProc, cancellationToken))
+                return false;
+
+            _logger.Information("Reduced points from {0:n0} to {1:n0} by coalescing nearby points",
+                prevPts,
+                kDoc.Points.Count);
+
+            prevPts = kDoc.Points.Count;
+
+            if (!await RunRouteProcessor(kDoc, _routeProc, cancellationToken))
+                return false;
+
+            _logger.Information("Snapping to route changed point count from {0:n0} to {1:n0}",
+                prevPts,
+                kDoc.Points.Count);
+
+            return true;
         }
 
         private async Task<bool> RunRouteProcessor( KmlDocument kDoc, IRouteProcessor processor, CancellationToken cancellationToken)

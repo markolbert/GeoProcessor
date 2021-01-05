@@ -4,10 +4,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using BingMapsRESTToolkit;
 using J4JSoftware.Logging;
-using Microsoft.Extensions.Options;
 
 namespace J4JSoftware.KMLProcessor
 {
+    [RouteProcessor(ProcessorType.Bing)]
     public class BingProcessor : CloudRouteProcessor
     {
         public BingProcessor(
@@ -16,7 +16,10 @@ namespace J4JSoftware.KMLProcessor
         )
             : base( config, logger )
         {
+            Type = KMLExtensions.GetTargetType<RouteProcessorAttribute>(GetType())!.Type;
         }
+
+        public ProcessorType Type { get; }
 
         protected override async Task<List<Coordinate>?> ExecuteRequestAsync( 
             List<Coordinate> coordinates,

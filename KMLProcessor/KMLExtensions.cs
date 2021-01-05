@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -10,49 +9,15 @@ namespace J4JSoftware.KMLProcessor
 {
     public static class KMLExtensions
     {
-        public static int ToAbgr( Color color, byte transparency = 0xFF )
-        {
-            var bytes = new byte[4];
-            bytes[ 0 ] = color.R;
-            bytes[ 1 ] = color.G;
-            bytes[ 2 ] = color.B;
-            bytes[ 3 ] = transparency;
-
-            return BitConverter.ToInt32( bytes );
-        }
-
-        public static string ToAbgrHex(Color color, byte transparency = 0xFF)
-        {
-            return ToAbgr( color, transparency ).ToString( "x" );
-        }
-
-        public static int FromAbgrHex( string text )
-        {
-            if( int.TryParse( text, NumberStyles.HexNumber,null, out var temp ) )
-                return temp;
-
-            return -1;
-        }
-
-        public static Color ToColor( int code )
-        {
-            var bytes = BitConverter.GetBytes( code );
-
-            return bytes.Length != 4 
-                ? Color.White 
-                : Color.FromArgb( bytes[ 3 ], bytes[ 0 ], bytes[ 1 ], bytes[ 2 ] );
-        }
-
-        public static Color ToColor(string text)
-        {
-            var bytes = BitConverter.GetBytes( FromAbgrHex( text ) );
-
-            return bytes.Length != 4
-                ? Color.White
-                : Color.FromArgb(bytes[3], bytes[0], bytes[1], bytes[2]);
-        }
-
         public static Coordinate TargetCoordinate = new Coordinate( 38.49203, -122.65806 );
+
+        public static TAttr? GetTargetType<THandler, TAttr>()
+            where TAttr : Attribute
+            => GetTargetType<TAttr>( typeof(THandler) );
+
+        public static TAttr? GetTargetType<TAttr>( Type handlerType )
+            where TAttr : Attribute
+            => handlerType.GetCustomAttribute<TAttr>();
 
         public static bool NearTargetPoint( this Coordinate point )
         {
