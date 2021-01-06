@@ -28,7 +28,7 @@ namespace J4JSoftware.KMLProcessor
 
             try
             {
-                curFilePath = GetNumberedFilePath(docIndex);
+                curFilePath = Configuration.OutputFileDetails.GetPath(docIndex);
 
                 await using var fileStream = File.Create( curFilePath );
                 using var archive = new ZipArchive( fileStream, ZipArchiveMode.Create, true );

@@ -9,8 +9,6 @@ namespace J4JSoftware.KMLProcessor
 {
     public static class KMLExtensions
     {
-        public static Coordinate TargetCoordinate = new Coordinate( 38.49203, -122.65806 );
-
         public static TAttr? GetTargetType<THandler, TAttr>()
             where TAttr : Attribute
             => GetTargetType<TAttr>( typeof(THandler) );
@@ -18,18 +16,6 @@ namespace J4JSoftware.KMLProcessor
         public static TAttr? GetTargetType<TAttr>( Type handlerType )
             where TAttr : Attribute
             => handlerType.GetCustomAttribute<TAttr>();
-
-        public static bool NearTargetPoint( this Coordinate point )
-        {
-            if( Math.Abs( point.Latitude - TargetCoordinate.Latitude ) < .00001
-                && Math.Abs( point.Longitude - TargetCoordinate.Longitude ) < .00001 )
-                return true;
-
-            return false;
-
-            //if (GetDistance(TargetCoordinate, point).GetValue(UnitTypes.mi) < 0.1)
-            //    System.Diagnostics.Debugger.Break();
-        }
 
         public static Distance GetDistance( Coordinate c1, Coordinate c2 )
         {

@@ -8,15 +8,20 @@ namespace J4JSoftware.KMLProcessor
 {
     public class AppConfig
     {
-        private string? _outputFile = null;
-        private ExportType _exportType = ExportType.KML;
+        internal InputFileInfo InputFileDetails { get; } = new();
+        internal OutputFileInfo OutputFileDetails { get; } = new();
 
         public ProcessorType ProcessorType { get; set; } = ProcessorType.Undefined;
         public Dictionary<ProcessorType, ProcessorInfo>? Processors { get; set; }
         public Dictionary<ProcessorType, APIKey>? APIKeys { get; set; }
         
         public bool StoreAPIKey { get; set; }
-        public string? InputFile { get; set; }
+
+        public string InputFile
+        {
+            get => InputFileDetails.FilePath;
+            set => InputFileDetails.FilePath = value;
+        }
 
         public string DefaultRouteName { get; set; } = "Unnamed Route";
         public int RouteWidth { get; set; } = 4;
@@ -25,66 +30,14 @@ namespace J4JSoftware.KMLProcessor
 
         public ExportType ExportType
         {
-            get => _exportType;
-
-            set
-            {
-                _exportType = value;
-
-                if( _outputFile == null )
-                    return;
-
-                // adjust the output file name
-                var dir = Path.GetDirectoryName(_outputFile);
-                var noExt = Path.GetFileNameWithoutExtension(_outputFile);
-
-                _outputFile = Path.Combine( dir!, $"{noExt}{( _exportType == ExportType.KMZ ? ".kmz" : ".kml" )}" );
-            }
+            get => OutputFileDetails.Type;
+            set => OutputFileDetails.Type = value;
         }
 
-        public string? OutputFile
+        public string OutputFile
         {
-            get
-            {
-                if( _outputFile != null ) 
-                    return _outputFile;
-
-                if( InputFile == null )
-                    return _outputFile;
-
-                var dir = Path.GetDirectoryName( InputFile );
-                var noExt = Path.GetFileNameWithoutExtension( InputFile );
-
-                _outputFile = Path.Combine( dir!,
-                    $"{noExt}-processed{( ExportType == ExportType.KMZ ? ".kmz" : ".kml" )}" );
-
-                return _outputFile;
-            }
-
-            set
-            {
-                // adjust the _exportType to be consistent with the file name we were given
-                var ext = Path.GetExtension(value);
-
-                var priorExportType = _exportType;
-
-                if( ext?.Length >=1 
-                    && Enum.TryParse( typeof(ExportType), ext[1..], true, out var valueExportType ) )
-                {
-                    _exportType = (ExportType) valueExportType!;
-
-                    if( priorExportType == _exportType )
-                    {
-                        _outputFile = value;
-                        return;
-                    }
-                }
-
-                var dir = Path.GetDirectoryName(value);
-                var noExt = Path.GetFileNameWithoutExtension(value);
-
-                _outputFile = Path.Combine( dir!, $"{noExt}{( ExportType == ExportType.KMZ ? ".kmz" : ".kml" )}" );
-            }
+            get => OutputFileDetails.FilePath;
+            set => OutputFileDetails.FilePath = value;
         }
 
         public J4JLoggerConfiguration? Logging { get; set; }

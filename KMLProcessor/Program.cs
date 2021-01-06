@@ -74,7 +74,17 @@ namespace J4JSoftware.KMLProcessor
 
                         config ??= new AppConfig();
 
-                        context.Properties.Add( "config", config );
+                        if( !string.IsNullOrEmpty( config.OutputFileDetails.FileName ) ) 
+                            return config;
+
+                        config.OutputFileDetails.FilePath = config.InputFileDetails.FilePath;
+                        config.OutputFileDetails.FileName = $"{config.OutputFileDetails.FileName}-processed";
+
+                        config.OutputFileDetails.Type = config.InputFileDetails.Type switch
+                        {
+                            ImportType.KMZ => ExportType.KMZ,
+                            _ => ExportType.KML
+                        };
 
                         return config;
                     } )

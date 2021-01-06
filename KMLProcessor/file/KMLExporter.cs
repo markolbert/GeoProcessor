@@ -31,7 +31,7 @@ namespace J4JSoftware.KMLProcessor
 
             try
             {
-                curFilePath = GetNumberedFilePath( docIndex );
+                curFilePath = Configuration.OutputFileDetails.GetPath( docIndex );
 
                 await using var writeStream = File.CreateText(curFilePath);
                 await xDoc!.SaveAsync( writeStream, SaveOptions.None, cancellationToken );
