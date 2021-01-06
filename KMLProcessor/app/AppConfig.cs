@@ -8,12 +8,28 @@ namespace J4JSoftware.KMLProcessor
 {
     public class AppConfig
     {
+        private string? _apiKey;
+
         internal InputFileInfo InputFileDetails { get; } = new();
         internal OutputFileInfo OutputFileDetails { get; } = new();
 
         public ProcessorType ProcessorType { get; set; } = ProcessorType.Undefined;
         public Dictionary<ProcessorType, ProcessorInfo>? Processors { get; set; }
         public Dictionary<ProcessorType, APIKey>? APIKeys { get; set; }
+
+        public string? APIKey
+        {
+            get
+            {
+                if( string.IsNullOrEmpty( _apiKey )
+                    && ( APIKeys?.ContainsKey( ProcessorType ) ?? false ) )
+                    return APIKeys![ ProcessorType ].Value;
+
+                return _apiKey;
+            }
+
+            set => _apiKey = value;
+        }
         
         public bool StoreAPIKey { get; set; }
 
@@ -44,15 +60,9 @@ namespace J4JSoftware.KMLProcessor
 
         public bool IsValid( IJ4JLogger? logger )
         {
-            // if we're storing an API key we must have a SnapProcessorType defined
-            if( StoreAPIKey )
-            {
-                if( ProcessorType != ProcessorType.Undefined )
-                    return true;
-
-                logger?.Error( "Undefined SnapProcessorType" );
-                return false;
-            }
+            // if we're storing an API key there's nothing to check
+            if (StoreAPIKey)
+                return true;
 
             if( !File.Exists( InputFile ) )
             {

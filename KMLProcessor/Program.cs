@@ -14,7 +14,14 @@ namespace J4JSoftware.KMLProcessor
 {
     internal class Program
     {
+        public const string AppName = "GPS Track Processor";
         public const string AppConfigFile = "appConfig.json";
+        public const string UserConfigFile = "userConfig.json";
+
+        public static string AppUserFolder = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "J4JSoftware",
+            AppName);
 
         private static readonly J4JCachedLogger _cachedLogger = new();
         private static readonly CancellationToken _cancellationToken = new();
@@ -44,6 +51,7 @@ namespace J4JSoftware.KMLProcessor
                 var options = new OptionCollection( CommandLineStyle.Linux, () => _cachedLogger);
 
                 options.Bind<AppConfig, string?>(x => x.InputFile, "i", "inputFile");
+                options.Bind<AppConfig, string>(x => x.DefaultRouteName, "n", "defaultName");
                 options.Bind<AppConfig, string?>(x => x.OutputFile, "o", "outputFile");
                 options.Bind<AppConfig, ExportType>(x => x.ExportType, "t", "outputType");
                 options.Bind<AppConfig, bool>(x => x.StoreAPIKey, "k", "storeApiKey");
@@ -51,6 +59,7 @@ namespace J4JSoftware.KMLProcessor
 
                 builder.SetBasePath( Environment.CurrentDirectory )
                     .AddJsonFile( Path.Combine( Environment.CurrentDirectory, AppConfigFile ), false, false )
+                    .AddJsonFile( Path.Combine( AppUserFolder, UserConfigFile ), true, false )
                     .AddUserSecrets<AppConfig>()
                     .AddJ4JCommandLine( options );
             } );
@@ -74,7 +83,14 @@ namespace J4JSoftware.KMLProcessor
 
                         config ??= new AppConfig();
 
-                        if( !string.IsNullOrEmpty( config.OutputFileDetails.FileName ) ) 
+                        // validate, but not when all we're doing is storing an API key
+                        if( !config.StoreAPIKey )
+                        {
+                            var validator = c.Resolve<IAppConfigValidator>();
+                            validator.Validate( config );
+                        }
+
+                        if ( !string.IsNullOrEmpty( config.OutputFileDetails.FileName ) ) 
                             return config;
 
                         config.OutputFileDetails.FilePath = config.InputFileDetails.FilePath;
@@ -89,6 +105,10 @@ namespace J4JSoftware.KMLProcessor
                         return config;
                     } )
                     .AsSelf()
+                    .SingleInstance();
+
+                builder.RegisterType<AppConfigValidator>()
+                    .As<IAppConfigValidator>()
                     .SingleInstance();
 
                 builder.RegisterType<KmlDocument>()

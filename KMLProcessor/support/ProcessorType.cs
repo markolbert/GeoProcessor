@@ -1,7 +1,21 @@
-﻿public enum ProcessorType
+﻿using System;
+
+namespace J4JSoftware.KMLProcessor
 {
-    Bing,
-    Distance,
-    Google,
-    Undefined
+    public class SecuredProcessorTypeAttribute : Attribute
+    {
+    }
+
+    public enum ProcessorType
+    {
+        [SecuredProcessorType] 
+        Bing,
+
+        Distance,
+        
+        [SecuredProcessorType]
+        Google,
+        
+        Undefined
+    }
 }

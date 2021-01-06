@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using J4JSoftware.Logging;
+using Serilog;
 
 namespace J4JSoftware.KMLProcessor
 {
@@ -20,6 +21,12 @@ namespace J4JSoftware.KMLProcessor
             LinkedList<Coordinate> nodes,
             CancellationToken cancellationToken)
         {
+            if( string.IsNullOrEmpty( APIKey ) )
+            {
+                Logger.Error( "{0}: APIKey is undefined", GetType() );
+                return null;
+            }
+
             var retVal = new LinkedList<Coordinate>();
 
             var chunks = ChunkPoints(InterpolatePoints(nodes));

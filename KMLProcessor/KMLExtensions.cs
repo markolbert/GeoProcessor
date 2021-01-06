@@ -9,6 +9,15 @@ namespace J4JSoftware.KMLProcessor
 {
     public static class KMLExtensions
     {
+        public static bool IsSecuredProcessor( this ProcessorType procType )
+        {
+            var memInfo = typeof(ProcessorType).GetField( procType.ToString() );
+            if( memInfo == null )
+                return false;
+
+            return memInfo.GetCustomAttribute<SecuredProcessorTypeAttribute>() != null;
+        }
+
         public static TAttr? GetTargetType<THandler, TAttr>()
             where TAttr : Attribute
             => GetTargetType<TAttr>( typeof(THandler) );

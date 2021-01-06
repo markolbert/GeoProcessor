@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
@@ -41,9 +42,52 @@ namespace J4JSoftware.KMLProcessor
             }
 
             if( !_config.StoreAPIKey )
+            {
+                _lifetime.StopApplication();
                 return;
+            }
 
-            Console.Write( $"Enter the {_config.ProcessorType} API key: " );
+            var secureProcessors = _config.Processors
+                                       ?.Where( p => p.Key.IsSecuredProcessor() )
+                                       .Select( p => p.Key )
+                                       .ToList()
+                                   ?? new List<ProcessorType>();
+
+            if( !secureProcessors.Any() )
+            {
+                _logger.Error("No processors are defined");
+                _lifetime.StopApplication();
+
+                return;
+            }
+
+            Console.WriteLine("Select the processor whose API key you want to encrypt and store:\n");
+
+            var idx = 0;
+
+            foreach( var pType in secureProcessors )
+            {
+                Console.WriteLine($"{idx+1} - {pType.ToString()}");
+
+                idx++;
+            }
+
+            Console.Write("\nChoice: ");
+            var procNumText = Console.ReadLine();
+
+            if( !int.TryParse(procNumText, out var procNum) 
+                || procNum < 1 
+                || procNum > secureProcessors.Count)
+            {
+                _logger.Error("Invalid choice");
+                _lifetime.StopApplication();
+
+                return;
+            }
+
+            var procType = secureProcessors.Skip( procNum - 1 ).First();
+
+            Console.Write( $"Enter the {procType} API key: " );
             var apiKey = Console.ReadLine();
 
             if( string.IsNullOrEmpty( apiKey ) )
@@ -52,26 +96,30 @@ namespace J4JSoftware.KMLProcessor
                 _lifetime.StopApplication();
             }
 
-            _config.APIKeys ??= new Dictionary<ProcessorType, APIKey>();
+            var tempConfig = new AppConfig { APIKeys = _config.APIKeys ?? new Dictionary<ProcessorType, APIKey>() };
 
             var newKey = new APIKey
             {
-                Type = _config.ProcessorType,
+                Type = procType,
                 Value = apiKey!
             };
 
-            if( _config.APIKeys.ContainsKey( _config.ProcessorType ) )
-                _config.APIKeys.Add( _config.ProcessorType, newKey );
-            else _config.APIKeys[ _config.ProcessorType ] = newKey;
+            if( !tempConfig.APIKeys.ContainsKey( procType ) )
+                tempConfig.APIKeys.Add( procType, newKey );
+            else tempConfig.APIKeys[ procType ] = newKey;
 
             var jsonOptions = new JsonSerializerOptions { WriteIndented = true };
             jsonOptions.Converters.Add( new JsonStringEnumConverter() );
+            jsonOptions.Converters.Add(new APIKeysConverter());
 
-            var serialized = JsonSerializer.Serialize( _config, jsonOptions);
+            var serialized = JsonSerializer.Serialize( tempConfig, jsonOptions);
 
-            await File.WriteAllTextAsync( Program.AppConfigFile, serialized, cancellationToken );
+            await File.WriteAllTextAsync( 
+                Path.Combine( Program.AppUserFolder, Program.UserConfigFile ), 
+                serialized,
+                cancellationToken );
 
-            _logger.Information( "{0} API key updated", _config.ProcessorType );
+            _logger.Information( "{0} API key updated", procType );
 
             _lifetime.StopApplication();
         }

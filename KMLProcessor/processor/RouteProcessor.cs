@@ -18,13 +18,8 @@ namespace J4JSoftware.KMLProcessor
                                 .FirstOrDefault()
                             ?? new ProcessorInfo();
 
-            APIKey = config.APIKeys?.Where( kvp => kvp.Key == config.ProcessorType )
-                         .Select( k => k.Value )
-                         .FirstOrDefault()
-                         ?.Value
-                     ?? string.Empty;
-
             Processor = config.ProcessorType;
+            APIKey = config.APIKey;
 
             Logger = logger;
             Logger.SetLoggedType( GetType() );
@@ -33,7 +28,7 @@ namespace J4JSoftware.KMLProcessor
         protected IJ4JLogger Logger { get; }
 
         protected ProcessorInfo Configuration { get; }
-        protected string APIKey { get; }
+        protected string? APIKey { get; }
         protected ProcessorType Processor { get; }
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
@@ -59,7 +54,7 @@ namespace J4JSoftware.KMLProcessor
         public virtual async Task<LinkedList<Coordinate>?> ProcessAsync( LinkedList<Coordinate> nodes, CancellationToken cancellationToken )
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
-            throw new NotImplementedException();
+            return null;
         }
     }
 }

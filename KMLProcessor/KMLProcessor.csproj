@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Alba.CsConsoleFormat" Version="1.0.0" />
     <PackageReference Include="Autofac.Extras.AttributeMetadata" Version="6.0.0" />
     <PackageReference Include="BingMapsRESTToolkit" Version="1.1.4" />
     <PackageReference Include="GoogleApi" Version="3.10.5" />
