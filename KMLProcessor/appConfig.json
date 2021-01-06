@@ -1,11 +1,15 @@
 {
   "Processors": {
     "Distance": {
-      "MaxDistanceMultiplier": 3, 
+      "MaxDistanceMultiplier": 3,
       "MaxPointsPerRequest": -1,
       "MaxSeparation": "100 ft"
     },
     "Bing": {
+      "MaxPointsPerRequest": 100,
+      "MaxSeparation": "2 km"
+    },
+    "Google": {
       "MaxPointsPerRequest": 100,
       "MaxSeparation": "2 km"
     }

@@ -99,6 +99,11 @@ namespace J4JSoftware.KMLProcessor
                     .AsImplementedInterfaces()
                     .SingleInstance();
 
+                builder.RegisterType<GoogleProcessor>()
+                    .Keyed<IRouteProcessor>(KMLExtensions.GetTargetType<GoogleProcessor, RouteProcessorAttribute>()!.Type)
+                    .AsImplementedInterfaces()
+                    .SingleInstance();
+
                 builder.RegisterType<DistanceProcessor>()
                     .Keyed<IRouteProcessor>(KMLExtensions.GetTargetType<DistanceProcessor, RouteProcessorAttribute>()!.Type)
                     .AsImplementedInterfaces()

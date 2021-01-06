@@ -56,27 +56,16 @@ namespace J4JSoftware.KMLProcessor
             if( _config.StoreAPIKey )
                 return;
 
-            // import the file; start by seeing if we can determine the file type
-            // from the file extension
-            ImportType? importType = null;
-            var fileExt = Path.GetExtension( _config.InputFile );
-
-            if( fileExt != null 
-                && Enum.TryParse( typeof(ImportType), fileExt[1..], true, out var temp ) )
-                importType = (ImportType) temp!;
-
-            importType ??= ImportType.Unknown;
-
             List<KmlDocument>? kDocs = null;
 
-            if( importType != ImportType.Unknown )
-                kDocs = await LoadFileAsync( importType.Value, cancellationToken );
+            if( _config.InputFileDetails.Type != ImportType.Unknown )
+                kDocs = await LoadFileAsync( _config.InputFileDetails.Type, cancellationToken );
 
             // if the import based on the extension failed, try all our importers
             if( kDocs == null )
             {
                 foreach( var fType in Enum.GetValues<ImportType>()
-                    .Where( ft => ft != importType && ft != ImportType.Unknown ) )
+                    .Where( ft => ft != _config.InputFileDetails.Type && ft != ImportType.Unknown ) )
                 {
                     kDocs = await LoadFileAsync( fType, cancellationToken );
 
