@@ -12,6 +12,13 @@ namespace J4JSoftware.KMLProcessor
     [Importer(ImportType.GPX)]
     public class GPXImporter : FileHandler, IImport
     {
+        private const string TrackName = "trk";
+        private const string RouteName = "name";
+        private const string TrackSegmentName = "trkSeg";
+        private const string TrackPointName = "trkpt";
+        private const string LongitudeName = "lon";
+        private const string LatitudeName = "lat";
+
         public GPXImporter( AppConfig config, IJ4JLogger logger )
             : base( config, logger )
         {
@@ -43,19 +50,18 @@ namespace J4JSoftware.KMLProcessor
             }
 
             var retVal = new List<KmlDocument>();
+            var segNum = 0;
 
-            foreach( var track in xDoc.Descendants()
-                .Where( x => x.Name.LocalName.Equals( "trk", StringComparison.OrdinalIgnoreCase ) ) )
+            foreach ( var track in xDoc.Descendants()
+                .Where( x => x.Name.LocalName.Equals( TrackName, StringComparison.OrdinalIgnoreCase ) ) )
             {
                 var trkName =
                     track.Descendants().SingleOrDefault(
-                        x => x.Name.LocalName.Equals( "name", StringComparison.OrdinalIgnoreCase ) )?.Value
+                        x => x.Name.LocalName.Equals( RouteName, StringComparison.OrdinalIgnoreCase ) )?.Value
                     ?? "Unnamed Route";
 
-                var segNum = 0;
-
                 foreach( var trackSeg in track.Descendants()
-                    .Where( x => x.Name.LocalName.Equals( "trkSeg", StringComparison.OrdinalIgnoreCase ) ) )
+                    .Where( x => x.Name.LocalName.Equals( TrackSegmentName, StringComparison.OrdinalIgnoreCase ) ) )
                 {
                     var curDoc = new KmlDocument( Configuration )
                     {
@@ -68,13 +74,12 @@ namespace J4JSoftware.KMLProcessor
 
                     foreach( var point in trackSeg.Descendants()
                         .Where( x =>
-                            x.Name.LocalName.Equals( "tkpt", StringComparison.OrdinalIgnoreCase ) ) )
+                            x.Name.LocalName.Equals( TrackPointName, StringComparison.OrdinalIgnoreCase ) ) )
                     {
-                        if( !ValidateDouble( point, "lon", "longitude", out var longitude ) )
+                        if( !ValidateDouble( point, LongitudeName, "longitude", out var longitude )
+                            || !ValidateDouble( point, LatitudeName, "latitude", out var latitude ) )
                             continue;
 
-                        if( !ValidateDouble( point, "lat", "latitude", out var latitude ) )
-                            continue;
                         prevPoint = curDoc.Points.Count == 0
                             ? curDoc.Points.AddFirst( new Coordinate( latitude, longitude ) )
                             : curDoc.Points.AddAfter( prevPoint!, new Coordinate( latitude, longitude ) );

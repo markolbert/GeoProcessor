@@ -11,8 +11,8 @@
     }
   },
   "Logging": {
-    "EventElements": "All",
-    "SourceRootPath": "C:/Programming/KMLProcessor/",
+    "EventElements": "None",
+    "SourceRootPath": "C:\\Programming\\KMLProcessor\\",
     "Channels": {
       "Debug": {
         "MinimumLevel": "Information"

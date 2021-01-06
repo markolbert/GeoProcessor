@@ -108,9 +108,7 @@ namespace J4JSoftware.KMLProcessor
 
             for( var idx = 0; idx < kDocs.Count; idx++ )
             {
-                if( await _exporter.ExportAsync( kDocs[ idx ], idx, cancellationToken ) )
-                    _logger.Information<string>( "Wrote file '{0}'", _exporter.GetNumberedFilePath( idx ) );
-                else _logger.Information<string>( "Export to file '{0}' failed", _exporter.GetNumberedFilePath( idx ) );
+                await _exporter.ExportAsync( kDocs[ idx ], idx, cancellationToken );
             }
 
             _lifetime.StopApplication();

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
@@ -22,15 +21,11 @@ namespace J4JSoftware.KMLProcessor
                 "J4JSoftware",
                 AppName );
 
-        public static string AppUserConfigFile = Path.Combine( AppUserFolder, "userConfig.json" );
-
-        private static readonly J4JCachedLogger _cachedLogger = new J4JCachedLogger();
-        private static readonly CancellationToken _cancellationToken = new CancellationToken();
+        private static readonly J4JCachedLogger _cachedLogger = new();
+        private static readonly CancellationToken _cancellationToken = new();
 
         private static async Task Main( string[] args )
         {
-            Console.WriteLine(Environment.CommandLine);
-
             Directory.CreateDirectory( AppUserFolder );
             
             var hostBuilder = InitializeHostBuilder();
@@ -63,7 +58,6 @@ namespace J4JSoftware.KMLProcessor
 
                 builder.SetBasePath( Environment.CurrentDirectory )
                     .AddJsonFile( Path.Combine( Environment.CurrentDirectory, "appConfig.json" ), false, false )
-                    .AddJsonFile( AppUserConfigFile, true, false )
                     .AddUserSecrets<AppConfig>()
                     .AddJ4JCommandLine( options );
             } );
@@ -112,6 +106,11 @@ namespace J4JSoftware.KMLProcessor
                     .AsImplementedInterfaces()
                     .SingleInstance();
 
+                builder.RegisterType<KMZImporter>()
+                    .Keyed<IImport>(KMLExtensions.GetTargetType<KMZImporter, ImporterAttribute>()!.Type)
+                    .AsImplementedInterfaces()
+                    .SingleInstance();
+
                 builder.RegisterType<GPXImporter>()
                     .Keyed<IImport>(KMLExtensions.GetTargetType<GPXImporter, ImporterAttribute>()!.Type)
                     .AsImplementedInterfaces()
@@ -119,6 +118,11 @@ namespace J4JSoftware.KMLProcessor
 
                 builder.RegisterType<KMLExporter>()
                     .Keyed<IExport>(KMLExtensions.GetTargetType<KMLExporter, ExporterAttribute>()!.Type)
+                    .AsImplementedInterfaces()
+                    .SingleInstance();
+
+                builder.RegisterType<KMZExporter>()
+                    .Keyed<IExport>(KMLExtensions.GetTargetType<KMZExporter, ExporterAttribute>()!.Type)
                     .AsImplementedInterfaces()
                     .SingleInstance();
 
@@ -132,9 +136,6 @@ namespace J4JSoftware.KMLProcessor
 
             retVal.ConfigureServices( ( context, services ) =>
             {
-                //services.AddOptions();
-                //services.Configure<AppConfig>( context.Configuration );
-
                 var config = context.Configuration.Get<AppConfig>();
 
                 if ( config!.StoreAPIKey )

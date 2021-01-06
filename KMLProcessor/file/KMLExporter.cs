@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,15 +18,50 @@ namespace J4JSoftware.KMLProcessor
             Type = KMLExtensions.GetTargetType<ExporterAttribute>(GetType())!.Type;
         }
 
-        public ExportType Type { get; }
+        public ExportType Type { get; protected set; }
 
-        public async Task<bool> ExportAsync( KmlDocument kDoc, int docIndex, CancellationToken cancellationToken)
+        public virtual async Task<bool> ExportAsync( KmlDocument kDoc, int docIndex, CancellationToken cancellationToken)
+        {
+            var xDoc = await CreateXDocument( kDoc, cancellationToken );
+
+            if( xDoc == null )
+                return false;
+
+            string? curFilePath = string.Empty;
+
+            try
+            {
+                curFilePath = GetNumberedFilePath( docIndex );
+
+                await using var writeStream = File.CreateText(curFilePath);
+                await xDoc!.SaveAsync( writeStream, SaveOptions.None, cancellationToken );
+                await writeStream.FlushAsync();
+                writeStream.Close();
+
+                Logger.Information<string>("Wrote file '{0}'", curFilePath);
+            }
+            catch( Exception e )
+            {
+                Logger.Information<string, string>( 
+                    "Export to file '{0}' failed, message was '{1}'", 
+                    curFilePath,
+                    e.Message );
+
+                return false;
+            }
+
+            return true;
+        }
+
+        protected async Task<XDocument?> CreateXDocument( KmlDocument kDoc, CancellationToken cancellationToken )
         {
             if (kDoc.Points.Count == 0)
             {
                 Logger.Error("Cannot save empty KmlDocument");
-                return false;
+                return null;
             }
+
+            FilePath = Configuration.OutputFile!;
 
             var xDoc = new XDocument(new XDeclaration("1.0", "UTF-8", "no"));
 
@@ -97,14 +133,7 @@ namespace J4JSoftware.KMLProcessor
 
             coordinates.Value = sb.ToString();
 
-            await using var writeStream = File.CreateText( GetNumberedFilePath( docIndex ) );
-
-            await xDoc!.SaveAsync(writeStream, SaveOptions.None, cancellationToken);
-
-            await writeStream.FlushAsync();
-            writeStream.Close();
-
-            return true;
+            return xDoc;
         }
     }
 }

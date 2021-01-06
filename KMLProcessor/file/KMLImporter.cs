@@ -18,9 +18,9 @@ namespace J4JSoftware.KMLProcessor
             Type = KMLExtensions.GetTargetType<ImporterAttribute>(GetType())!.Type;
         }
 
-        public ImportType Type { get; }
+        public ImportType Type { get; protected set; }
 
-        public async Task<List<KmlDocument>?> ImportAsync( string filePath, CancellationToken cancellationToken )
+        public virtual async Task<List<KmlDocument>?> ImportAsync( string filePath, CancellationToken cancellationToken )
         {
             if (!File.Exists(filePath))
             {
@@ -42,6 +42,11 @@ namespace J4JSoftware.KMLProcessor
                 return null;
             }
 
+            return await ProcessXDocumentAsync( xDoc, cancellationToken );
+        }
+
+        protected async Task<List<KmlDocument>> ProcessXDocumentAsync( XDocument xDoc, CancellationToken cancellationToken )
+        {
             var coordElement = xDoc.Descendants()
                 .SingleOrDefault(x => x.Name.LocalName == "coordinates");
 
@@ -54,10 +59,10 @@ namespace J4JSoftware.KMLProcessor
             var coordRaw = coordElement.Value.Replace("\t", "")
                 .Replace("\n", "");
 
-            var retVal = new KmlDocument( Configuration )
+            var retVal = new KmlDocument(Configuration)
             {
                 RouteName = xDoc.Root?.Descendants()
-                                .FirstOrDefault(x=>x.Name.LocalName.Equals("name", StringComparison.OrdinalIgnoreCase))?.Value
+                                .FirstOrDefault(x => x.Name.LocalName.Equals("name", StringComparison.OrdinalIgnoreCase))?.Value
                             ?? "Unnamed Route",
             };
 
