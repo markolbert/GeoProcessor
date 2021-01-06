@@ -42,10 +42,10 @@ namespace J4JSoftware.KMLProcessor
                 return null;
             }
 
-            return await ProcessXDocumentAsync( xDoc, cancellationToken );
+            return ProcessXDocumentAsync( xDoc );
         }
 
-        protected async Task<List<KmlDocument>> ProcessXDocumentAsync( XDocument xDoc, CancellationToken cancellationToken )
+        protected List<KmlDocument>? ProcessXDocumentAsync( XDocument xDoc )
         {
             var coordElement = xDoc.Descendants()
                 .SingleOrDefault(x => x.Name.LocalName == "coordinates");
@@ -73,12 +73,6 @@ namespace J4JSoftware.KMLProcessor
                 prevPoint = retVal.Points.Count == 0
                     ? retVal.Points.AddFirst(new Coordinate(coordText))
                     : retVal.Points.AddAfter(prevPoint!, new Coordinate(coordText));
-
-                if (!cancellationToken.IsCancellationRequested)
-                    continue;
-
-                Logger.Information("File load cancelled");
-                return null;
             }
 
             return new List<KmlDocument> { retVal };

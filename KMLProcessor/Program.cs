@@ -14,20 +14,13 @@ namespace J4JSoftware.KMLProcessor
 {
     internal class Program
     {
-        public static string AppName = "GPS Track Processor";
-
-        public static string AppUserFolder = Path.Combine( 
-                Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ), 
-                "J4JSoftware",
-                AppName );
+        public const string AppConfigFile = "appConfig.json";
 
         private static readonly J4JCachedLogger _cachedLogger = new();
         private static readonly CancellationToken _cancellationToken = new();
 
         private static async Task Main( string[] args )
         {
-            Directory.CreateDirectory( AppUserFolder );
-            
             var hostBuilder = InitializeHostBuilder();
             
             var host = hostBuilder.Build();
@@ -57,7 +50,7 @@ namespace J4JSoftware.KMLProcessor
                 options.Bind<AppConfig, ProcessorType>(x => x.ProcessorType, "p", "snapProcessor");
 
                 builder.SetBasePath( Environment.CurrentDirectory )
-                    .AddJsonFile( Path.Combine( Environment.CurrentDirectory, "appConfig.json" ), false, false )
+                    .AddJsonFile( Path.Combine( Environment.CurrentDirectory, AppConfigFile ), false, false )
                     .AddUserSecrets<AppConfig>()
                     .AddJ4JCommandLine( options );
             } );

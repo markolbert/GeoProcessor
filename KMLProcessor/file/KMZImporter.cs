@@ -51,7 +51,7 @@ namespace J4JSoftware.KMLProcessor
                 return null;
             }
 
-            return await ProcessXDocumentAsync( xDoc, cancellationToken );
+            return ProcessXDocumentAsync( xDoc );
         }
     }
 }

@@ -19,7 +19,7 @@ namespace J4JSoftware.KMLProcessor
 
         public override async Task<bool> ExportAsync( KmlDocument kDoc, int docIndex, CancellationToken cancellationToken)
         {
-            var xDoc = await CreateXDocument( kDoc, cancellationToken );
+            var xDoc = CreateXDocument( kDoc );
 
             if( xDoc == null )
                 return false;

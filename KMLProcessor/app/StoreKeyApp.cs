@@ -69,7 +69,7 @@ namespace J4JSoftware.KMLProcessor
 
             var serialized = JsonSerializer.Serialize( _config, jsonOptions);
 
-            await File.WriteAllTextAsync( Program.AppUserConfigFile, serialized, cancellationToken );
+            await File.WriteAllTextAsync( Program.AppConfigFile, serialized, cancellationToken );
 
             _logger.Information( "{0} API key updated", _config.ProcessorType );
 

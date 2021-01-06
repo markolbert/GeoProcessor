@@ -22,7 +22,7 @@ namespace J4JSoftware.KMLProcessor
 
         public virtual async Task<bool> ExportAsync( KmlDocument kDoc, int docIndex, CancellationToken cancellationToken)
         {
-            var xDoc = await CreateXDocument( kDoc, cancellationToken );
+            var xDoc = CreateXDocument( kDoc );
 
             if( xDoc == null )
                 return false;
@@ -53,7 +53,7 @@ namespace J4JSoftware.KMLProcessor
             return true;
         }
 
-        protected async Task<XDocument?> CreateXDocument( KmlDocument kDoc, CancellationToken cancellationToken )
+        protected XDocument? CreateXDocument( KmlDocument kDoc )
         {
             if (kDoc.Points.Count == 0)
             {

@@ -2,7 +2,7 @@
   "profiles": {
     "KML2Excel": {
       "commandName": "Project",
-      "commandLineArgs": "-i \"C:\\Users\\Mark\\Desktop\\web\\EatSleepRIDE-GPX-342822.gpx\" -p Bing -t kmz"
+      "commandLineArgs": "-i \"C:\\Users\\Mark\\Desktop\\web\\EatSleepRIDE-GPX-342822.kmz\" -p Bing"
     }
   }
 }
