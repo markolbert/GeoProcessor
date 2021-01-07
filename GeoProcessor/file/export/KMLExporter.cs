@@ -135,7 +135,7 @@ namespace J4JSoftware.GeoProcessor
                 // having NO SPACES between these three arguments is INCREDIBLY IMPORTANT.
                 // the Google Earth importer parses based on spaces (but ignores tabs, linefeeds & newlines)
                 // also note that LONGITUDE is emitted FIRST!!!
-                sb.AppendLine($"\t\t\t{point.Longitude},{point.Latitude},0 ");
+                sb.AppendLine($"{point.Longitude},{point.Latitude},0 ");
 
             coordinates.Value = sb.ToString();
 

@@ -82,11 +82,11 @@ namespace J4JSoftware.GeoProcessor
 
             for( var ptNum = 0; ptNum < numPts; ptNum += 3 )
             {
-                var curPoint = new string[] { rawNumbers[ ptNum ], rawNumbers[ ptNum + 1 ] };
+                var curPoint = new Coordinate(rawNumbers[ptNum + 1], rawNumbers[ptNum]);
 
                 prevPoint = retVal.Points.Count == 0
-                    ? retVal.Points.AddFirst(new Coordinate(curPoint))
-                    : retVal.Points.AddAfter(prevPoint!, new Coordinate(curPoint));
+                    ? retVal.Points.AddFirst( curPoint )
+                    : retVal.Points.AddAfter( prevPoint!, curPoint );
             }
 
             return new List<PointSet> { retVal };

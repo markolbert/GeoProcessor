@@ -70,5 +70,7 @@ namespace Test.GeoProcessor
 
             return retVal;
         }
+
+        public IExportConfig GetExportConfig () => Host?.Services.GetRequiredService<IExportConfig>();
     }
 }

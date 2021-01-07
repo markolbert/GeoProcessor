@@ -17,10 +17,10 @@ namespace J4JSoftware.GeoProcessor
             Label = bingPt.Name;
         }
 
-        public Coordinate( string[] latLong )
+        public Coordinate( string latitude, string longitude )
         {
-            Longitude = Convert.ToDouble(latLong[1]);
-            Latitude = Convert.ToDouble( latLong[ 0 ] );
+            Latitude = Convert.ToDouble(latitude);
+            Longitude = Convert.ToDouble(longitude);
         }
 
         public Coordinate( double latitude, double longitude )
