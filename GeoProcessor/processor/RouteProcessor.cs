@@ -4,30 +4,24 @@ using System.Threading;
 using System.Threading.Tasks;
 using J4JSoftware.Logging;
 
-namespace J4JSoftware.KMLProcessor
+namespace J4JSoftware.GeoProcessor
 {
     public class RouteProcessor : IRouteProcessor
     {
         protected RouteProcessor(
-            AppConfig config, 
-            IJ4JLogger logger )
+            IGeoConfig config, 
+            IJ4JLogger? logger )
         {
-            Configuration = config.Processors?.Where( kvp => kvp.Key == config.ProcessorType )
-                                .Select( kvp => kvp.Value )
-                                .FirstOrDefault()
-                            ?? new ProcessorInfo();
-
+            Configuration = config.ProcessorInfo;
             Processor = config.ProcessorType;
-            APIKey = config.APIKey;
 
             Logger = logger;
-            Logger.SetLoggedType( GetType() );
+            Logger?.SetLoggedType( GetType() );
         }
 
-        protected IJ4JLogger Logger { get; }
+        protected IJ4JLogger? Logger { get; }
 
         protected ProcessorInfo Configuration { get; }
-        protected string? APIKey { get; }
         protected ProcessorType Processor { get; }
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously

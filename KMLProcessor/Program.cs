@@ -154,10 +154,11 @@ namespace J4JSoftware.KMLProcessor
                     .AsImplementedInterfaces()
                     .SingleInstance();
 
-                var factory = new ChannelFactory( context.Configuration, "Logging", false );
+                var channelInfo = new ChannelInformation()
+                    .AddChannel<ConsoleConfig>( "Logging:Channels:Console" )
+                    .AddChannel<DebugConfig>( "Logging:Channels:Debug" );
 
-                factory.AddChannel<ConsoleConfig>( "Logging:Channels:Console" );
-                factory.AddChannel<DebugConfig>("Logging:Channels:Debug");
+                var factory = new ChannelFactory( context.Configuration, channelInfo, "Logging" );
 
                 builder.RegisterJ4JLogging<J4JLoggerConfiguration>( factory );
             } );

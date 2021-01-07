@@ -1,6 +1,4 @@
-﻿using System.IO;
-using System.Text;
-using J4JSoftware.Logging;
+﻿using J4JSoftware.Logging;
 
 namespace J4JSoftware.KMLProcessor
 {

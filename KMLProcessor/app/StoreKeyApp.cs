@@ -67,7 +67,7 @@ namespace J4JSoftware.KMLProcessor
 
             foreach( var pType in secureProcessors )
             {
-                Console.WriteLine($"{idx+1} - {pType.ToString()}");
+                Console.WriteLine($"{idx+1} - {pType}");
 
                 idx++;
             }

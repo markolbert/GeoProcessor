@@ -4,7 +4,7 @@ using System.IO;
 
 #pragma warning disable 8618
 
-namespace J4JSoftware.KMLProcessor
+namespace J4JSoftware.GeoProcessor
 {
     public abstract class FileInfo<T>
         where T:Enum
@@ -20,7 +20,7 @@ namespace J4JSoftware.KMLProcessor
             set
             {
                 DirectoryPath = Path.GetDirectoryName(value) ?? string.Empty;
-                FileName = Path.GetFileNameWithoutExtension(value);
+                FileNameWithoutExtension = Path.GetFileNameWithoutExtension(value);
                 Type = GetTypeFromExtension( Path.GetExtension( value ) );
             }
         }
@@ -34,14 +34,16 @@ namespace J4JSoftware.KMLProcessor
             if( !string.IsNullOrEmpty( DirectoryPath ) )
                 parts.Add( DirectoryPath );
 
-            if( !string.IsNullOrEmpty(FileName  ))
-                parts.Add( fileNum > 0 ? $"{FileName}-{fileNum}{FileExtension}" : $"{FileName}{FileExtension}" );
+            if( !string.IsNullOrEmpty( FileNameWithoutExtension ) )
+                parts.Add( fileNum > 0
+                    ? $"{FileNameWithoutExtension}-{fileNum}{FileExtension}"
+                    : $"{FileNameWithoutExtension}{FileExtension}" );
 
             return parts.Count == 0 ? string.Empty : Path.Combine( parts.ToArray() );
         }
 
         public string DirectoryPath { get; protected set; }
-        public string FileName { get; set; }
+        public string FileNameWithoutExtension { get; set; }
         public T Type { get; set; }
         public string FileExtension => GetExtensionFromType( Type );
 

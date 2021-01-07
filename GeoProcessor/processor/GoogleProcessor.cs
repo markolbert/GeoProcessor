@@ -7,18 +7,18 @@ using GoogleApi.Entities.Maps.Roads.SnapToRoads.Request;
 using J4JSoftware.Logging;
 using Location = GoogleApi.Entities.Common.Location;
 
-namespace J4JSoftware.KMLProcessor
+namespace J4JSoftware.GeoProcessor
 {
     [RouteProcessor(ProcessorType.Google)]
     public class GoogleProcessor : CloudRouteProcessor
     {
         public GoogleProcessor(
-            AppConfig config,
-            IJ4JLogger logger
+            IImportConfig config,
+            IJ4JLogger? logger
         )
             : base( config, logger )
         {
-            Type = KMLExtensions.GetTargetType<RouteProcessorAttribute>(GetType())!.Type;
+            Type = GeoExtensions.GetTargetType<RouteProcessorAttribute>(GetType())!.Type;
         }
 
         public ProcessorType Type { get; }
@@ -38,7 +38,7 @@ namespace J4JSoftware.KMLProcessor
 
             if( result == null )
             {
-                Logger.Error("Snap to road request failed");
+                Logger?.Error("Snap to road request failed");
                 return null;
             }
 
@@ -51,7 +51,7 @@ namespace J4JSoftware.KMLProcessor
 
             foreach( var error in errors )
             {
-                Logger.Error<string>( "Snap to road error: {0}", error.ErrorMessage );
+                Logger?.Error<string>( "Snap to road error: {0}", error.ErrorMessage );
             }
 
             return null;

@@ -5,16 +5,18 @@ using System.Threading;
 using System.Threading.Tasks;
 using J4JSoftware.Logging;
 
-namespace J4JSoftware.KMLProcessor
+namespace J4JSoftware.GeoProcessor
 {
     public class CloudRouteProcessor : RouteProcessor
     {
         protected CloudRouteProcessor( 
-            AppConfig config, 
-            IJ4JLogger logger ) 
+            IImportConfig config, 
+            IJ4JLogger? logger ) 
             : base( config, logger )
         {
+            APIKey = config.APIKey;
         }
+        protected string APIKey { get; }
 
         public override async Task<LinkedList<Coordinate>?> ProcessAsync(
             LinkedList<Coordinate> nodes,
@@ -22,7 +24,7 @@ namespace J4JSoftware.KMLProcessor
         {
             if( string.IsNullOrEmpty( APIKey ) )
             {
-                Logger.Error( "{0}: APIKey is undefined", GetType() );
+                Logger?.Error( "{0}: APIKey is undefined", GetType() );
                 return null;
             }
 
@@ -40,7 +42,7 @@ namespace J4JSoftware.KMLProcessor
                 pointsProcessed += coordinates.Count;
 
                 if( pointsProcessed % ( 5 * Configuration.MaxPointsPerRequest ) == 0 )
-                    Logger.Information( "Processed {0:n0} points via {1}", pointsProcessed, Processor );
+                    Logger?.Information( "Processed {0:n0} points via {1}", pointsProcessed, Processor );
             }
 
             return retVal;
@@ -77,7 +79,7 @@ namespace J4JSoftware.KMLProcessor
                     continue;
                 }
 
-                var distance = KMLExtensions.GetDistance(prevPt, curPt);
+                var distance = GeoExtensions.GetDistance(prevPt, curPt);
 
                 if (distance <= Configuration.MaxSeparation)
                 {
