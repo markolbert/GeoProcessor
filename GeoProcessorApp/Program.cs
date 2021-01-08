@@ -9,7 +9,7 @@ namespace J4JSoftware.GeoProcessor
 {
     internal class Program
     {
-        public const string AppName = "GPS Track Processor";
+        public const string AppName = "GeoProcessor";
         public const string AppConfigFile = "appConfig.json";
         public const string UserConfigFile = "userConfig.json";
 

@@ -26,6 +26,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.GeoProcessor", "Test.G
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoProcessorApp", "GeoProcessorApp\GeoProcessorApp.csproj", "{9F6D7226-328A-4FA4-9D56-9B68F240E127}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{46B961C5-1883-4706-8633-66984BA48596}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE.md = LICENSE.md
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{62EB80C2-C53A-48CB-BC0D-67D4F40A5881}"
+	ProjectSection(SolutionItems) = preProject
+		docs\assets\tldr-console.png = docs\assets\tldr-console.png
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,6 +89,7 @@ Global
 		{70E3D3D7-4BFA-414E-806C-D007CD9342DC} = {5AD3F041-D553-492B-948D-E58BDA4373CF}
 		{64E230F2-1223-4FBE-BD97-A34152FAAF6C} = {5AD3F041-D553-492B-948D-E58BDA4373CF}
 		{6781EA78-CEEA-4B48-8D1E-E76CECE32A28} = {5AD3F041-D553-492B-948D-E58BDA4373CF}
+		{62EB80C2-C53A-48CB-BC0D-67D4F40A5881} = {46B961C5-1883-4706-8633-66984BA48596}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FE44BCE1-11E4-4584-BACC-44570810FB77}

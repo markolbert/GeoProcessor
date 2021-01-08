@@ -50,7 +50,7 @@ namespace J4JSoftware.GeoProcessor
         {
             defaultValue ??= curValue;
 
-            Colors.WriteLine( "\nEnter ", prompt.Green(), " (current value is '".White(), curValue.Green(), "'): " );
+            Colors.WriteLine( "Enter ", prompt.Green(), " (current value is '".White(), curValue.Green(), "'): ");
             Console.Write("> ");
 
             var retVal = Console.ReadLine();
@@ -63,7 +63,7 @@ namespace J4JSoftware.GeoProcessor
             defaultValue ??= curValue;
 
             var promptList = prompts.ToList();
-            promptList.Insert( 0, "\nEnter".White() );
+            promptList.Insert( 0, "Enter ".White() );
             promptList.Add(" (current value is '".White()  );
             promptList.Add(curValue.Green()  );
             promptList.Add( "') :".White() );

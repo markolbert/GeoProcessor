@@ -15,7 +15,6 @@ namespace J4JSoftware.GeoProcessor
             ValidateProcessorType( config );
             ValidateAPIKey( config );
             ValidateInputFile( config );
-            ;
         }
 
         private void ValidateProcessorType( AppConfig config )
@@ -23,6 +22,7 @@ namespace J4JSoftware.GeoProcessor
             if( !config.RunInteractive && config.ProcessorType != ProcessorType.Undefined )
                 return;
 
+            Console.WriteLine();
             Colors.WriteLine( "\nProcessorType".Yellow(), " is undefined\n" );
 
             config.ProcessorType = ConsoleExtensions.GetEnum<ProcessorType>(
@@ -38,7 +38,8 @@ namespace J4JSoftware.GeoProcessor
             if( !config.RunInteractive && !string.IsNullOrEmpty( config.APIKey ) )
                 return;
 
-            config.APIKey = ConsoleExtensions.GetText( config.APIKey, $"\n{config.ProcessorType} APIKey" );
+            Console.WriteLine();
+            config.APIKey = ConsoleExtensions.GetText( config.APIKey, $"{config.ProcessorType} APIKey" );
         }
 
         private void ValidateInputFile( AppConfig config )
@@ -46,6 +47,7 @@ namespace J4JSoftware.GeoProcessor
             if( !config.RunInteractive && !string.IsNullOrEmpty( config.InputFile.GetPath() ) )
                 return;
 
+            Console.WriteLine();
             var filePath = ConsoleExtensions.GetText( config.InputFile.GetPath(),
                 string.Empty,
                 "full path to input file ".Yellow() );
