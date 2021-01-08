@@ -11,7 +11,7 @@
 *.sln.docstates
 
 # old/deprecated projects
-KMLProcessor/
+/KMLProcessor/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
