@@ -8,7 +8,7 @@ namespace J4JSoftware.GeoProcessor
 {
     public class PointSet
     {
-        public LinkedList<Coordinate> Points { get; } = new LinkedList<Coordinate>();
+        public LinkedList<Coordinate> Points { get; set; } = new LinkedList<Coordinate>();
         public string RouteName { get; set; } = "Unnamed Route";
     }
 }

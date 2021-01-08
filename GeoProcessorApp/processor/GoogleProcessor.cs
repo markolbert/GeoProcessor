@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
 using GoogleApi.Entities.Maps.Roads.Common;
 using GoogleApi.Entities.Maps.Roads.SnapToRoads.Request;
-using GoogleApi.Entities.Maps.Roads.SnapToRoads.Response;
 using J4JSoftware.Logging;
 using Location = GoogleApi.Entities.Common.Location;
 
@@ -16,12 +13,12 @@ namespace J4JSoftware.GeoProcessor
     public class GoogleProcessor : CloudRouteProcessor
     {
         public GoogleProcessor(
-            IImportConfig config,
-            IJ4JLogger? logger
+            AppConfig config,
+            IJ4JLogger logger
         )
             : base( config, logger )
         {
-            Type = GeoExtensions.GetTargetType<RouteProcessorAttribute>(GetType())!.Type;
+            Type = KMLExtensions.GetTargetType<RouteProcessorAttribute>(GetType())!.Type;
         }
 
         public ProcessorType Type { get; }
@@ -37,21 +34,11 @@ namespace J4JSoftware.GeoProcessor
                 Path = coordinates.Select( c => new Location( c.Latitude, c.Longitude ) )
             };
 
-            SnapToRoadsResponse? result = null;
-
-            try
-            {
-                result = await GoogleApi.GoogleMaps.SnapToRoad.QueryAsync( request, cancellationToken );
-            }
-            catch( Exception e )
-            {
-                Logger?.Error<string>("Snap to road request failed. Message was '{0}'", e.Message);
-                return null;
-            }
+            var result = await GoogleApi.GoogleMaps.SnapToRoad.QueryAsync( request, cancellationToken );
 
             if( result == null )
             {
-                Logger?.Error("Snap to road request failed");
+                Logger.Error("Snap to road request failed");
                 return null;
             }
 
@@ -64,7 +51,7 @@ namespace J4JSoftware.GeoProcessor
 
             foreach( var error in errors )
             {
-                Logger?.Error<string>( "Snap to road error: {0}", error.ErrorMessage );
+                Logger.Error<string>( "Snap to road error: {0}", error.ErrorMessage );
             }
 
             return null;
