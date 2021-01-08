@@ -47,8 +47,17 @@ namespace J4JSoftware.GeoProcessor
             var utf8 = new UTF8Encoding();
             var bytesToEncrypt = utf8.GetBytes(plainText);
 
-            var encryptedBytes = dataProtection.Protector.Protect( bytesToEncrypt );
-            encrypted = Convert.ToBase64String( encryptedBytes );
+            try
+            {
+                var encryptedBytes = dataProtection.Protector.Protect( bytesToEncrypt );
+                encrypted = Convert.ToBase64String( encryptedBytes );
+            }
+#pragma warning disable 168
+            catch( Exception e )
+#pragma warning restore 168
+            {
+                return false;
+            }
 
             return true;
         }
@@ -61,8 +70,19 @@ namespace J4JSoftware.GeoProcessor
             if (dataProtection == null)
                 return false;
 
-            var encryptedBytes = Convert.FromBase64String( encryptedText );
-            var decryptedBytes = dataProtection.Protector.Unprotect( encryptedBytes );
+            byte[] decryptedBytes;
+
+            try
+            {
+                var encryptedBytes = Convert.FromBase64String( encryptedText );
+                decryptedBytes = dataProtection.Protector.Unprotect( encryptedBytes );
+            }
+#pragma warning disable 168
+            catch( Exception e )
+#pragma warning restore 168
+            {
+                return false;
+            }
 
             var utf8 = new UTF8Encoding();
             decrypted = utf8.GetString( decryptedBytes );
