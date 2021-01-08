@@ -10,9 +10,6 @@
 *.userosscache
 *.sln.docstates
 
-# old/deprecated projects
-/KMLProcessor/
-
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
