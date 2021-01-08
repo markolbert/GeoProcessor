@@ -19,8 +19,8 @@ You will need a Bing or Google API key for the library and program to
 work.
 
 ### Command line options
-|Key|Explanation|Default|
-|-------|---------------|-----------|
+|Key        |Explanation|Default|
+|-----------|---------------|-----------|
 |-i<br/>--inputFile|the input file to process|*none*|
 |-n<br/>--defaultName|default name for a route if none is specified in the input file|Unnamed Route|
 |-o<br/>--outputFile|the output file to create<br/><br/>file type (e.g., kmz) will be derived from input file extension but can be overriden|*none*|
@@ -66,7 +66,7 @@ like this:
 }
 ```
 There's also a user configuration file which stores encrypted snap-to-route
-API keys, if those are defined by the user (i.e., not simply entered) 
+API keys, if those are defined by the user (i.e., not simply entered 
 each time the program is run). It looks like this:
 ```json
 {
