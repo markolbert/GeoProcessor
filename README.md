@@ -10,19 +10,24 @@ I've only tested it, and the executable, on Windows 10.
 
 ![tl;dr console image](docs/assets/tldr-console.png)
 
+Configuration values can be specified in configuration files or, in some
+cases, from the command line. Anything that's required and missing from
+the configuration files will be prompted for at the console (you can also
+force the app to confirm configuration values through the console).
+
 You will need a Bing or Google API key for the library and program to
 work.
 
 ### Command line options
 |Key|Explanation|Default|
 |-------|---------------|-----------|
-|-i, --inputFile|the input file to process|*none*|
-|-n, --defaultName|default name for a route if none is specified in the input file|Unnamed Route|
-|-o, --outputFile|the output file to create<br/><br/>file type (e.g., kmz) will be derived from input file extension but can be overriden|*none*|
-|-t, --outputType|the type of output file to create. Must be one of *kml* or *kmz*| kml|
-|-p, --snapProcessor|the snap-to-route processor to use. Must be one of *Bing* or *Google*| Undefined |
-|-r, --runInteractive|force entry of all command line parameters regardless of whether or not they're specified in config file| false (not set)|
-|-k, --storeApiKey|prompt user for a snap-to-route processor's API key and store it, encrypted, in the app's user configuration| false (not set)|
+|-i<br/>--inputFile|the input file to process|*none*|
+|-n<br/>--defaultName|default name for a route if none is specified in the input file|Unnamed Route|
+|-o<br/>--outputFile|the output file to create<br/><br/>file type (e.g., kmz) will be derived from input file extension but can be overriden|*none*|
+|-t<br/>--outputType|the type of output file to create. Must be one of *kml* or *kmz*| kml|
+|-p<br/>--snapProcessor|the snap-to-route processor to use. Must be one of *Bing* or *Google*| Undefined |
+|-r<br/>--runInteractive|force entry of all command line parameters regardless of whether or not they're specified in config file| false (not set)|
+|-k<br/>--storeApiKey|prompt user for a snap-to-route processor's API key and store it, encrypted, in the app's user configuration| false (not set)|
 
 ### Configuration Files
 The app has a general configuration file, in its program directory, for
