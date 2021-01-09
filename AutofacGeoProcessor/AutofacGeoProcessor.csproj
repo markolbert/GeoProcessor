@@ -4,7 +4,29 @@
 	  <TargetFramework>net5.0</TargetFramework>
 	  <RootNamespace>J4JSoftware.GeoProcessor</RootNamespace>
 	  <Nullable>enable</Nullable>
+	  <Authors>Mark A. Olbert</Authors>
+	  <Company>Jump for Joy Software</Company>
+	  <Product>J4JSoftware Autofac add-on for GeoProcessing Library</Product>
+	  <Description>an Autofac module for simplifying use of the J4JSoftware GeoProcessor library</Description>
+	  <Copyright>© Mark A. Olbert all rights reserved</Copyright>
+	  <PackageDescription>an Autofac module for simplifying use of the J4JSoftware GeoProcessor library</PackageDescription>
+	  <RepositoryUrl>https://github.com/markolbert/GeoProcessor</RepositoryUrl>
+	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
+	  <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+	  <PackageIcon>Diego nuspec.png</PackageIcon>
+	  <RepositoryType>git</RepositoryType>
+	  <Version>0.8.0.0</Version>
+	  <AssemblyVersion>0.8.0.0</AssemblyVersion>
+	  <PackageReleaseNotes>initial release</PackageReleaseNotes>
+	  <Configurations>Debug;Release;NuGetRelease</Configurations>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="E:\Pix\JumpForJoy\Diego nuspec.png" Link="Diego nuspec.png">
+      <PackagePath></PackagePath>
+      <Pack>True</Pack>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Autofac" Version="6.1.0" />

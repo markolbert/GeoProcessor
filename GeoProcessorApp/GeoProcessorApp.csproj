@@ -6,6 +6,7 @@
     <RootNamespace>J4JSoftware.GeoProcessor</RootNamespace>
     <Nullable>enable</Nullable>
     <UserSecretsId>bddc2ef2-9330-48ea-b316-40fc738a4e28</UserSecretsId>
+    <Configurations>Debug;Release;NuGetRelease</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,11 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\J4JCommandLine\Binder\Binder.csproj" />
-    <ProjectReference Include="..\..\J4JLogging\AutoFacJ4JLogging\AutoFacJ4JLogging.csproj" />
-    <ProjectReference Include="..\..\J4JLogging\J4JLogging\J4JLogging.csproj" />
-    <ProjectReference Include="..\..\ProgrammingUtilities\DependencyInjection\DependencyInjection.csproj" />
-    <ProjectReference Include="..\..\ProgrammingUtilities\VisualUtilities\VisualUtilities.csproj" />
     <ProjectReference Include="..\AutofacGeoProcessor\AutofacGeoProcessor.csproj" />
     <ProjectReference Include="..\GeoProcessor\GeoProcessor.csproj" />
   </ItemGroup>
@@ -34,5 +30,33 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+
+	<Choose>
+		<When Condition=" '$(Configuration)' == 'NuGetRelease' ">
+			<ItemGroup>
+				<PackageReference Include="J4JSoftware.Configuration.CommandLine" Version="1.0.0" />
+				<PackageReference Include="J4JSoftware.Logging" Version="3.0.0" />
+				<PackageReference Include="J4JSoftware.Logging.Autofac" Version="3.0.0" />
+				<PackageReference Include="J4JSoftware.DependencyInjection" Version="0.8.0" />
+				<PackageReference Include="J4JSoftware.VisualUtilities" Version="0.8.0" />
+			</ItemGroup>
+		</When>
+		<Otherwise>
+			<ItemGroup>
+				<ProjectReference Include="..\..\J4JCommandLine\J4JCommandLine\J4JCommandLine.csproj" />
+				<ProjectReference Include="..\..\J4JLogging\J4JLogging\J4JLogging.csproj" />
+				<ProjectReference Include="..\..\J4JLogging\AutoFacJ4JLogging\AutoFacJ4JLogging.csproj" />
+				<ProjectReference Include="..\..\ProgrammingUtilities\DependencyInjection\DependencyInjection.csproj" />
+				<ProjectReference Include="..\..\ProgrammingUtilities\VisualUtilities\VisualUtilities.csproj" />
+			</ItemGroup>
+		</Otherwise>
+	</Choose>
+
+	<ItemGroup>
+		<None Include="E:\Pix\JumpForJoy\Diego nuspec.png">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+	</ItemGroup>
 
 </Project>

@@ -4,6 +4,21 @@
 	  <TargetFramework>net5.0</TargetFramework>
 	  <RootNamespace>J4JSoftware.GeoProcessor</RootNamespace>
 	  <Nullable>enable</Nullable>
+	  <Authors>Mark A. Olbert</Authors>
+	  <Company>Jump for Joy Software</Company>
+	  <Product>J4JSoftware GeoProcessing Library</Product>
+	  <Description>a library for processing GPX, KML and KMZ files, and snapping GPS tracks to roadways</Description>
+	  <Copyright>© Mark A. Olbert all rights reserved</Copyright>
+	  <PackageDescription>a library for processing GPX, KML and KMZ files, and snapping GPS tracks to roadways</PackageDescription>
+	  <RepositoryUrl>https://github.com/markolbert/GeoProcessor</RepositoryUrl>
+	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
+	  <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+	  <PackageIcon>Diego nuspec.png</PackageIcon>
+	  <RepositoryType>git</RepositoryType>
+	  <Version>0.8.0.0</Version>
+	  <AssemblyVersion>0.8.0.0</AssemblyVersion>
+	  <PackageReleaseNotes>initial release</PackageReleaseNotes>
+	  <Configurations>Debug;Release;NuGetRelease</Configurations>
   </PropertyGroup>
 
 	<ItemGroup>
@@ -12,8 +27,26 @@
 		<PackageReference Include="Microsoft.AspNetCore.DataProtection.Abstractions" Version="5.0.1" />
 	</ItemGroup>
 
+	<Choose>
+		<When Condition=" '$(Configuration)' == 'NuGetRelease' ">
+			<ItemGroup>
+				<PackageReference Include="J4JSoftware.Logging" Version="3.0.0" />
+				<PackageReference Include="J4JSoftware.VisualUtilities" Version="0.8.0" />
+			</ItemGroup>
+		</When>
+		<Otherwise>
+			<ItemGroup>
+				<ProjectReference Include="..\..\J4JLogging\J4JLogging\J4JLogging.csproj" />
+				<ProjectReference Include="..\..\ProgrammingUtilities\VisualUtilities\VisualUtilities.csproj" />
+			</ItemGroup>
+		</Otherwise>
+	</Choose>
+
 	<ItemGroup>
-		<ProjectReference Include="..\..\J4JLogging\J4JLogging\J4JLogging.csproj" />
-		<ProjectReference Include="..\..\ProgrammingUtilities\VisualUtilities\VisualUtilities.csproj" />
+		<None Include="E:\Pix\JumpForJoy\Diego nuspec.png">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
 	</ItemGroup>
+
 </Project>
