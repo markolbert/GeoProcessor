@@ -9,27 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="file\**" />
-    <Compile Remove="processor\**" />
-    <Compile Remove="support\**" />
-    <EmbeddedResource Remove="file\**" />
-    <EmbeddedResource Remove="processor\**" />
-    <EmbeddedResource Remove="support\**" />
-    <None Remove="file\**" />
-    <None Remove="processor\**" />
-    <None Remove="support\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="app\FileInfo.cs" />
-    <Compile Remove="app\IAppConfig.cs" />
-    <Compile Remove="app\InputFileInfo.cs" />
-    <Compile Remove="app\OutputFileInfo.cs" />
-    <Compile Remove="app\ProcessorInfo.cs" />
-    <Compile Remove="Coordinates.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Alba.CsConsoleFormat" Version="1.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="5.0.0" />
   </ItemGroup>
