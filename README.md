@@ -4,6 +4,7 @@ snapping tracks/routes to roadways using the Bing or Google online
 snap-to-route processors (**note:** you'll need an account with Bing or Google to
 access those).
 
+[![Nuget](https://img.shields.io/nuget/v/J4JSoftware.GeoProcessor?style=flat-square)](https://www.nuget.org/packages/J4JSoftware.GeoProcessor/)
 ### TL;DR
 The app should compile and run anywhere Net5 is supported...but 
 I've only tested it on Windows 10.

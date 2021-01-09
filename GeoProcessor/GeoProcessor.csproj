@@ -3,6 +3,7 @@
   <PropertyGroup>
 	  <TargetFramework>net5.0</TargetFramework>
 	  <RootNamespace>J4JSoftware.GeoProcessor</RootNamespace>
+	  <AssemblyName>J4JSoftware.GeoProcessor</AssemblyName>
 	  <Nullable>enable</Nullable>
 	  <Authors>Mark A. Olbert</Authors>
 	  <Company>Jump for Joy Software</Company>
@@ -15,9 +16,9 @@
 	  <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 	  <PackageIcon>Diego nuspec.png</PackageIcon>
 	  <RepositoryType>git</RepositoryType>
-	  <Version>0.8.0.0</Version>
-	  <AssemblyVersion>0.8.0.0</AssemblyVersion>
-	  <PackageReleaseNotes>initial release</PackageReleaseNotes>
+	  <Version>0.8.1.0</Version>
+	  <AssemblyVersion>0.8.1.0</AssemblyVersion>
+	  <PackageReleaseNotes>fix naming issue</PackageReleaseNotes>
 	  <Configurations>Debug;Release;NuGetRelease</Configurations>
   </PropertyGroup>
 
