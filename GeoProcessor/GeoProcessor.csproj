@@ -22,6 +22,11 @@
 	  <Configurations>Debug;Release;NuGetRelease</Configurations>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="support\DataProtection.cs" />
+    <Compile Remove="support\IDataProtection.cs" />
+  </ItemGroup>
+
 	<ItemGroup>
 		<PackageReference Include="BingMapsRESTToolkit" Version="1.1.4" />
 		<PackageReference Include="GoogleApi" Version="3.10.5" />

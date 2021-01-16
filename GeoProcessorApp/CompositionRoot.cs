@@ -33,61 +33,8 @@ namespace J4JSoftware.GeoProcessor
         }
 
         private CompositionRoot()
+            : base( "J4JSoftware.GeoProcessor.DataProtection" )
         {
-        }
-
-        public bool Protect( string plainText, out string? encrypted )
-        {
-            encrypted = null;
-
-            var dataProtection = Host?.Services.GetService<IDataProtection>();
-            if( dataProtection == null )
-                return false;
-
-            var utf8 = new UTF8Encoding();
-            var bytesToEncrypt = utf8.GetBytes(plainText);
-
-            try
-            {
-                var encryptedBytes = dataProtection.Protector.Protect( bytesToEncrypt );
-                encrypted = Convert.ToBase64String( encryptedBytes );
-            }
-#pragma warning disable 168
-            catch( Exception e )
-#pragma warning restore 168
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        public bool Unprotect( string encryptedText, out string? decrypted )
-        {
-            decrypted = null;
-
-            var dataProtection = Host?.Services.GetService<IDataProtection>();
-            if (dataProtection == null)
-                return false;
-
-            byte[] decryptedBytes;
-
-            try
-            {
-                var encryptedBytes = Convert.FromBase64String( encryptedText );
-                decryptedBytes = dataProtection.Protector.Unprotect( encryptedBytes );
-            }
-#pragma warning disable 168
-            catch( Exception e )
-#pragma warning restore 168
-            {
-                return false;
-            }
-
-            var utf8 = new UTF8Encoding();
-            decrypted = utf8.GetString( decryptedBytes );
-
-            return true;
         }
 
         protected override void SetupConfigurationEnvironment( IConfigurationBuilder builder )
@@ -96,7 +43,7 @@ namespace J4JSoftware.GeoProcessor
 
             var junk = GetCachedLogger();
 
-            var options = new OptionCollection(CommandLineStyle.Linux, () => GetCachedLogger()!);
+            var options = new OptionCollection( CommandLineStyle.Linux, loggerFactory: () => GetCachedLogger()! );
 
             options.Bind<AppConfig, string>(x => x.InputFile.FilePath, "i", "inputFile");
             options.Bind<AppConfig, string>(x => x.DefaultRouteName, "n", "defaultName");

@@ -11,12 +11,8 @@ namespace J4JSoftware.GeoProcessor
         {
             base.Load( builder );
 
-            builder.RegisterType<DataProtection>()
-                .As<IDataProtection>()
-                .SingleInstance();
-
             // register route processors
-            builder.RegisterAssemblyTypes(typeof(DataProtection).Assembly)
+            builder.RegisterAssemblyTypes(typeof(IRouteProcessor).Assembly)
                 .Where(t => typeof(IRouteProcessor).IsAssignableFrom(t)
                             && !t.IsAbstract
                             && t.GetConstructors().Any()
@@ -26,7 +22,7 @@ namespace J4JSoftware.GeoProcessor
                 .SingleInstance();
 
             // register exporters
-            builder.RegisterAssemblyTypes( typeof(DataProtection).Assembly )
+            builder.RegisterAssemblyTypes( typeof(IRouteProcessor).Assembly )
                 .Where( t => typeof(IExporter).IsAssignableFrom( t )
                              && !t.IsAbstract
                              && t.GetConstructors().Any()
@@ -36,7 +32,7 @@ namespace J4JSoftware.GeoProcessor
                 .SingleInstance();
 
             // register importers
-            builder.RegisterAssemblyTypes(typeof(DataProtection).Assembly)
+            builder.RegisterAssemblyTypes(typeof(IRouteProcessor).Assembly)
                 .Where(t => typeof(IImporter).IsAssignableFrom(t)
                             && !t.IsAbstract
                             && t.GetConstructors().Any()
