@@ -10,11 +10,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Alba.CsConsoleFormat" Version="1.0.0" />
+    <!--<PackageReference Include="Alba.CsConsoleFormat" Version="1.0.0" />-->
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\ProgrammingUtilities\ConsoleUtilities\ConsoleUtilities.csproj" />
     <ProjectReference Include="..\AutofacGeoProcessor\AutofacGeoProcessor.csproj" />
     <ProjectReference Include="..\GeoProcessor\GeoProcessor.csproj" />
   </ItemGroup>

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Autofac.Features.Indexed;
+using J4JSoftware.ConsoleUtilities;
 using J4JSoftware.Logging;
 using Microsoft.Extensions.Hosting;
 
@@ -24,6 +25,7 @@ namespace J4JSoftware.GeoProcessor
             IHost host,
             AppConfig config,
             IHostApplicationLifetime lifetime,
+            IConfigurationUpdater<AppConfig> configUpdater,
             IIndex<ImportType, IImporter> importers,
             IIndex<ExportType, IExporter> exporters,
             IIndex<ProcessorType, IRouteProcessor> snapProcessors,
@@ -36,17 +38,22 @@ namespace J4JSoftware.GeoProcessor
             _importers = importers;
 
             _exporter = exporters[ config.ExportType ];
-
             _distProc = snapProcessors[ ProcessorType.Distance ];
-            _routeProc = snapProcessors[ config.ProcessorType ];
 
             _logger = logger;
             _logger.SetLoggedType( GetType() );
+
+            if( !configUpdater.Validate( _config ) )
+            {
+                _logger.Fatal("Incomplete configuration, aborting");
+                _lifetime.StopApplication();
+            }
+            else _routeProc = snapProcessors[ config.ProcessorType ];
         }
 
         public async Task StartAsync( CancellationToken cancellationToken )
         {
-            if( !_config.IsValid( _logger ) )
+            if( !_config.IsValid(_logger) )
             {
                 _lifetime.StopApplication();
                 return;

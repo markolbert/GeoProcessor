@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using Autofac;
 using J4JSoftware.Configuration.CommandLine;
+using J4JSoftware.ConsoleUtilities;
 using J4JSoftware.DependencyInjection;
 using J4JSoftware.Logging;
 using Microsoft.AspNetCore.DataProtection;
@@ -81,13 +82,6 @@ namespace J4JSoftware.GeoProcessor
 
                 config ??= new AppConfig();
 
-                // validate, but not when all we're doing is storing an API key
-                if (!config.StoreAPIKey)
-                {
-                    var validator = c.Resolve<IAppConfigValidator>();
-                    validator.Validate( config );
-                }
-
                 if (!string.IsNullOrEmpty(config.OutputFile.FileNameWithoutExtension))
                     return config;
 
@@ -107,11 +101,12 @@ namespace J4JSoftware.GeoProcessor
                 .AsSelf()
                 .SingleInstance();
 
-            builder.RegisterType<AppConfigValidator>()
-                .As<IAppConfigValidator>()
+            builder.RegisterType<ConfigurationUpdater<AppConfig>>()
+                .As<IConfigurationUpdater<AppConfig>>()
                 .SingleInstance();
 
             builder.RegisterModule<AutofacGeoProcessorModule>();
+            builder.RegisterModule( new AutofacConsoleUtilitiesModule( this.GetType() ) );
         }
 
         protected override void SetupServices( HostBuilderContext hbc, IServiceCollection services )
