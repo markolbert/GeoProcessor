@@ -7,9 +7,9 @@ using J4JSoftware.Logging;
 
 namespace J4JSoftware.GeoProcessor
 {
-    public class InputFileValidator : PropertyUpdater<InputFileInfo>
+    public class InputFileUpdater : PropertyUpdater<InputFileInfo>
     {
-        public InputFileValidator( IJ4JLogger? logger )
+        public InputFileUpdater( IJ4JLogger? logger )
             : base( logger )
         {
         }

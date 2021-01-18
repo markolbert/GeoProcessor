@@ -6,9 +6,9 @@ using J4JSoftware.Logging;
 
 namespace J4JSoftware.GeoProcessor
 {
-    public class ApiKeyValidator : PropertyUpdater<string>
+    public class APIKeyUpdater : PropertyUpdater<string>
     {
-        public ApiKeyValidator( IJ4JLogger? logger )
+        public APIKeyUpdater( IJ4JLogger? logger )
             : base( logger )
         {
         }
@@ -21,7 +21,7 @@ namespace J4JSoftware.GeoProcessor
                 return UpdaterResult.OriginalOkay;
 
             Console.WriteLine();
-            newValue = GetText( origValue ?? "**undefined**", "APIKey" );
+            newValue = GetSingleValue( origValue ?? "**undefined**", "APIKey" );
 
             return UpdaterResult.Changed;
         }

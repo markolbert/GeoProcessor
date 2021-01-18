@@ -31,9 +31,6 @@ namespace J4JSoftware.GeoProcessor
                 return;
             }
 
-            // output any log events cached during configuration/startup
-            CompositionRoot.Default.OutputCachedLogger();
-
             await CompositionRoot.Default.Host!.RunAsync( _cancellationToken );
         }
     }

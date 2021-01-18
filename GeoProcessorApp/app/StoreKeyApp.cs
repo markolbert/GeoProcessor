@@ -7,6 +7,8 @@ using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Alba.CsConsoleFormat.Fluent;
+using Autofac.Features.Indexed;
+using J4JSoftware.ConsoleUtilities;
 using J4JSoftware.Logging;
 using Microsoft.Extensions.Hosting;
 
@@ -14,24 +16,30 @@ namespace J4JSoftware.GeoProcessor
 {
     public class StoreKeyApp : IHostedService
     {
+        internal const string AutofacKey = "StoreKeyApp";
+
         private readonly AppConfig _config;
-        private readonly IHost _host;
         private readonly IHostApplicationLifetime _lifetime;
         private readonly IJ4JLogger _logger;
 
         public StoreKeyApp(
-            IHost host,
             AppConfig config,
             IHostApplicationLifetime lifetime,
+            IIndex<string, IConfigurationUpdater<AppConfig>> configUpdaters,
             IJ4JLogger logger
         )
         {
-            _host = host;
             _config = config;
             _lifetime = lifetime;
 
             _logger = logger;
             _logger.SetLoggedType( GetType() );
+
+            if( !configUpdaters.TryGetValue( AutofacKey, out var updater ) || !updater.Update( _config ) )
+                return;
+
+            _logger.Fatal( "Incomplete configuration, aborting" );
+            _lifetime.StopApplication();
         }
 
         public async Task StartAsync( CancellationToken cancellationToken )

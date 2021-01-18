@@ -21,7 +21,6 @@ namespace J4JSoftware.GeoProcessor
         {
             Default = new CompositionRoot()
             {
-                CachedLoggerScope = CachedLoggerScope.SingleInstance,
                 LoggingSectionKey = "Logging",
                 UseConsoleLifetime = true
             };
@@ -34,7 +33,7 @@ namespace J4JSoftware.GeoProcessor
         }
 
         private CompositionRoot()
-            : base( "J4JSoftware.GeoProcessor.DataProtection" )
+            : base( "J4JSoftware", Program.AppName, "J4JSoftware.GeoProcessor.DataProtection" )
         {
         }
 
@@ -42,9 +41,7 @@ namespace J4JSoftware.GeoProcessor
         {
             base.SetupConfigurationEnvironment( builder );
 
-            var junk = GetCachedLogger();
-
-            var options = new OptionCollection( CommandLineStyle.Linux, loggerFactory: () => GetCachedLogger()! );
+            var options = new OptionCollection( CommandLineStyle.Linux, loggerFactory: () => CachedLogger );
 
             options.Bind<AppConfig, string>(x => x.InputFile.FilePath, "i", "inputFile");
             options.Bind<AppConfig, string>(x => x.DefaultRouteName, "n", "defaultName");
@@ -75,7 +72,7 @@ namespace J4JSoftware.GeoProcessor
                 }
                 catch (Exception e)
                 {
-                    GetCachedLogger()!.Fatal<string>(
+                    CachedLogger.Fatal<string>(
                         "Failed to parse configuration information. Message was: {0}",
                         e.Message);
                 }
@@ -102,11 +99,21 @@ namespace J4JSoftware.GeoProcessor
                 .SingleInstance();
 
             builder.RegisterType<ConfigurationUpdater<AppConfig>>()
-                .As<IConfigurationUpdater<AppConfig>>()
+                .OnActivating( x => { x.Instance.Property( c => c.APIKey, new APIKeyUpdater( CachedLogger ) ); } )
+                .Named<IConfigurationUpdater>( StoreKeyApp.AutofacKey )
+                .SingleInstance();
+
+            builder.RegisterType<ConfigurationUpdater<AppConfig>>()
+                .OnActivating( x =>
+                {
+                    x.Instance.Property( c => c.APIKey, new APIKeyUpdater( CachedLogger ) );
+                    x.Instance.Property( c => c.InputFile, new InputFileUpdater( CachedLogger ) );
+                    x.Instance.Property( c => c.ProcessorType, new ProcessorTypeUpdater( CachedLogger ) );
+                } )
+                .Named<IConfigurationUpdater>( RouteApp.AutofacKey )
                 .SingleInstance();
 
             builder.RegisterModule<AutofacGeoProcessorModule>();
-            builder.RegisterModule( new AutofacConsoleUtilitiesModule( this.GetType() ) );
         }
 
         protected override void SetupServices( HostBuilderContext hbc, IServiceCollection services )

@@ -16,7 +16,7 @@
   },
   "Logging": {
     "EventElements": "None",
-    "SourceRootPath": "C:\\Programming\\KMLProcessor\\",
+    "SourceRootPath": "C:\\Programming\\GeoProcessor\\",
     "Channels": {
       "Debug": {
         "MinimumLevel": "Information"

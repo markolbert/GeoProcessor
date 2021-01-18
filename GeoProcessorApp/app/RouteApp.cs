@@ -12,8 +12,9 @@ namespace J4JSoftware.GeoProcessor
 {
     public class RouteApp : IHostedService
     {
+        internal const string AutofacKey = "RouteApp";
+
         private readonly AppConfig _config;
-        private readonly IHost _host;
         private readonly IHostApplicationLifetime _lifetime;
         private readonly IIndex<ImportType, IImporter> _importers;
         private readonly IExporter _exporter;
@@ -22,17 +23,15 @@ namespace J4JSoftware.GeoProcessor
         private readonly IJ4JLogger _logger;
 
         public RouteApp(
-            IHost host,
             AppConfig config,
             IHostApplicationLifetime lifetime,
-            IConfigurationUpdater<AppConfig> configUpdater,
+            IIndex<string,IConfigurationUpdater<AppConfig>> configUpdaters,
             IIndex<ImportType, IImporter> importers,
             IIndex<ExportType, IExporter> exporters,
             IIndex<ProcessorType, IRouteProcessor> snapProcessors,
             IJ4JLogger logger
         )
         {
-            _host = host;
             _config = config;
             _lifetime = lifetime;
             _importers = importers;
@@ -43,12 +42,14 @@ namespace J4JSoftware.GeoProcessor
             _logger = logger;
             _logger.SetLoggedType( GetType() );
 
-            if( !configUpdater.Validate( _config ) )
+            if( configUpdaters.TryGetValue( AutofacKey, out var updater )
+                && updater.Update( _config ) )
             {
-                _logger.Fatal("Incomplete configuration, aborting");
+                _logger.Fatal( "Incomplete configuration, aborting" );
                 _lifetime.StopApplication();
             }
-            else _routeProc = snapProcessors[ config.ProcessorType ];
+
+            _routeProc = snapProcessors[ config.ProcessorType ];
         }
 
         public async Task StartAsync( CancellationToken cancellationToken )

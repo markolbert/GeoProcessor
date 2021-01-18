@@ -6,9 +6,9 @@ using J4JSoftware.Logging;
 
 namespace J4JSoftware.GeoProcessor
 {
-    public class ProcessorTypeValidator : PropertyUpdater<ProcessorType>
+    public class ProcessorTypeUpdater : PropertyUpdater<ProcessorType>
     {
-        public ProcessorTypeValidator( IJ4JLogger? logger )
+        public ProcessorTypeUpdater( IJ4JLogger? logger )
             : base( logger )
         {
         }

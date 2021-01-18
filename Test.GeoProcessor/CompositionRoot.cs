@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,14 +16,19 @@ using Microsoft.Extensions.Hosting;
 
 namespace Test.GeoProcessor
 {
-    public class CompositionRoot : J4JCompositionRoot
+    public class CompositionRoot : J4JCompositionRoot<J4JLoggerConfiguration>
     {
         static CompositionRoot()
         {
             Default = new CompositionRoot
             {
+                LoggingSectionKey = "Logging",
                 UseConsoleLifetime = true,
             };
+
+            Default.ChannelInformation
+                .AddChannel<ConsoleConfig>( "Logging:Channels:Console" )
+                .AddChannel<DebugConfig>( "Logging:Channels:Debug" );
 
             Default.Initialize();
         }
@@ -30,6 +36,7 @@ namespace Test.GeoProcessor
         public static CompositionRoot Default { get; }
 
         private CompositionRoot()
+            : base( "J4JSoftware", "Test.GeoProcessor" )
         {
         }
 
@@ -48,7 +55,9 @@ namespace Test.GeoProcessor
         {
             base.SetupConfigurationEnvironment( builder );
 
-            builder.AddUserSecrets<CompositionRoot>();
+            builder.SetBasePath(Environment.CurrentDirectory)
+                .AddJsonFile(Path.Combine(Environment.CurrentDirectory, "appConfig.json"), false, false)
+                .AddUserSecrets<CompositionRoot>();
         }
 
         public IImporter GetImporter( ImportType type )

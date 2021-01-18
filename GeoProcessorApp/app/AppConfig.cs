@@ -11,7 +11,6 @@ namespace J4JSoftware.GeoProcessor
         public bool StoreAPIKey { get; set; }
         public bool RunInteractive { get; set; }
 
-        [Updater(typeof(InputFileValidator))]
         public InputFileInfo InputFile{ get; } = new();
 
         public ExportType ExportType
@@ -21,16 +20,15 @@ namespace J4JSoftware.GeoProcessor
         }
         public OutputFileInfo OutputFile { get; } = new();
 
-        [Updater(typeof(ProcessorTypeValidator))]
         public ProcessorType ProcessorType { get; set; } = ProcessorType.Undefined;
         public Dictionary<ProcessorType, ProcessorInfo> Processors { get; set; } =
             new Dictionary<ProcessorType, ProcessorInfo>();
         public ProcessorInfo ProcessorInfo => Processors.ContainsKey( ProcessorType )
             ? Processors[ ProcessorType ]
             : new ProcessorInfo();
-        public Dictionary<ProcessorType, APIKey> APIKeys { get; set; } = new Dictionary<ProcessorType, APIKey>();
 
-        [Updater(typeof(ApiKeyValidator))]
+        public Dictionary<ProcessorType, APIKey> APIKeys { get; set; } = new Dictionary<ProcessorType, APIKey>();
+        
         public string APIKey
         {
             get => APIKeys.ContainsKey( ProcessorType ) ? APIKeys[ ProcessorType ].Value : string.Empty;
