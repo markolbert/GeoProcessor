@@ -25,7 +25,7 @@ namespace J4JSoftware.GeoProcessor
         public RouteApp(
             AppConfig config,
             IHostApplicationLifetime lifetime,
-            IIndex<string,IConfigurationUpdater<AppConfig>> configUpdaters,
+            IIndex<string, IConfigurationUpdater> configUpdaters,
             IIndex<ImportType, IImporter> importers,
             IIndex<ExportType, IExporter> exporters,
             IIndex<ProcessorType, IRouteProcessor> snapProcessors,
@@ -45,11 +45,12 @@ namespace J4JSoftware.GeoProcessor
             if( configUpdaters.TryGetValue( AutofacKey, out var updater )
                 && updater.Update( _config ) )
             {
-                _logger.Fatal( "Incomplete configuration, aborting" );
-                _lifetime.StopApplication();
+                _routeProc = snapProcessors[ config.ProcessorType ];
+                return;
             }
 
-            _routeProc = snapProcessors[ config.ProcessorType ];
+            _logger.Fatal( "Incomplete configuration, aborting" );
+            _lifetime.StopApplication();
         }
 
         public async Task StartAsync( CancellationToken cancellationToken )

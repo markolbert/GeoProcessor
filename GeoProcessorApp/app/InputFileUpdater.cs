@@ -14,7 +14,7 @@ namespace J4JSoftware.GeoProcessor
         {
         }
 
-        public override UpdaterResult Validate( InputFileInfo? origValue, out InputFileInfo? newValue )
+        public override UpdaterResult Update( InputFileInfo? origValue, out InputFileInfo? newValue )
         {
             newValue = origValue ?? new InputFileInfo();
 

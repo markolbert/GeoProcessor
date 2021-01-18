@@ -25,7 +25,7 @@ namespace J4JSoftware.GeoProcessor
         public StoreKeyApp(
             AppConfig config,
             IHostApplicationLifetime lifetime,
-            IIndex<string, IConfigurationUpdater<AppConfig>> configUpdaters,
+            IIndex<string, IConfigurationUpdater> configUpdaters,
             IJ4JLogger logger
         )
         {

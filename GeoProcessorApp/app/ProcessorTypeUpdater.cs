@@ -13,7 +13,7 @@ namespace J4JSoftware.GeoProcessor
         {
         }
 
-        public override UpdaterResult Validate( ProcessorType origValue, out ProcessorType newValue )
+        public override UpdaterResult Update( ProcessorType origValue, out ProcessorType newValue )
         {
             newValue = origValue;
 

@@ -13,7 +13,7 @@ namespace J4JSoftware.GeoProcessor
         {
         }
 
-        public override UpdaterResult Validate( string? origValue, out string? newValue )
+        public override UpdaterResult Update( string? origValue, out string? newValue )
         {
             newValue = origValue;
 

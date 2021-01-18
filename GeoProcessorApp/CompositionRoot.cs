@@ -99,16 +99,20 @@ namespace J4JSoftware.GeoProcessor
                 .SingleInstance();
 
             builder.RegisterType<ConfigurationUpdater<AppConfig>>()
-                .OnActivating( x => { x.Instance.Property( c => c.APIKey, new APIKeyUpdater( CachedLogger ) ); } )
+                .OnActivating( x =>
+                {
+                    x.Instance.Property( c => c.ProcessorType, new ProcessorTypeUpdater( CachedLogger ) );
+                    x.Instance.Property( c => c.APIKey, new APIKeyUpdater( CachedLogger ) );
+                } )
                 .Named<IConfigurationUpdater>( StoreKeyApp.AutofacKey )
                 .SingleInstance();
 
             builder.RegisterType<ConfigurationUpdater<AppConfig>>()
                 .OnActivating( x =>
                 {
+                    x.Instance.Property( c => c.ProcessorType, new ProcessorTypeUpdater( CachedLogger ) );
                     x.Instance.Property( c => c.APIKey, new APIKeyUpdater( CachedLogger ) );
                     x.Instance.Property( c => c.InputFile, new InputFileUpdater( CachedLogger ) );
-                    x.Instance.Property( c => c.ProcessorType, new ProcessorTypeUpdater( CachedLogger ) );
                 } )
                 .Named<IConfigurationUpdater>( RouteApp.AutofacKey )
                 .SingleInstance();
