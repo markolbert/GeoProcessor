@@ -20,15 +20,7 @@ namespace Test.GeoProcessor
     {
         static CompositionRoot()
         {
-            Default = new CompositionRoot
-            {
-                LoggingSectionKey = "Logging",
-                UseConsoleLifetime = true,
-            };
-
-            Default.ChannelInformation
-                .AddChannel<ConsoleConfig>( "Logging:Channels:Console" )
-                .AddChannel<DebugConfig>( "Logging:Channels:Debug" );
+            Default = new CompositionRoot();
 
             Default.Initialize();
         }
@@ -38,6 +30,14 @@ namespace Test.GeoProcessor
         private CompositionRoot()
             : base( "J4JSoftware", "Test.GeoProcessor" )
         {
+            var loggerConfig = new J4JLoggerConfiguration();
+            
+            loggerConfig.Channels.Add(new ConsoleConfig()  );
+            loggerConfig.Channels.Add(new DebugConfig()  );
+
+            StaticConfiguredLogging( loggerConfig );
+
+            UseConsoleLifetime = true;
         }
 
         protected override void SetupDependencyInjection( HostBuilderContext hbc, ContainerBuilder builder )

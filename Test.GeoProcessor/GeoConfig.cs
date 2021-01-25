@@ -27,7 +27,7 @@ namespace Test.GeoProcessor
         public OutputFileInfo OutputFile { get; } = new OutputFileInfo();
         public int RouteWidth { get; set; } = 4;
         public Color RouteColor { get; set; } = Color.Red;
-        public Color RouteHighlightColor { get; } = Color.DarkTurquoise;
+        public Color RouteHighlightColor { get; set; } = Color.DarkTurquoise;
         public Dictionary<ProcessorType, APIKeyValue> APIKeys { get; set; }
         public string APIKey => APIKeys.ContainsKey(ProcessorType) ? APIKeys[ProcessorType].Value : string.Empty;
     }

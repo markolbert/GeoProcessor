@@ -1,12 +1,13 @@
-﻿using System.Drawing;
+﻿
+using System.Drawing;
 
 namespace J4JSoftware.GeoProcessor
 {
     public interface IExportConfig : IGeoConfig
     {
-        OutputFileInfo OutputFile { get; }
-        int RouteWidth { get; } 
-        Color RouteColor { get; }
-        Color RouteHighlightColor { get; }
+        public OutputFileInfo OutputFile { get; }
+        public int RouteWidth { get; set; }
+        public Color RouteColor { get; set; }
+        public Color RouteHighlightColor { get; set; }
     }
 }

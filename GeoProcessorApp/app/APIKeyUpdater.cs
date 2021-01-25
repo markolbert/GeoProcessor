@@ -21,7 +21,7 @@ namespace J4JSoftware.GeoProcessor
                 return UpdaterResult.OriginalOkay;
 
             Console.WriteLine();
-            newValue = GetSingleValue( origValue ?? "**undefined**", "APIKey" );
+            newValue = Prompters.GetSingleValue( origValue ?? "**undefined**", "APIKey" );
 
             return UpdaterResult.Changed;
         }

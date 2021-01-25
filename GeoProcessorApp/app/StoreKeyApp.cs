@@ -73,8 +73,7 @@ namespace J4JSoftware.GeoProcessor
 
             Colors.WriteLine( "Select the ", "processor ".Yellow(), " whose API key you want to encrypt and store:\n" );
 
-            var procType =
-                ConsoleExtensions.GetEnum<ProcessorType>( _config.ProcessorType,
+            var procType = Prompters.GetEnum<ProcessorType>( _config.ProcessorType,
                     _config.ProcessorType switch
                     {
                         ProcessorType.Distance => ProcessorType.Google,
@@ -83,12 +82,7 @@ namespace J4JSoftware.GeoProcessor
                     },
                     secureProcessors );
 
-            var apiKey =
-                ConsoleExtensions.GetText(_config.APIKey,
-                    _config.APIKey, 
-                    "the ".White(), 
-                    $"{procType}".Green(),
-                    " API key".White() );
+            var apiKey = Prompters.GetSingleValue( _config.APIKey, $"the {procType} API key", _config.APIKey );
 
             if( string.IsNullOrEmpty( apiKey ) )
             {

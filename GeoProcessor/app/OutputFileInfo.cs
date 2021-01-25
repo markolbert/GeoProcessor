@@ -7,17 +7,18 @@ namespace J4JSoftware.GeoProcessor
         protected override ExportType GetTypeFromExtension(string? ext)
         {
             if( ext?.Length > 0
-                && Enum.TryParse( typeof(ExportType), ext, true, out var parsed ) )
+                && Enum.TryParse( typeof(ExportType), ext[1..], true, out var parsed ) )
                 return (ExportType) parsed!;
 
-            return ExportType.KML;
+            return ExportType.Unknown;
         }
 
-        protected override string GetExtensionFromType(ExportType type) =>
+        protected override string GetExtensionFromType( ExportType type ) =>
             type switch
             {
                 ExportType.KMZ => ".kmz",
-                _ => ".kml"
+                ExportType.KML => ".kml",
+                _ => string.Empty
             };
     }
 }

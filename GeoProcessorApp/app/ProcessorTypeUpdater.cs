@@ -23,7 +23,7 @@ namespace J4JSoftware.GeoProcessor
             Console.WriteLine();
             Colors.WriteLine( "\nProcessorType".Yellow(), " is undefined\n" );
 
-            newValue = GetEnum<ProcessorType>(
+            newValue = Prompters.GetEnum<ProcessorType>(
                 origValue,
                 ProcessorType.Google,
                 Enum.GetValues<ProcessorType>()

@@ -6,16 +6,26 @@
     <RootNamespace>J4JSoftware.GeoProcessor</RootNamespace>
     <Nullable>enable</Nullable>
     <UserSecretsId>bddc2ef2-9330-48ea-b316-40fc738a4e28</UserSecretsId>
-    <Configurations>Debug;Release;NuGetRelease</Configurations>
+    <Configurations>Debug;Release</Configurations>
+    <Authors>Mark A. Olbert</Authors>
+    <Company>Jump for Joy Software</Company>
+    <Product>GeoProcessor application</Product>
+    <Description>processes GPX, KML and KMX files (optionally converting them) using Microsoft Bing or Google Maps route-snapping algorithms to produce driving routes that can be displayed in mapping programs.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+	  <PackageIcon>Diego nuspec.png</PackageIcon>
+    <Copyright>2021 Mark A. Olbert</Copyright>
+    <PackageReleaseNotes>initial public release</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
-    <!--<PackageReference Include="Alba.CsConsoleFormat" Version="1.0.0" />-->
+    <Compile Remove="ConsoleExtensions.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\ProgrammingUtilities\ConsoleUtilities\ConsoleUtilities.csproj" />
     <ProjectReference Include="..\AutofacGeoProcessor\AutofacGeoProcessor.csproj" />
     <ProjectReference Include="..\GeoProcessor\GeoProcessor.csproj" />
   </ItemGroup>
@@ -24,34 +34,16 @@
     <None Update="appConfig.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Clear Lake to Home.kml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Tweaked 2.kml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
-	<Choose>
-		<When Condition=" '$(Configuration)' == 'NuGetRelease' ">
-			<ItemGroup>
-				<PackageReference Include="J4JSoftware.Configuration.CommandLine" Version="1.0.0" />
-				<PackageReference Include="J4JSoftware.Logging" Version="3.0.0" />
-				<PackageReference Include="J4JSoftware.Logging.Autofac" Version="3.0.0" />
-				<PackageReference Include="J4JSoftware.DependencyInjection" Version="0.8.0" />
-				<PackageReference Include="J4JSoftware.VisualUtilities" Version="0.8.0" />
-			</ItemGroup>
-		</When>
-		<Otherwise>
-			<ItemGroup>
-				<ProjectReference Include="..\..\J4JCommandLine\J4JCommandLine\J4JCommandLine.csproj" />
-				<ProjectReference Include="..\..\J4JLogging\J4JLogging\J4JLogging.csproj" />
-				<ProjectReference Include="..\..\J4JLogging\AutoFacJ4JLogging\AutoFacJ4JLogging.csproj" />
-				<ProjectReference Include="..\..\ProgrammingUtilities\DependencyInjection\DependencyInjection.csproj" />
-				<ProjectReference Include="..\..\ProgrammingUtilities\VisualUtilities\VisualUtilities.csproj" />
-			</ItemGroup>
-		</Otherwise>
-	</Choose>
+	<ItemGroup>
+		<ProjectReference Include="..\..\J4JCommandLine\J4JCommandLine\J4JCommandLine.csproj" />
+		<ProjectReference Include="..\..\J4JLogging\J4JLogging\J4JLogging.csproj" />
+		<ProjectReference Include="..\..\J4JLogging\AutoFacJ4JLogging\AutoFacJ4JLogging.csproj" />
+		<ProjectReference Include="..\..\ProgrammingUtilities\DependencyInjection\DependencyInjection.csproj" />
+		<ProjectReference Include="..\..\ProgrammingUtilities\VisualUtilities\VisualUtilities.csproj" />
+		<ProjectReference Include="..\..\ProgrammingUtilities\ConsoleUtilities\ConsoleUtilities.csproj" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<None Include="E:\Pix\JumpForJoy\Diego nuspec.png">

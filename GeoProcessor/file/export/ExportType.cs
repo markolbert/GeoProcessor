@@ -3,6 +3,7 @@
     public enum ExportType
     {
         KML,
-        KMZ
+        KMZ,
+        Unknown
     }
 }

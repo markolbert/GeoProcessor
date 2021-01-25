@@ -22,9 +22,9 @@ namespace J4JSoftware.GeoProcessor
                 return UpdaterResult.OriginalOkay;
 
             Console.WriteLine();
-            var filePath = ConsoleExtensions.GetText( origValue?.GetPath() ?? "**undefined**",
+            var filePath = Prompters.GetSingleValue( origValue?.GetPath() ?? "**undefined**",
                 string.Empty,
-                "full path to input file ".Yellow() );
+                "full path to input file " );
 
             if( string.IsNullOrEmpty( filePath ) )
                 return UpdaterResult.InvalidUserInput;
