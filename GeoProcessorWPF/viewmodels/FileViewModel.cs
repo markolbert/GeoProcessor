@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -21,6 +22,7 @@ namespace J4JSoftware.GeoProcessor
         public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
         private readonly IAppConfig _appConfig;
+        private readonly IUserConfig _userConfig;
         private readonly FileViewModelValidator _validator = new();
         private readonly IJ4JLogger? _logger;
 
@@ -32,9 +34,11 @@ namespace J4JSoftware.GeoProcessor
 
         public FileViewModel( 
             IAppConfig appConfig, 
+            IUserConfig userConfig,
             IJ4JLogger? logger )
         {
             _appConfig = appConfig;
+            _userConfig = userConfig;
 
             _logger = logger;
             _logger?.SetLoggedType( GetType() );
@@ -46,8 +50,8 @@ namespace J4JSoftware.GeoProcessor
                 .Where( kvp =>
                     kvp.Value.SupportsSnapping
                     && ( !kvp.Value.RequiresKey
-                         || ( _appConfig.APIKeys.ContainsKey( kvp.Key )
-                              && !string.IsNullOrEmpty( _appConfig.APIKeys[ kvp.Key ].Value ) ) ) )
+                         || ( _userConfig.APIKeys.ContainsKey( kvp.Key )
+                              && !string.IsNullOrEmpty( _userConfig.APIKeys[ kvp.Key ].Value ) ) ) )
                 .Select( kvp => kvp.Key ) );
 
             Validate( "SnappingTypes" );
@@ -138,6 +142,7 @@ namespace J4JSoftware.GeoProcessor
                 if( SelectedExportType != ExportType.Unknown )
                 {
                     SetProperty( ref _outputPath, _appConfig.OutputFile.FilePath );
+
                     return;
                 }
 
@@ -199,8 +204,7 @@ namespace J4JSoftware.GeoProcessor
                 .GroupBy( x => x.PropertyName, x => x.ErrorMessage )
                 .ToDictionary( x => x.Key, x => x.ToList() );
 
-            if( HasErrors )
-                ErrorsChanged?.Invoke( this, new DataErrorsChangedEventArgs( propName ) );
+            ErrorsChanged?.Invoke( this, new DataErrorsChangedEventArgs( propName ) );
         }
     }
 }

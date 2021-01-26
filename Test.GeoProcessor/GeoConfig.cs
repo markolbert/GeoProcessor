@@ -29,6 +29,15 @@ namespace Test.GeoProcessor
         public Color RouteColor { get; set; } = Color.Red;
         public Color RouteHighlightColor { get; set; } = Color.DarkTurquoise;
         public Dictionary<ProcessorType, APIKeyValue> APIKeys { get; set; }
-        public string APIKey => APIKeys.ContainsKey(ProcessorType) ? APIKeys[ProcessorType].Value : string.Empty;
+        public string APIKey
+        {
+            get => APIKeys.ContainsKey( ProcessorType ) ? APIKeys[ ProcessorType ].Value : string.Empty;
+
+            set
+            {
+                if( APIKeys.TryGetValue( ProcessorType, out var apiKey ) )
+                    apiKey.Value = value;
+            }
+        }
     }
 }

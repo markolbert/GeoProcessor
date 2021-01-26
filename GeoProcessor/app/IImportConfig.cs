@@ -2,6 +2,6 @@
 {
     public interface IImportConfig : IGeoConfig
     {
-        public string? APIKey { get; }
+        public string APIKey { get; set; }
     }
 }

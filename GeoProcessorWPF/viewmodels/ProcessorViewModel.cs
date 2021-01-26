@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
 using J4JSoftware.Logging;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 
@@ -10,6 +11,7 @@ namespace J4JSoftware.GeoProcessor
     public class ProcessorViewModel : ObservableRecipient
     {
         private readonly IAppConfig _appConfig;
+        private readonly IUserConfig _userConfig;
         private readonly IJ4JLogger? _logger;
 
         private Visibility _apiKeyVisibility = Visibility.Collapsed;
@@ -24,9 +26,11 @@ namespace J4JSoftware.GeoProcessor
 
         public ProcessorViewModel(
             IAppConfig appConfig,
+            IUserConfig userConfig,
             IJ4JLogger? logger )
         {
             _appConfig = appConfig;
+            _userConfig = userConfig;
 
             _logger = logger;
             _logger?.SetLoggedType( GetType() );
@@ -55,20 +59,38 @@ namespace J4JSoftware.GeoProcessor
 
                 _appConfig.ProcessorType = value;
 
+                // we set some properties indirectly because we don't want to do an update of
+                // the underlying model's value, which is what calling the setters would do
                 if( _appConfig.Processors.TryGetValue( _processorType, out var processorInfo ) )
                 {
-                    SetProperty( ref _apiKeyVisibility, processorInfo.RequiresKey
-                        ? Visibility.Visible
-                        : Visibility.Collapsed );
+                    APIKeyVisible = processorInfo.RequiresKey ? Visibility.Visible : Visibility.Collapsed;
+                    RequestLimitVisibility = processorInfo.HasPointsLimit ? Visibility.Visible : Visibility.Collapsed;
 
-                    SetProperty( ref _requestLimitVisibility, processorInfo.HasPointsLimit
-                        ? Visibility.Visible
-                        : Visibility.Collapsed );
+                    SetProperty( ref _maxPtsPerReq, processorInfo.MaxPointsPerRequest );
+                    SetProperty( ref _maxDistMultiplier, processorInfo.MaxDistanceMultiplier );
+                    SetProperty( ref _distanceValue, processorInfo.MaxSeparation.OriginalValue );
+                    SetProperty( ref _selectedUnitType, processorInfo.MaxSeparation.Unit );
+
+                    if( _userConfig.APIKeys.TryGetValue( _processorType, out var apiKey ) )
+                    {
+                        SetProperty( ref _apiKey, apiKey.Value );
+                        EncryptedAPIKey = apiKey.EncryptedValue;
+                    }
+                    else
+                    {
+                        SetProperty( ref _apiKey, string.Empty );
+                        EncryptedAPIKey = string.Empty;
+                    }
                 }
                 else
                 {
-                    SetProperty( ref _apiKeyVisibility, Visibility.Collapsed );
-                    SetProperty( ref _requestLimitVisibility, Visibility.Collapsed );
+                    APIKeyVisible = Visibility.Collapsed;
+                    RequestLimitVisibility=Visibility.Collapsed;
+
+                    SetProperty( ref _maxPtsPerReq, 100 );
+                    SetProperty( ref _maxDistMultiplier, 3 );
+                    SetProperty( ref _distanceValue, 2.0 );
+                    SetProperty( ref _selectedUnitType, GeoProcessor.UnitTypes.km );
                 }
             }
         }
@@ -82,21 +104,21 @@ namespace J4JSoftware.GeoProcessor
         public string APIKey
         {
             get => _apiKey;
-            private set => SetProperty( ref _apiKey, value );
+
+            set
+            {
+                SetProperty( ref _apiKey, value );
+
+                _userConfig.APIKeys[ SelectedProcessorType ].Value = value;
+
+                EncryptedAPIKey = _userConfig.APIKeys[ SelectedProcessorType ].EncryptedValue;
+            }
         }
 
         public string EncryptedAPIKey
         {
             get => _encyptedApiKey;
-
-            set
-            {
-                SetProperty(ref _encyptedApiKey, value  );
-
-                _appConfig.APIKeys[ SelectedProcessorType ].EncryptedValue = value;
-
-                APIKey = _appConfig.APIKeys[ SelectedProcessorType ].Value;
-            }
+            private set => SetProperty(ref _encyptedApiKey, value  );
         }
 
         public int MaxDistanceMultiplier

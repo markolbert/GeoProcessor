@@ -29,15 +29,12 @@ namespace J4JSoftware.GeoProcessor
 
         public Dictionary<ProcessorType, APIKey> APIKeys { get; set; } = new Dictionary<ProcessorType, APIKey>();
         
-        public string? APIKey
+        public string APIKey
         {
-            get => APIKeys.ContainsKey( ProcessorType ) ? APIKeys[ ProcessorType ].Value : null;
+            get => APIKeys.ContainsKey( ProcessorType ) ? APIKeys[ ProcessorType ].Value : string.Empty;
 
             set
             {
-                if( value == null )
-                    return;
-
                 if( APIKeys.ContainsKey( ProcessorType ) )
                     APIKeys[ ProcessorType ].Value = value;
                 else APIKeys.Add( ProcessorType, new APIKey { Value = value, Type = ProcessorType } );

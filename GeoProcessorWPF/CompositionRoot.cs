@@ -55,8 +55,10 @@ namespace J4JSoftware.GeoProcessor
         {
             base.SetupConfigurationEnvironment( builder );
 
+            var appDir = InDesignMode ? AppContext.BaseDirectory : Environment.CurrentDirectory;
+
             builder.SetBasePath( Environment.CurrentDirectory )
-                .AddJsonFile( Path.Combine( Environment.CurrentDirectory, AppConfigFile ), InDesignMode, false )
+                .AddJsonFile( Path.Combine( appDir, AppConfigFile ), false,false )
                 .AddJsonFile( Path.Combine( AppUserFolder, UserConfigFile ), true, false )
                 .AddUserSecrets<CompositionRoot>();
         }
@@ -65,14 +67,13 @@ namespace J4JSoftware.GeoProcessor
         {
             base.SetupDependencyInjection( hbc, builder );
 
-            if( InDesignMode )
-                builder.RegisterType<AppConfigDesignTime>()
-                    .AsImplementedInterfaces()
-                    .SingleInstance();
-            else
-                builder.Register( c => hbc.Configuration.Get<AppConfig>() )
-                    .AsImplementedInterfaces()
-                    .SingleInstance();
+            builder.Register( c => hbc.Configuration.Get<AppConfig>() )
+                .AsImplementedInterfaces()
+                .SingleInstance();
+
+            builder.Register( c => hbc.Configuration.Get<UserConfig>() )
+                .AsImplementedInterfaces()
+                .SingleInstance();
 
             builder.RegisterType<MainViewModel>()
                 .AsSelf();

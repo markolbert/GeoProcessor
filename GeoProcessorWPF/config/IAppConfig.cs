@@ -7,7 +7,7 @@ namespace J4JSoftware.GeoProcessor
     {
         InputFileInfo InputFile { get; }
         Dictionary<ProcessorType, ProcessorInfo> Processors { get; set; }
-        Dictionary<ProcessorType, APIKey> APIKeys { get; set; }
+        //Dictionary<ProcessorType, APIKey> APIKeys { get; set; }
         ExportType ExportType { get; set; }
         J4JLoggerConfiguration? Logging { get; set; }
     }
