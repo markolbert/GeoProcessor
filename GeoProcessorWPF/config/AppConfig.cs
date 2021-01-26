@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Windows.Controls;
-using System.Windows.Data;
 using J4JSoftware.Logging;
 
 namespace J4JSoftware.GeoProcessor

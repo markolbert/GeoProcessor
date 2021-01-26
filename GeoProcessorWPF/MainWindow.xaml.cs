@@ -1,7 +1,4 @@
-﻿using System;
-using System.Windows;
-using J4JSoftware.Logging;
-using MahApps.Metro.Controls;
+﻿using MahApps.Metro.Controls;
 
 namespace J4JSoftware.GeoProcessor
 {

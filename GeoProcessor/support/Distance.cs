@@ -11,8 +11,11 @@ namespace J4JSoftware.GeoProcessor
             OriginalValue = originalValue;
         }
 
-        public UnitTypes Unit { get; }
-        public double OriginalValue { get; }
+        public UnitTypes Unit { get; private set; }
+        public void ChangeUnitType( UnitTypes unitType ) => Unit = unitType;
+
+        public double OriginalValue { get; private set; }
+        public void ChangeOriginalValue( double value ) => OriginalValue = value;
 
         public override string ToString() => $"{OriginalValue} {Unit}";
 

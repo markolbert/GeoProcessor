@@ -6,7 +6,7 @@ using J4JSoftware.Logging;
 
 namespace J4JSoftware.GeoProcessor
 {
-    public class APIKeyUpdater : PropertyUpdater<string>
+    public class APIKeyUpdater : PropertyUpdater<string?>
     {
         public APIKeyUpdater( IJ4JLogger? logger )
             : base( logger )

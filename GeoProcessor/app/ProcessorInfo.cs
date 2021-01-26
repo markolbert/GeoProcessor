@@ -10,6 +10,10 @@ namespace J4JSoftware.GeoProcessor
         private int _maxPoints = DefaultMaxPointsPerRequest;
         private Distance? _maxSep;
 
+        public bool RequiresKey { get; set; }
+        public bool HasPointsLimit { get; set; }
+        public bool SupportsSnapping { get; set; }
+
         public int MaxDistanceMultiplier
         {
             get => _maxDistMult;
@@ -18,14 +22,15 @@ namespace J4JSoftware.GeoProcessor
 
         public int MaxPointsPerRequest
         {
-            get => _maxPoints;
+            get => HasPointsLimit ? _maxPoints : int.MaxValue;
 
-            set => _maxPoints = value switch
-            {
-                < 0 => int.MaxValue,
-                0 => DefaultMaxPointsPerRequest,
-                _ => value
-            };
+            set =>
+                _maxPoints = value switch
+                {
+                    < 0 => int.MaxValue,
+                    0 => DefaultMaxPointsPerRequest,
+                    _ => value
+                };
         }
 
         [JsonIgnore]

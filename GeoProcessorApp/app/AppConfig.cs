@@ -29,12 +29,15 @@ namespace J4JSoftware.GeoProcessor
 
         public Dictionary<ProcessorType, APIKey> APIKeys { get; set; } = new Dictionary<ProcessorType, APIKey>();
         
-        public string APIKey
+        public string? APIKey
         {
-            get => APIKeys.ContainsKey( ProcessorType ) ? APIKeys[ ProcessorType ].Value : string.Empty;
+            get => APIKeys.ContainsKey( ProcessorType ) ? APIKeys[ ProcessorType ].Value : null;
 
             set
             {
+                if( value == null )
+                    return;
+
                 if( APIKeys.ContainsKey( ProcessorType ) )
                     APIKeys[ ProcessorType ].Value = value;
                 else APIKeys.Add( ProcessorType, new APIKey { Value = value, Type = ProcessorType } );
@@ -51,7 +54,7 @@ namespace J4JSoftware.GeoProcessor
         public bool IsValid( IJ4JLogger? logger )
         {
             // if we're storing an API key there's nothing to check
-            if (StoreAPIKey)
+            if( StoreAPIKey )
                 return true;
 
             var filePath = InputFile.GetPath();
@@ -68,21 +71,15 @@ namespace J4JSoftware.GeoProcessor
                 return false;
             }
 
-            if( !Processors!.ContainsKey(ProcessorType ) )
+            if( !Processors!.ContainsKey( ProcessorType ) )
             {
-                logger?.Error("No {0} processor is defined", ProcessorType);
+                logger?.Error( "No {0} processor is defined", ProcessorType );
                 return false;
             }
 
-            if( APIKeys?.Count == 0 )
+            if( string.IsNullOrEmpty( APIKey ) )
             {
-                logger?.Error("No API keys are defined");
-                return false;
-            }
-
-            if( !APIKeys!.ContainsKey( ProcessorType ) )
-            {
-                logger?.Error( "{0} API key is not defined", ProcessorType );
+                logger?.Error( "API key for {0} is not defined", ProcessorType );
                 return false;
             }
 

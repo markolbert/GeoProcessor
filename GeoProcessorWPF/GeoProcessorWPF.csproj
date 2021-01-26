@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="9.4.0" />
     <PackageReference Include="MahApps.Metro" Version="2.4.3" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="5.0.0" />
     <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.0.0-preview4" />
@@ -26,7 +27,7 @@
 
   <ItemGroup>
     <None Update="appConfig.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

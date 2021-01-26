@@ -16,7 +16,11 @@
 
                 <ResourceDictionary>
                     <local:ViewModelLocator x:Key="ViewModelLocator" />
+                    <local:TextToDouble x:Key="textToDouble" />
                 </ResourceDictionary>
+
+                <ResourceDictionary Source="CustomComboBox.xaml"/>
+
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
 

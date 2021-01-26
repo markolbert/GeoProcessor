@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         mc:Ignorable="d"
         FontFamily="SeguoeUI"
         FontSize="14"
@@ -12,6 +11,7 @@
         GlowBrush="{DynamicResource MahApps.Brushes.Accent}"
         Title="GeoProcessor" 
         Height="450" Width="800">
+
     <DockPanel LastChildFill="True"
                DataContext="{Binding MainViewModel, Source={StaticResource ViewModelLocator} }">
         <StackPanel DockPanel.Dock="Bottom"
@@ -28,7 +28,8 @@
                     mah:HeaderedControlHelper.HeaderFontSize="14"
                     mah:TabControlHelper.Underlined="SelectedTabItem"
                     Margin="5">
-            <mah:MetroTabItem Header="Process">
+            <mah:MetroTabItem Header="Process"
+                              DataContext="{Binding FileViewModel}" Height="26" VerticalAlignment="Bottom">
                 <Grid Background="#FFE5E5E5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -39,10 +40,12 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
                     <Label Grid.Column="0" Grid.Row="0"
-                           VerticalAlignment="Center">Input File</Label>
+                           VerticalAlignment="Center"
+                           Content="Input File" />
                     <StackPanel Grid.Column="1" Grid.Row="0"
                                 Orientation="Horizontal">
                         <TextBox BorderThickness="1" 
@@ -50,20 +53,33 @@
                                  IsReadOnly="True"
                                  Margin="5"
                                  MinWidth="300px"
-                                 Text="{Binding InputPath, Mode=OneWay}" />
+                                 Text="{Binding InputPath, Mode=OneWay, ValidatesOnNotifyDataErrors=True}">
+
+                            <Validation.ErrorTemplate>
+                                <ControlTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <AdornedElementPlaceholder x:Name="textBox" />
+                                        <ItemsControl VerticalAlignment="Center"
+                                                      Margin="30,5,5,5"
+                                                      ItemsSource="{Binding}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding ErrorContent}" Foreground="Red" />
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </ControlTemplate>
+                            </Validation.ErrorTemplate>
+                        </TextBox>
                         <Button Content="..."
                                 VerticalAlignment="Center"
                                 Command="{Binding InputFileCommand }" />
-                        <TextBlock Visibility="{Binding InputWarningVisibility}"
-                                   Foreground="Red"
-                                   Margin="5"
-                                   VerticalAlignment="Center">
-                            Invalid input file format
-                        </TextBlock>
                     </StackPanel>
 
                     <Label Grid.Column="0" Grid.Row="1"
-                           VerticalAlignment="Center" >Output Type</Label>
+                           VerticalAlignment="Center"
+                           Content="Output Type" />
                     <ComboBox Grid.Column="1" Grid.Row="1"
                               Margin="5"
                               HorizontalAlignment="Left"
@@ -73,7 +89,8 @@
                               SelectedItem="{Binding SelectedExportType}"/>
 
                     <Label Grid.Column="0" Grid.Row="2"
-                           VerticalAlignment="Center" >Output File</Label>
+                           VerticalAlignment="Center"
+                           Content="Output File" />
                     <StackPanel Grid.Column="1" Grid.Row="2"
                                 Orientation="Horizontal">
                         <TextBox BorderThickness="1" 
@@ -86,10 +103,39 @@
                                 VerticalAlignment="Center"
                                 Command="{Binding OutputFileCommand }" />
                     </StackPanel>
+
+                    <Label Grid.Column="0" Grid.Row="3"
+                           VerticalAlignment="Center"
+                           Content="Route Snapping Processor" />
+                    <ComboBox Grid.Column="1" Grid.Row="3"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Center"
+                              Margin="5"
+                              ItemsSource="{Binding SnappingTypes, ValidatesOnNotifyDataErrors=True}"
+                              SelectedItem="{Binding SelectedSnappingType}">
+
+                        <Validation.ErrorTemplate>
+                            <ControlTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <AdornedElementPlaceholder x:Name="comboBox" />
+                                    <ItemsControl VerticalAlignment="Center" 
+                                                  Margin="5,5,5,5"
+                                                  ItemsSource="{Binding}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding ErrorContent}" Foreground="Red" />
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </ControlTemplate>
+                        </Validation.ErrorTemplate>
+                    </ComboBox>
                 </Grid>
             </mah:MetroTabItem>
 
-            <mah:MetroTabItem Header="Options">
+            <mah:MetroTabItem Header="Options"
+                              DataContext="{Binding RouteOptionsViewModel}">
                 <Grid Background="#FFE5E5E5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -129,8 +175,117 @@
                 </Grid>
             </mah:MetroTabItem>
 
-            <mah:MetroTabItem Header="Route Engines">
-                <Grid Background="#FFE5E5E5"/>
+            <mah:MetroTabItem Header="Route Engines"
+                              DataContext="{Binding ProcessorViewModel}" Height="26" VerticalAlignment="Bottom">
+                <Grid Background="#FFE5E5E5">
+                    
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <ListView Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" />
+
+                    <Label Grid.Column="1" Grid.Row="0"
+                           Content="Engine Type"
+                           Margin="5"
+                           VerticalAlignment="Center" />
+
+                    <ComboBox Grid.Column="2" Grid.Row="0"
+                              HorizontalAlignment="Left"
+                              Margin="5"
+                              VerticalAlignment="Center" 
+                              IsEditable="False"
+                              ItemsSource="{Binding ProcessorTypes}"
+                              SelectedItem="{Binding SelectedProcessorType}"/>
+
+                    <Label Grid.Column="1" Grid.Row="1"
+                           Content="API Key"
+                           Margin="5"
+                           VerticalAlignment="Center"
+                           Visibility="{Binding APIKeyVisible}"/>
+
+                    <TextBox Grid.Column="2" Grid.Row="1"
+                             VerticalAlignment ="Center"
+                             IsReadOnly="True"
+                             Margin="5"
+                             MinWidth="200"
+                             Text="{Binding APIKey, Mode=OneWay }"
+                             Visibility="{Binding APIKeyVisible}"/>
+
+                    <Label Grid.Column="1" Grid.Row="2"
+                           Content="Encrypted API Key"
+                           Margin="5"
+                           VerticalAlignment="Center" 
+                           Visibility="{Binding APIKeyVisible}"/>
+
+                    <TextBox Grid.Column="2" Grid.Row="2"
+                             VerticalAlignment ="Center"
+                             Margin="5" 
+                             MinWidth="200"
+                             Text="{Binding EncryptedAPIKey }"
+                             Visibility="{Binding APIKeyVisible}"/>
+
+                    <Label Grid.Column="1" Grid.Row="3"
+                           Content="Maximum Distance Multiplier"
+                           Margin="5"
+                           VerticalAlignment="Center" 
+                           Visibility="{Binding APIKeyVisible}"/>
+
+                    <mah:NumericUpDown Grid.Column="2" Grid.Row="3"
+                                       HorizontalAlignment="Left"
+                                       Margin="5"
+                                       Minimum="1"
+                                       Maximum="20"
+                                       Visibility="{Binding APIKeyVisible}"
+                                       Value="{Binding Path=MaxDistanceMultiplier, Mode=TwoWay }"/>
+
+                    <Label Grid.Column="1" Grid.Row="4"
+                           Content="Points per Request"
+                           Margin="5"
+                           VerticalAlignment="Center" 
+                           Visibility="{Binding RequestLimitVisibility}"/>
+
+                    <mah:NumericUpDown Grid.Column="2" Grid.Row="4"
+                                       HorizontalAlignment="Left"
+                                       Margin="5"
+                                       Minimum="1"
+                                       Maximum="100"
+                                       Visibility="{Binding RequestLimitVisibility}"
+                                       Value="{Binding Path=MaxPointsPerRequest, Mode=TwoWay }"/>
+
+                    <Label Grid.Column="1" Grid.Row="5"
+                           Content="Maximum Separation"
+                           Margin="5"
+                           VerticalAlignment="Center" />
+
+                    <StackPanel Grid.Column="2" Grid.Row="5"
+                                Orientation="Horizontal" >
+
+                        <TextBox Margin="5"
+                                 VerticalAlignment="Center"
+                                 Width="75" 
+                                 Text="{Binding DistanceValue, Mode=TwoWay, Converter={StaticResource textToDouble}}"/>
+
+                        <ComboBox Margin="5"
+                                  VerticalAlignment="Center"
+                                  IsEditable="False"
+                                  ItemsSource="{Binding UnitTypes}"
+                                  SelectedItem="{Binding SelectedUnitType}" />
+
+                    </StackPanel>
+
+                </Grid>
             </mah:MetroTabItem>
 
         </mah:MetroTabControl>

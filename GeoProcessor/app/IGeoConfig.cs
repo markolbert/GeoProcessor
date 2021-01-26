@@ -8,7 +8,7 @@ namespace J4JSoftware.GeoProcessor
 {
     public interface IGeoConfig
     {
-        public ProcessorType ProcessorType { get; }
+        public ProcessorType ProcessorType { get; set; }
         public ProcessorInfo ProcessorInfo { get; }
     }
 }

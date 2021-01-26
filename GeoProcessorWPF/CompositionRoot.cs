@@ -5,14 +5,13 @@ using Autofac;
 using J4JSoftware.DependencyInjection;
 using J4JSoftware.Logging;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace J4JSoftware.GeoProcessor
 {
     public class CompositionRoot : J4JCompositionRoot<J4JLoggerConfiguration>
     {
-        public const string AppName = "GeoProcessorWPF";
+        public const string AppName = "GeoProcessor";
         public const string AppConfigFile = "appConfig.json";
         public const string UserConfigFile = "userConfig.json";
 
@@ -76,9 +75,17 @@ namespace J4JSoftware.GeoProcessor
                     .SingleInstance();
 
             builder.RegisterType<MainViewModel>()
-                .AsSelf()
-                .SingleInstance();
+                .AsSelf();
 
+            builder.RegisterType<FileViewModel>()
+                .AsSelf();
+
+            builder.RegisterType<RouteOptionsViewModel>()
+                .AsSelf();
+            
+            builder.RegisterType<ProcessorViewModel>()
+                .AsSelf();
+            
             builder.RegisterType<MainWindow>()
                 .AsSelf();
 
