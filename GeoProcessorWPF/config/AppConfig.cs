@@ -26,20 +26,6 @@ namespace J4JSoftware.GeoProcessor
 
         public string APIKey { get; set; } = string.Empty;
 
-        //public Dictionary<ProcessorType, APIKey> APIKeys { get; set; } = new Dictionary<ProcessorType, APIKey>();
-        
-        //public string APIKey
-        //{
-        //    get => APIKeys.ContainsKey( ProcessorType ) ? APIKeys[ ProcessorType ].Value : string.Empty;
-
-        //    set
-        //    {
-        //        if( APIKeys.ContainsKey( ProcessorType ) )
-        //            APIKeys[ ProcessorType ].Value = value;
-        //        else APIKeys.Add( ProcessorType, new APIKey { Value = value, Type = ProcessorType } );
-        //    }
-        //}
-
         public ExportType ExportType
         {
             get => OutputFile.Type;

@@ -32,24 +32,39 @@ namespace J4JSoftware.GeoProcessor
         private CompositionRoot()
             : base( "J4JSoftware", AppName, "J4JSoftware.GeoProcessor.DataProtection" )
         {
-            var provider = new ChannelConfigProvider( "Logging" )
-                .AddChannel<ConsoleConfig>( "Channels:Console" )
-                .AddChannel<DebugConfig>( "Channels:Debug" );
+            NetEventChannelConfiguration = new NetEventConfig
+            {
+                OutputTemplate = "[{Level:u3}] {Message}",
+                EventElements = EventElements.None
+            };
 
             if( InDesignMode )
             {
                 var loggerConfig = new J4JLoggerConfiguration();
+
                 loggerConfig.Channels.Add( new DebugConfig() );
+                loggerConfig.Channels.Add( NetEventChannelConfiguration );
 
                 StaticConfiguredLogging( loggerConfig );
             }
-            else ConfigurationBasedLogging( provider );
+            else
+            {
+                var provider = new ChannelConfigProvider( "Logging" )
+                    .AddChannel<ConsoleConfig>( "Channels:Console" )
+                    .AddChannel<DebugConfig>( "Channels:Debug" );
+
+                provider.AddChannel( NetEventChannelConfiguration );
+
+                ConfigurationBasedLogging( provider );
+            }
 
             UseConsoleLifetime = true;
         }
 
         public bool InDesignMode => System.ComponentModel.DesignerProperties
             .GetIsInDesignMode( new DependencyObject() );
+
+        public NetEventConfig NetEventChannelConfiguration { get; }
 
         protected override void SetupConfigurationEnvironment( IConfigurationBuilder builder )
         {
@@ -86,6 +101,13 @@ namespace J4JSoftware.GeoProcessor
             
             builder.RegisterType<ProcessorViewModel>()
                 .AsSelf();
+
+            if( InDesignMode )
+                builder.RegisterType<DesignTimeProcessFileViewModel>()
+                    .AsImplementedInterfaces();
+            else
+                builder.RegisterType<ProcessFileViewModel>()
+                    .AsImplementedInterfaces();
             
             builder.RegisterType<MainWindow>()
                 .AsSelf();

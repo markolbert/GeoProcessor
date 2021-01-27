@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -54,11 +55,17 @@ namespace J4JSoftware.GeoProcessor
             }
 
             var curStartingIdx = 0;
+            var ptsSinceLastReport = 0;
 
             for( var idx = 1; idx < coordinates.Count; idx++ )
             {
-                if( idx % 1000 == 0 )
-                    Logger?.Information( "Coalesced {0:n0} points by distance", idx );
+                ptsSinceLastReport++;
+
+                if( ptsSinceLastReport >= ReportingInterval )
+                {
+                    OnReportingInterval( ptsSinceLastReport );
+                    ptsSinceLastReport -= ReportingInterval;
+                }
 
                 var mostRecentDistance = GeoExtensions
                     .GetDistance(coordinates[idx - 1], coordinates[idx]);

@@ -1,7 +1,10 @@
 ﻿using System.IO;
 using System.Text.Json;
+using System.Windows;
 using System.Windows.Input;
 using J4JSoftware.Logging;
+using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 
@@ -36,8 +39,8 @@ namespace J4JSoftware.GeoProcessor
             RouteOptionsViewModel = routeOptionsVM;
             ProcessorViewModel = procVM;
 
-            SaveCommand = new RelayCommand( SaveCommandHandler );
-            ProcessCommand = new RelayCommand( ProcessCommandHandler );
+            SaveCommand = new RelayCommand( SaveCommandHandlerAsync );
+            ProcessCommand = new RelayCommand( ProcessCommandHandlerAsync );
         }
 
         public FileViewModel FileViewModel { get; }
@@ -57,7 +60,7 @@ namespace J4JSoftware.GeoProcessor
 
         public ICommand SaveCommand { get; }
 
-        private async void SaveCommandHandler()
+        private async void SaveCommandHandlerAsync()
         {
             var options = new JsonSerializerOptions { WriteIndented = true };
 
@@ -76,9 +79,23 @@ namespace J4JSoftware.GeoProcessor
 
         public ICommand ProcessCommand { get; }
 
-        private void ProcessCommandHandler()
+        private async void ProcessCommandHandlerAsync()
         {
+            if( File.Exists( _appConfig.OutputFile.FilePath ) )
+            {
+                var mainWin = Application.Current.MainWindow as MetroWindow;
 
+                var result = await mainWin!.ShowMessageAsync( "Output File Exists",
+                    "The output file exists. Do you want to overwrite it?", 
+                    MessageDialogStyle.AffirmativeAndNegative );
+
+                if( result == MessageDialogResult.Negative )
+                    return;
+            }
+
+            var procWin = new ProcessWindow();
+
+            procWin.ShowDialog();
         }
     }
 }

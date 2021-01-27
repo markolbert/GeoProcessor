@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,18 +9,42 @@ namespace J4JSoftware.GeoProcessor
 {
     public class RouteProcessor : IRouteProcessor
     {
+        public event EventHandler<int>? PointsProcessed;
+
+        private int _reportingInterval;
+
         protected RouteProcessor(
-            IGeoConfig config, 
+            IGeoConfig config,
             IJ4JLogger? logger )
         {
             Configuration = config.ProcessorInfo;
             Processor = config.ProcessorType;
+            ReportingInterval = config.ProcessorInfo.MaxPointsPerRequest * 5;
 
             Logger = logger;
             Logger?.SetLoggedType( GetType() );
         }
 
         protected IJ4JLogger? Logger { get; }
+
+        public int ReportingInterval
+        {
+            get => _reportingInterval;
+
+            set
+            {
+                if( value <= 0 )
+                {
+                    var temp = Configuration.MaxPointsPerRequest * 5;
+                    _reportingInterval = temp;
+
+                    Logger?.Error( "ReportingInterval must be >= 0, defaulting to {0}", temp );
+                }
+                else _reportingInterval = value;
+            }
+        }
+
+        protected void OnReportingInterval( int points ) => PointsProcessed?.Invoke( this, points );
 
         protected ProcessorInfo Configuration { get; }
         protected ProcessorType Processor { get; }

@@ -23,7 +23,7 @@ namespace J4JSoftware.GeoProcessor
         {
             if (!File.Exists(filePath))
             {
-                Logger?.Error<string>("File '{0}' does not exist", filePath);
+                Logger?.Error<string>($"File '{0}' does not exist",filePath);
                 return null;
             }
 
@@ -38,7 +38,7 @@ namespace J4JSoftware.GeoProcessor
 
                 if( kmlEntry == null )
                 {
-                    Logger?.Error<string>("File '{0}' does not contain any KML files", filePath);
+                    Logger?.Error<string>($"File '{0}' does not contain any KML files",filePath);
                     return null;
                 }
 
@@ -46,7 +46,7 @@ namespace J4JSoftware.GeoProcessor
             }
             catch (Exception e)
             {
-                Logger?.Error<string, string>("Could not load file '{0}', exception was '{1}'", filePath, e.Message);
+                Logger?.Error<string, string>( $"Could not load file '{0}', exception was '{1}'", filePath, e.Message );
                 return null;
             }
 

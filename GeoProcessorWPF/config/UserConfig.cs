@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace J4JSoftware.GeoProcessor
 {
@@ -10,9 +6,9 @@ namespace J4JSoftware.GeoProcessor
     {
         public Dictionary<ProcessorType, APIKey> APIKeys { get; set; } = new();
 
-        public string? GetAPIKey( ProcessorType procType ) =>
+        public string GetAPIKey( ProcessorType procType ) =>
             APIKeys.TryGetValue( procType, out var apiKey )
                 ? apiKey.Value
-                : null;
+                : string.Empty;
     }
 }

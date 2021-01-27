@@ -13,5 +13,6 @@ namespace J4JSoftware.GeoProcessor
         }
 
         public MainViewModel MainViewModel => _host.Services.GetRequiredService<MainViewModel>();
+        public IProcessFileViewModel ProcessFileViewModel => _host.Services.GetRequiredService<IProcessFileViewModel>();
     }
 }

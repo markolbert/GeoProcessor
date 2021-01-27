@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Input;
 using J4JSoftware.Logging;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 

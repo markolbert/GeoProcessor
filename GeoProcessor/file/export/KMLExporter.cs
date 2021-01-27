@@ -48,7 +48,7 @@ namespace J4JSoftware.GeoProcessor
             }
             catch( Exception e )
             {
-                Logger?.Information<string, string>( 
+                Logger?.Error<string, string>( 
                     "Export to file '{0}' failed, message was '{1}'", 
                     curFilePath,
                     e.Message );

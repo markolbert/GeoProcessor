@@ -1,4 +1,5 @@
-﻿using J4JSoftware.Logging;
+﻿using System;
+using J4JSoftware.Logging;
 
 namespace J4JSoftware.GeoProcessor
 {
