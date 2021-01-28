@@ -30,20 +30,32 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{46B961C5-1
 		docs\cmdline.md = docs\cmdline.md
 		docs\config.md = docs\config.md
 		docs\distance.md = docs\distance.md
+		docs\library.md = docs\library.md
 		LICENSE.md = LICENSE.md
 		README.md = README.md
+		docs\win-config.md = docs\win-config.md
+		docs\win-running-the-app.md = docs\win-running-the-app.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{62EB80C2-C53A-48CB-BC0D-67D4F40A5881}"
 	ProjectSection(SolutionItems) = preProject
 		docs\assets\tldr-console.png = docs\assets\tldr-console.png
+		docs\assets\win-completed.png = docs\assets\win-completed.png
+		docs\assets\win-existing-file.png = docs\assets\win-existing-file.png
+		docs\assets\win-good-to-go.png = docs\assets\win-good-to-go.png
+		docs\assets\win-launch.png = docs\assets\win-launch.png
+		docs\assets\win-options-changed.png = docs\assets\win-options-changed.png
+		docs\assets\win-options.png = docs\assets\win-options.png
+		docs\assets\win-processing.png = docs\assets\win-processing.png
+		docs\assets\win-processors.png = docs\assets\win-processors.png
+		docs\assets\win-ready-to-begin.png = docs\assets\win-ready-to-begin.png
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "J4JCommandLine", "..\J4JCommandLine\J4JCommandLine\J4JCommandLine.csproj", "{67D12E27-03F7-4BC9-BE34-4BCC782716FC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleUtilities", "..\ProgrammingUtilities\ConsoleUtilities\ConsoleUtilities.csproj", "{7F59F25F-4F4F-4361-8C6D-C52972F56269}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoProcessorWPF", "GeoProcessorWPF\GeoProcessorWPF.csproj", "{26C0D173-954F-4476-8C3C-79A4249C1E36}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoProcessorWPF", "GeoProcessorWPF\GeoProcessorWPF.csproj", "{26C0D173-954F-4476-8C3C-79A4249C1E36}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

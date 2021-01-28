@@ -142,6 +142,7 @@ namespace J4JSoftware.GeoProcessor
                     _cancellationSrc.CancelAfter( 2000 );
 
                     CommandButtonText = "Close";
+                    Phase = "Aborted";
                     await Dispatcher.Yield();
 
                     return;
@@ -223,6 +224,7 @@ namespace J4JSoftware.GeoProcessor
             }
 
             _procState = ProcessState.Finished;
+            Phase = "Done";
             CommandButtonText = "Close";
             await Dispatcher.Yield();
         }

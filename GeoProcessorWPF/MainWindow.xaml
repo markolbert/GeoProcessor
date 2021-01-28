@@ -181,9 +181,9 @@
                               DataContext="{Binding RouteOptionsViewModel, Source={StaticResource ViewModelLocator}}">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="11.637"/>
-                        <ColumnDefinition Width="13.536"/>
-                        <ColumnDefinition Width="97.98"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
