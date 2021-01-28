@@ -1,6 +1,7 @@
 ## Configuring the Windows Desktop App
 When you launch the app you'll be created with the main window:
-![launch screen](assets/win-launch.png)
+
+<img src="assets/win-launch.png" width="100%" align="middle"/>
 
 By selecting tabs and entering values you can configure how files will be processed. You
 can also specify a file to be processed and where you want the processed file to be
