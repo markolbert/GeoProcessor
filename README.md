@@ -8,7 +8,9 @@ access those).
 ### TL;DR
 - The console app should compile and run anywhere Net5 is supported...but 
 I've only tested it on Windows 10.
-![tl;dr console image](docs/assets/tldr-console.png)
+
+<img src="docs/assets/tldr-console.png" width="500" align="center" />
+
 Configuration values can be specified in configuration files or, in some
 cases, from the command line. Anything that's required and missing from
 the configuration files will be prompted for at the console (you can also
