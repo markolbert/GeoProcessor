@@ -7,7 +7,7 @@ using Microsoft.Toolkit.Mvvm.ComponentModel;
 
 namespace J4JSoftware.GeoProcessor
 {
-    public class ProcessorViewModel : ObservableRecipient
+    public class ProcessorViewModel : ObservableRecipient, IProcessorViewModel
     {
         private readonly IAppConfig _appConfig;
         private readonly IUserConfig _userConfig;

@@ -56,8 +56,8 @@ namespace J4JSoftware.GeoProcessor
             _routeProc.PointsProcessed += DisplayPointsProcessedAsync;
             PointsProcessed = 0;
 
-            ProcessCommand = new RelayCommand<ProcessWindow>( ProcessCommandAsync );
-            CancelCommand = new RelayCommand<ProcessWindow>( CancelCommandHandler );
+            ProcessCommand = new RelayCommand( ProcessCommandAsync );
+            CancelCommand = new RelayCommand( CancelCommandHandler );
 
             if( string.IsNullOrEmpty( _appConfig.APIKey ) )
             {
@@ -107,8 +107,6 @@ namespace J4JSoftware.GeoProcessor
             private set => SetProperty( ref _cmdButtonText, value );
         }
 
-        public bool Succeeded { get; private set; }
-
         public Visibility CancelVisibility
         {
             get => _cancelVisibility;
@@ -117,15 +115,14 @@ namespace J4JSoftware.GeoProcessor
 
         public ICommand CancelCommand { get; }
 
-        private void CancelCommandHandler( ProcessWindow theWindow )
+        private void CancelCommandHandler()
         {
-            Succeeded = true;
-            theWindow.Close();
+            Messenger.Send( new ProcessingCompletedMessage( true ), "primary" );
         }
 
         public ICommand ProcessCommand { get; }
 
-        private async void ProcessCommandAsync( ProcessWindow theWindow )
+        private async void ProcessCommandAsync()
         {
             switch( _procState )
             {
@@ -150,15 +147,11 @@ namespace J4JSoftware.GeoProcessor
                     return;
 
                 case ProcessState.Finished:
-                    Succeeded = true;
-                    theWindow.Close();
-
+                    Messenger.Send( new ProcessingCompletedMessage( true ), "primary" );
                     return;
 
                 case ProcessState.Aborted:
-                    Succeeded = false;
-                    theWindow.Close();
-
+                    Messenger.Send( new ProcessingCompletedMessage( false ), "primary" );
                     return;
             }
 

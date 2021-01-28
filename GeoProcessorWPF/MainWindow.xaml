@@ -5,10 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         mc:Ignorable="d"
-        FontFamily="SeguoeUI"
-        FontSize="14"
         ResizeMode="CanResizeWithGrip"
         GlowBrush="{DynamicResource MahApps.Brushes.Accent}"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Normal"
+        TextElement.FontSize="14"
+        WindowTitleBrush="Teal"
+        Background="{DynamicResource MaterialDesignPaper}"
         Title="GeoProcessor" 
         Height="450" Width="800">
 
@@ -26,16 +29,14 @@
             </StackPanel>
 
             <Button DockPanel.Dock="Right"
-                    Margin="5"
+                    Margin="5, 5, 10,10"
                     HorizontalAlignment="Right"
-                    Style="{StaticResource MahApps.Styles.Button.Flat}"
                     Content="Save Settings"
                     Command="{Binding SaveCommand}" />
 
             <Button DockPanel.Dock="Right"
-                    Margin="5"
+                    Margin="5, 5, 10,10"
                     HorizontalAlignment="Right"
-                    Style="{StaticResource MahApps.Styles.Button.Flat}"
                     Content="Process File"
                     IsEnabled="{Binding ConfigurationIsValid}"
                     Command="{Binding ProcessCommand}" />
@@ -47,8 +48,8 @@
                     Margin="5">
 
             <mah:MetroTabItem Header="Process"
-                              DataContext="{Binding FileViewModel}">
-                <Grid Background="#FFE5E5E5">
+                              DataContext="{Binding FileViewModel, Source={StaticResource ViewModelLocator}}">
+                <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
@@ -67,10 +68,7 @@
                            Margin="0,0,11,0" />
                     <StackPanel Grid.Column="1" Grid.Row="0"
                                 Orientation="Horizontal" >
-                        <TextBox BorderThickness="1" 
-                                 BorderBrush="DarkGray"
-                                 Background="LightGray"
-                                 IsReadOnly="True"
+                        <TextBox IsReadOnly="True"
                                  Margin="5"
                                  MinWidth="300px"
                                  Text="{Binding InputPath, Mode=OneWay, ValidatesOnNotifyDataErrors=True}">
@@ -80,7 +78,7 @@
                                     <StackPanel Orientation="Horizontal">
                                         <AdornedElementPlaceholder x:Name="textBox" />
                                         <ItemsControl VerticalAlignment="Center"
-                                                      Margin="40,5,5,5"
+                                                      Margin="35,5,5,5"
                                                       ItemsSource="{Binding}">
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
@@ -91,8 +89,11 @@
                                     </StackPanel>
                                 </ControlTemplate>
                             </Validation.ErrorTemplate>
+
                         </TextBox>
+                        
                         <Button Content="..."
+                                Style="{DynamicResource MaterialDesignToolButton}"
                                 VerticalAlignment="Center"
                                 Command="{Binding InputFileCommand }" />
                     </StackPanel>
@@ -115,15 +116,32 @@
                            Margin="0,0,11,0" />
                     <StackPanel Grid.Column="1" Grid.Row="2"
                                 Orientation="Horizontal" Margin="0,0,0,27" Grid.RowSpan="2">
-                        <TextBox BorderThickness="1" 
-                                 BorderBrush="DarkGray"
-                                 Background="LightGray"
-                                 IsReadOnly="True"
+                        <TextBox IsReadOnly="True"
                                  Margin="5"
                                  MinWidth="300px"
-                                 Text="{Binding OutputPath, Mode=OneWay}"/>
+                                 Text="{Binding OutputPath, Mode=OneWay}">
+
+                            <Validation.ErrorTemplate>
+                                <ControlTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <AdornedElementPlaceholder x:Name="textBox" />
+                                        <ItemsControl VerticalAlignment="Center"
+                                                      Margin="35,5,5,5"
+                                                      ItemsSource="{Binding}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding ErrorContent}" Foreground="Red" />
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </ControlTemplate>
+                            </Validation.ErrorTemplate>
+
+                        </TextBox>
                         <Button Content="..."
                                 VerticalAlignment="Center"
+                                Style="{DynamicResource MaterialDesignToolButton}"
                                 Command="{Binding OutputFileCommand }" />
                     </StackPanel>
 
@@ -159,10 +177,12 @@
             </mah:MetroTabItem>
 
             <mah:MetroTabItem Header="Options"
-                              DataContext="{Binding RouteOptionsViewModel}">
-                <Grid Background="#FFE5E5E5">
+                              DataContext="{Binding RouteOptionsViewModel, Source={StaticResource ViewModelLocator}}">
+                <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="11.637"/>
+                        <ColumnDefinition Width="13.536"/>
+                        <ColumnDefinition Width="97.98"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
@@ -172,39 +192,40 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <Label Grid.Column="0" Grid.Row="0"
-                           VerticalAlignment="Center">Route Width, pixels</Label>
-                    <mah:NumericUpDown Grid.Column="1" Grid.Row="0"
+                    <Label Grid.Column="0"
+                           VerticalAlignment="Center" Grid.ColumnSpan="3">Route Width, pixels</Label>
+                    <mah:NumericUpDown Grid.Column="3" Grid.Row="0"
                                         HorizontalAlignment="Left"
-                                        Margin="5"
+                                        Margin="5,5,0,5"
                                         Minimum="1"
                                         Maximum="20"
                                         Value="{Binding Path=RouteWidth, Mode=TwoWay }"/>
 
                     <Label Grid.Column="0" Grid.Row="1"
-                           VerticalAlignment="Center" >Route Color</Label>
-                    <mah:ColorPicker Grid.Column="1" Grid.Row="1"
+                           VerticalAlignment="Center" Grid.ColumnSpan="3" >Route Color</Label>
+                    <mah:ColorPicker Grid.Column="3" Grid.Row="1"
                                      HorizontalAlignment="Left"
-                                     Margin="5"
+                                     Margin="5,5,0,5"
                                      Width="250"
                                      SelectedColor="{Binding Path= RouteColor, Mode=TwoWay}" />
 
                     <Label Grid.Column="0" Grid.Row="2"
-                           VerticalAlignment="Center" >Route Highlight Color</Label>
-                    <mah:ColorPicker Grid.Column="1" Grid.Row="2"
+                           VerticalAlignment="Center" Grid.ColumnSpan="3" >Route Highlight Color</Label>
+                    <mah:ColorPicker Grid.Column="3" Grid.Row="2"
                                      HorizontalAlignment="Left"
-                                     Margin="5"
+                                     Margin="5,5,0,5"
                                      Width="250"
                                      SelectedColor="{Binding Path= RouteHighlightColor, Mode=TwoWay}" />
                 </Grid>
             </mah:MetroTabItem>
 
             <mah:MetroTabItem Header="Route Engines"
-                              DataContext="{Binding ProcessorViewModel}" Height="26" VerticalAlignment="Top">
-                <Grid Background="#FFE5E5E5">
+                              DataContext="{Binding ProcessorViewModel, Source={StaticResource ViewModelLocator}}">
+                <Grid>
 
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="21.789"/>
+                        <ColumnDefinition Width="151.504"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
@@ -217,15 +238,14 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <Label Grid.Column="0" Grid.Row="0"
+                    <Label Grid.Column="0"
                            Content="Engine Type"
                            Margin="5,0,5,0"
-                           VerticalAlignment="Center" />
+                           VerticalAlignment="Center" Grid.ColumnSpan="2" />
 
-                    <ComboBox Grid.Column="1" Grid.Row="0"
+                    <ComboBox Grid.Column="2"
                               HorizontalAlignment="Left"
-                              Margin="5"
-                              VerticalAlignment="Center" 
+                              Margin="5,0,0,0" 
                               IsEditable="False"
                               ItemsSource="{Binding ProcessorTypes}"
                               SelectedItem="{Binding SelectedProcessorType}"/>
@@ -234,11 +254,11 @@
                            Content="API Key"
                            Margin="5,0,5,0"
                            VerticalAlignment="Center"
-                           Visibility="{Binding APIKeyVisible}" />
+                           Visibility="{Binding APIKeyVisible}" Grid.ColumnSpan="2" />
 
-                    <TextBox Grid.Column="1" Grid.Row="1"
+                    <TextBox Grid.Column="2" Grid.Row="1"
                              VerticalAlignment ="Center"
-                             Margin="5"
+                             Margin="5,0,5,0"
                              MinWidth="200"
                              Text="{Binding APIKey}"
                              Visibility="{Binding APIKeyVisible}"/>
@@ -247,13 +267,12 @@
                            Content="Encrypted API Key"
                            Margin="5,0,5,0"
                            VerticalAlignment="Center" 
-                           Visibility="{Binding APIKeyVisible}" />
+                           Visibility="{Binding APIKeyVisible}" Grid.ColumnSpan="2" />
 
-                    <TextBox Grid.Column="1" Grid.Row="2"
+                    <TextBox Grid.Column="2" Grid.Row="2"
                              VerticalAlignment ="Center"
-                             Margin="5" 
+                             Margin="5,0,5,0" 
                              MinWidth="200"
-                             Background="LightGray"
                              IsReadOnly="True"
                              Text="{Binding EncryptedAPIKey, Mode=OneWay }"
                              Visibility="{Binding APIKeyVisible}"/>
@@ -262,9 +281,9 @@
                            Content="Maximum Distance Multiplier"
                            Margin="5,0,5,0"
                            VerticalAlignment="Center" 
-                           Visibility="{Binding APIKeyVisible}" />
+                           Visibility="{Binding APIKeyVisible}" Grid.ColumnSpan="2" />
 
-                    <mah:NumericUpDown Grid.Column="1" Grid.Row="3"
+                    <mah:NumericUpDown Grid.Column="2" Grid.Row="3"
                                        HorizontalAlignment="Left"
                                        Margin="5,5,0,5"
                                        Minimum="1"
@@ -276,9 +295,9 @@
                            Content="Points per Request"
                            Margin="5,0,5,0"
                            VerticalAlignment="Center" 
-                           Visibility="{Binding RequestLimitVisibility}" />
+                           Visibility="{Binding RequestLimitVisibility}" Grid.ColumnSpan="2" />
 
-                    <mah:NumericUpDown Grid.Column="1" Grid.Row="4"
+                    <mah:NumericUpDown Grid.Column="2" Grid.Row="4"
                                        HorizontalAlignment="Left"
                                        Margin="5,5,0,5"
                                        Minimum="1"
@@ -289,10 +308,10 @@
                     <Label Grid.Column="0" Grid.Row="5"
                            Content="Maximum Separation"
                            Margin="5,0,5,0"
-                           VerticalAlignment="Center" />
+                           VerticalAlignment="Center" Grid.ColumnSpan="2" />
 
                     <StackPanel Grid.Column="1" Grid.Row="5"
-                                Orientation="Horizontal">
+                                Orientation="Horizontal" Grid.ColumnSpan="2" Margin="151,0,0,0">
 
                         <TextBox Margin="5"
                                  VerticalAlignment="Center"

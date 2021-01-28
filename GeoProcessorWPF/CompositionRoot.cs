@@ -90,24 +90,40 @@ namespace J4JSoftware.GeoProcessor
                 .AsImplementedInterfaces()
                 .SingleInstance();
 
-            builder.RegisterType<MainViewModel>()
-                .AsSelf();
-
-            builder.RegisterType<FileViewModel>()
-                .AsSelf();
-
-            builder.RegisterType<RouteOptionsViewModel>()
-                .AsSelf();
-            
-            builder.RegisterType<ProcessorViewModel>()
-                .AsSelf();
-
             if( InDesignMode )
+            {
+                builder.RegisterType<DesignTimeMainViewModel>()
+                    .AsImplementedInterfaces();
+
+                builder.RegisterType<DesignTimeFileViewModel>()
+                    .AsImplementedInterfaces();
+
+                builder.RegisterType<DesignTimeRouteOptionsViewModel>()
+                    .AsImplementedInterfaces();
+            
+                builder.RegisterType<DesignTimeProcessorViewModel>()
+                    .AsImplementedInterfaces();
+
                 builder.RegisterType<DesignTimeProcessFileViewModel>()
                     .AsImplementedInterfaces();
+            }
             else
+            {
+                builder.RegisterType<MainViewModel>()
+                    .AsImplementedInterfaces();
+
+                builder.RegisterType<FileViewModel>()
+                    .AsImplementedInterfaces();
+
+                builder.RegisterType<RouteOptionsViewModel>()
+                    .AsImplementedInterfaces();
+            
+                builder.RegisterType<ProcessorViewModel>()
+                    .AsImplementedInterfaces();
+
                 builder.RegisterType<ProcessFileViewModel>()
                     .AsImplementedInterfaces();
+            }
             
             builder.RegisterType<MainWindow>()
                 .AsSelf();

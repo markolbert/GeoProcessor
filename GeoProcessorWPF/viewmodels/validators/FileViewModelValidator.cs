@@ -15,6 +15,14 @@ namespace J4JSoftware.GeoProcessor
             RuleFor( x => x.SnappingTypes )
                 .Must( x => x.Any() )
                 .WithMessage( "No snap-to-route processors are defined" );
+
+            RuleFor( x => x.SelectedSnappingType )
+                .Must( x => x != ProcessorType.Undefined && x != ProcessorType.Distance )
+                .WithMessage( "You must select a snap-to-route engine" );
+            
+            RuleFor( x => x.OutputPath )
+                .NotEmpty()
+                .WithMessage( "An output file must be specified" );
         }
     }
 }

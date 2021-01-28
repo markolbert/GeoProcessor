@@ -10,18 +10,16 @@ using Microsoft.Toolkit.Mvvm.Input;
 
 namespace J4JSoftware.GeoProcessor
 {
-    public class MainViewModel : ObservableRecipient
+    public class MainViewModel : ObservableRecipient, IMainViewModel
     {
         private readonly IAppConfig _appConfig;
         private readonly IUserConfig _userConfig;
         private readonly IJ4JLogger? _logger;
 
         private bool _configIsValid;
+        private ProcessWindow? _procWin;
 
         public MainViewModel(
-            FileViewModel fileVM,
-            RouteOptionsViewModel routeOptionsVM,
-            ProcessorViewModel procVM,
             IAppConfig appConfig,
             IUserConfig userConfig,
             IJ4JLogger? logger )
@@ -32,31 +30,45 @@ namespace J4JSoftware.GeoProcessor
             _logger = logger;
             _logger?.SetLoggedType( GetType() );
 
-            FileViewModel = fileVM;
-            FileViewModel.PropertyChanged += ( fvm, args ) => CheckIfValid();
-            CheckIfValid();
-
-            RouteOptionsViewModel = routeOptionsVM;
-            ProcessorViewModel = procVM;
-
             SaveCommand = new RelayCommand( SaveCommandHandlerAsync );
             ProcessCommand = new RelayCommand( ProcessCommandHandlerAsync );
+
+            IsActive = true;
         }
 
-        public FileViewModel FileViewModel { get; }
-        public RouteOptionsViewModel RouteOptionsViewModel { get; }
-        public ProcessorViewModel ProcessorViewModel { get; }
+        protected override void OnActivated()
+        {
+            base.OnActivated();
+
+            Messenger.Register<MainViewModel, FileConfigurationMessage, string>( this, 
+                "primary",
+                FileConfigurationMessageHandler );
+
+            Messenger.Register<MainViewModel, ProcessingCompletedMessage, string>( this, 
+                "primary",
+                ProcessCompletedMessageHandler );
+        }
+
+        protected override void OnDeactivated()
+        {
+            base.OnDeactivated();
+
+            Messenger.UnregisterAll(this);
+        }
+
+        private void FileConfigurationMessageHandler( object recipient, FileConfigurationMessage fcMesg )
+        {
+            ConfigurationIsValid = fcMesg.ConfigurationIsValid;
+        }
+
+        private void ProcessCompletedMessageHandler( object recipient, ProcessingCompletedMessage pcMesg ) =>
+            _procWin?.Close();
 
         public bool ConfigurationIsValid
         {
             get => _configIsValid;
             private set => SetProperty( ref _configIsValid, value );
         }
-
-        private void CheckIfValid() =>
-            ConfigurationIsValid = File.Exists( FileViewModel.InputPath )
-                                   && FileViewModel.SelectedSnappingType != ProcessorType.Undefined
-                                   && !string.IsNullOrEmpty( FileViewModel.OutputPath );
 
         public ICommand SaveCommand { get; }
 
@@ -93,9 +105,8 @@ namespace J4JSoftware.GeoProcessor
                     return;
             }
 
-            var procWin = new ProcessWindow();
-
-            procWin.ShowDialog();
+            _procWin = new ProcessWindow();
+            _procWin.ShowDialog();
         }
     }
 }

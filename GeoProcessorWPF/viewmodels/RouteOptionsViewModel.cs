@@ -4,7 +4,7 @@ using Microsoft.Toolkit.Mvvm.ComponentModel;
 
 namespace J4JSoftware.GeoProcessor
 {
-    public class RouteOptionsViewModel : ObservableRecipient
+    public class RouteOptionsViewModel : ObservableRecipient, IRouteOptionsViewModel
     {
         private readonly IAppConfig _appConfig;
         private readonly IJ4JLogger? _logger;

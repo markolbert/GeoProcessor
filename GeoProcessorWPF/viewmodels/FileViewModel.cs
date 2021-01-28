@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -12,16 +13,17 @@ using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
+using Microsoft.Toolkit.Mvvm.Messaging;
+using Microsoft.Toolkit.Mvvm.Messaging.Messages;
 using Microsoft.Win32;
 
 namespace J4JSoftware.GeoProcessor
 {
-    public class FileViewModel : ObservableRecipient, INotifyDataErrorInfo
+    public class FileViewModel : ObservableRecipient, IFileViewModel
     {
         public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
         private readonly IAppConfig _appConfig;
-        private readonly IUserConfig _userConfig;
         private readonly FileViewModelValidator _validator = new();
         private readonly IJ4JLogger? _logger;
 
@@ -37,7 +39,6 @@ namespace J4JSoftware.GeoProcessor
             IJ4JLogger? logger )
         {
             _appConfig = appConfig;
-            _userConfig = userConfig;
 
             _logger = logger;
             _logger?.SetLoggedType( GetType() );
@@ -49,15 +50,15 @@ namespace J4JSoftware.GeoProcessor
                 .Where( kvp =>
                     kvp.Value.SupportsSnapping
                     && ( !kvp.Value.RequiresKey
-                         || ( _userConfig.APIKeys.ContainsKey( kvp.Key )
-                              && !string.IsNullOrEmpty( _userConfig.APIKeys[ kvp.Key ].Value ) ) ) )
+                         || ( userConfig.APIKeys.ContainsKey( kvp.Key )
+                              && !string.IsNullOrEmpty( userConfig.APIKeys[ kvp.Key ].Value ) ) ) )
                 .Select( kvp => kvp.Key ) );
-
-            Validate( "SnappingTypes" );
 
             SelectedSnappingType = SnappingTypes.Any() ? SnappingTypes.First() : ProcessorType.Undefined;
 
             OutputPath = _appConfig.OutputFile.FilePath;
+
+            Validate( "SnappingTypes" );
 
             InputFileCommand = new RelayCommand( InputFileDialog );
             OutputFileCommand = new RelayCommand( OutputFileDialog );
@@ -204,6 +205,8 @@ namespace J4JSoftware.GeoProcessor
                 .ToDictionary( x => x.Key, x => x.ToList() );
 
             ErrorsChanged?.Invoke( this, new DataErrorsChangedEventArgs( propName ) );
+
+            Messenger.Send( new FileConfigurationMessage( !_errors.Any() ), "primary" );
         }
     }
 }

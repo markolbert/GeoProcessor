@@ -6,8 +6,11 @@
                  xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
                  xmlns:local="clr-namespace:J4JSoftware.GeoProcessor"
                  mc:Ignorable="d"
-                 FontFamily="SeguoeUI"
-                 FontSize="14"
+                 TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+                 TextElement.FontWeight="Normal"
+                 TextElement.FontSize="14"
+                 WindowTitleBrush="Teal"
+                 Background="{DynamicResource MaterialDesignPaper}"
                  ShowCloseButton="False"
                  ShowMaxRestoreButton="False"
                  ShowMinButton="False"
@@ -16,8 +19,7 @@
                  Title="Process File" 
                  Height="250" Width="500">
 
-    <Grid Background="#FFE5E5E5"
-          DataContext="{Binding ProcessFileViewModel, Source={StaticResource ViewModelLocator} }">
+    <Grid DataContext="{Binding ProcessFileViewModel, Source={StaticResource ViewModelLocator} }">
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -73,18 +75,16 @@
                     Orientation="Horizontal"
                     HorizontalAlignment="Right" >
 
-            <Button Margin="5, 5, 5, 10" 
+            <Button Margin="5, 5, 10, 10" 
                     HorizontalAlignment="Right"
                     Content="{Binding CommandButtonText}" 
-                    Command="{Binding ProcessCommand}"
-                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window} }"/>
+                    Command="{Binding ProcessCommand}" />
 
-            <Button Margin="0, 5, 10,10" 
+            <Button Margin="5, 5, 10, 10" 
                     HorizontalAlignment="Right"
                     Content="Cancel" 
                     Visibility="{Binding CancelVisibility}"
-                    Command="{Binding CancelCommand}" 
-                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window} }"/>
+                    Command="{Binding CancelCommand}" />
 
         </StackPanel>
     </Grid>
