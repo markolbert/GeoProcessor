@@ -69,13 +69,24 @@
             </ItemsControl>
         </ScrollViewer>
 
-        <Button Grid.Column="1" Grid.Row="3"
-                Margin="10" 
-                HorizontalAlignment="Right"
-                Content="{Binding CommandButtonText}" 
-                Command="{Binding ProcessCommand}"
-                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window} }"/>
+        <StackPanel Grid.Column="1" Grid.Row="3"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right" >
 
+            <Button Margin="5, 5, 5, 10" 
+                    HorizontalAlignment="Right"
+                    Content="{Binding CommandButtonText}" 
+                    Command="{Binding ProcessCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window} }"/>
+
+            <Button Margin="0, 5, 10,10" 
+                    HorizontalAlignment="Right"
+                    Content="Cancel" 
+                    Visibility="{Binding CancelVisibility}"
+                    Command="{Binding CancelCommand}" 
+                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window} }"/>
+
+        </StackPanel>
     </Grid>
 
 </mah:MetroWindow>

@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Input;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
@@ -10,6 +11,7 @@ namespace J4JSoftware.GeoProcessor
         private int _pointProcessed;
         private string _phase = string.Empty;
         private string _cmdButtonText = string.Empty;
+        private Visibility _cancelVisibility = Visibility.Visible;
 
         public DesignTimeProcessFileViewModel()
         {
@@ -47,6 +49,14 @@ namespace J4JSoftware.GeoProcessor
 
         public bool Succeeded => true;
         
+        public Visibility CancelVisibility
+        {
+            get => _cancelVisibility;
+            private set => SetProperty( ref _cancelVisibility, value );
+        }
+
+        public ICommand CancelCommand {get;}
+
         public ICommand ProcessCommand { get; }
 
         private async void ProcessCommandAsync( ProcessWindow theWindow )

@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using Autofac.Features.Indexed;
@@ -28,6 +29,7 @@ namespace J4JSoftware.GeoProcessor
         private string _phase = string.Empty;
         private ProcessState _procState = ProcessState.Ready;
         private string _cmdButtonText = string.Empty;
+        private Visibility _cancelVisibility = Visibility.Visible;
 
         public ProcessFileViewModel(
             IAppConfig appConfig,
@@ -55,6 +57,7 @@ namespace J4JSoftware.GeoProcessor
             PointsProcessed = 0;
 
             ProcessCommand = new RelayCommand<ProcessWindow>( ProcessCommandAsync );
+            CancelCommand = new RelayCommand<ProcessWindow>( CancelCommandHandler );
 
             if( string.IsNullOrEmpty( _appConfig.APIKey ) )
             {
@@ -106,6 +109,20 @@ namespace J4JSoftware.GeoProcessor
 
         public bool Succeeded { get; private set; }
 
+        public Visibility CancelVisibility
+        {
+            get => _cancelVisibility;
+            private set => SetProperty( ref _cancelVisibility, value );
+        }
+
+        public ICommand CancelCommand { get; }
+
+        private void CancelCommandHandler( ProcessWindow theWindow )
+        {
+            Succeeded = true;
+            theWindow.Close();
+        }
+
         public ICommand ProcessCommand { get; }
 
         private async void ProcessCommandAsync( ProcessWindow theWindow )
@@ -113,8 +130,10 @@ namespace J4JSoftware.GeoProcessor
             switch( _procState )
             {
                 case ProcessState.Ready:
+                    CancelVisibility = Visibility.Collapsed;
                     _procState = ProcessState.Running;
                     CommandButtonText = "Abort";
+
                     await Dispatcher.Yield();
 
                     await ProcessAsync();
