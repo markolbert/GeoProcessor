@@ -12,9 +12,13 @@ you'll have to do that on the **Route Engines** tab.
 
 You can adjust the color and width of the route line that will show up when the route is
 displayed in Google Earth on the **Options** tab:
-![options](assets/win-options.png)
+
+<img src="assets/win-options.png" width="800px" />
+
 You configure way the various route engines work on the **Route Engines** tab:
-![options](assets/win-processors.png)
+
+<img src="assets/win-processors.png" width="800px" />
+
 I've blanked out the **API Key** and **Encrypted API Key** fields for security reasons. 
 
 Once you have an API key for either Bing Maps or Google Maps you'd enter it in the 
@@ -30,5 +34,7 @@ service if you exceed their free usage thresholds.
 #### Saving a Configuration
 If you change the configuration that's on file the **Save Settings** button will become
 enabled:
-![options](assets/win-options-changed.png)
+
+<img src="assets/win-options-changed.png" width="800px" />
+
 Clicking it saves your current settings to disk for later use.
