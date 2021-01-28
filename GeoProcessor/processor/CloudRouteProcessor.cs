@@ -36,6 +36,9 @@ namespace J4JSoftware.GeoProcessor
 
             foreach (var coordinates in chunks)
             {
+                if( cancellationToken.IsCancellationRequested )
+                    return null;
+
                 if (!await ProcessChunkAsync(coordinates, retVal!, cancellationToken))
                     return null;
 

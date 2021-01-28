@@ -59,6 +59,9 @@ namespace J4JSoftware.GeoProcessor
 
             for( var idx = 1; idx < coordinates.Count; idx++ )
             {
+                if( cancellationToken.IsCancellationRequested )
+                    return null;
+
                 ptsSinceLastReport++;
 
                 if( ptsSinceLastReport >= ReportingInterval )
