@@ -9,6 +9,13 @@ namespace J4JSoftware.GeoProcessor
 {
     public class ProcessorViewModel : ObservableRecipient, IProcessorViewModel
     {
+        private enum PropertySettingState
+        {
+            Initial,
+            ProcessorTypeChange,
+            Normal
+        }
+
         private readonly IAppConfig _appConfig;
         private readonly IUserConfig _userConfig;
         private readonly IJ4JLogger? _logger;
@@ -22,6 +29,7 @@ namespace J4JSoftware.GeoProcessor
         private int _maxPtsPerReq;
         private UnitTypes _selectedUnitType;
         private double _distanceValue;
+        private PropertySettingState _setState = PropertySettingState.Initial;
 
         public ProcessorViewModel(
             IAppConfig appConfig,
@@ -44,6 +52,8 @@ namespace J4JSoftware.GeoProcessor
             SelectedUnitType = _appConfig.Processors.TryGetValue( SelectedProcessorType, out var procInfo ) 
                 ? procInfo.MaxSeparation.Unit 
                 : GeoProcessor.UnitTypes.km;
+
+            _setState = PropertySettingState.Normal;
         }
 
         public ObservableCollection<ProcessorType> ProcessorTypes { get; }
@@ -56,28 +66,32 @@ namespace J4JSoftware.GeoProcessor
             {
                 SetProperty( ref _processorType, value );
 
+                // don't update the underlying AppConfig object with the new values 
+                if( _setState == PropertySettingState.Normal )
+                    _setState = PropertySettingState.ProcessorTypeChange;
+
+                OnSettingsChanged();
+
                 _appConfig.ProcessorType = value;
 
-                // we set some properties indirectly because we don't want to do an update of
-                // the underlying model's value, which is what calling the setters would do
                 if( _appConfig.Processors.TryGetValue( _processorType, out var processorInfo ) )
                 {
                     APIKeyVisible = processorInfo.RequiresKey ? Visibility.Visible : Visibility.Collapsed;
                     RequestLimitVisibility = processorInfo.HasPointsLimit ? Visibility.Visible : Visibility.Collapsed;
 
-                    SetProperty( ref _maxPtsPerReq, processorInfo.MaxPointsPerRequest );
-                    SetProperty( ref _maxDistMultiplier, processorInfo.MaxDistanceMultiplier );
-                    SetProperty( ref _distanceValue, processorInfo.MaxSeparation.OriginalValue );
-                    SetProperty( ref _selectedUnitType, processorInfo.MaxSeparation.Unit );
+                    MaxPointsPerRequest = processorInfo.MaxPointsPerRequest;
+                    MaxDistanceMultiplier = processorInfo.MaxDistanceMultiplier;
+                    DistanceValue = processorInfo.MaxSeparation.OriginalValue;
+                    SelectedUnitType = processorInfo.MaxSeparation.Unit;
 
                     if( _userConfig.APIKeys.TryGetValue( _processorType, out var apiKey ) )
                     {
-                        SetProperty( ref _apiKey, apiKey.Value );
+                        APIKey = apiKey.Value;
                         EncryptedAPIKey = apiKey.EncryptedValue;
                     }
                     else
                     {
-                        SetProperty( ref _apiKey, string.Empty );
+                        APIKey = string.Empty;
                         EncryptedAPIKey = string.Empty;
                     }
                 }
@@ -86,11 +100,14 @@ namespace J4JSoftware.GeoProcessor
                     APIKeyVisible = Visibility.Collapsed;
                     RequestLimitVisibility=Visibility.Collapsed;
 
-                    SetProperty( ref _maxPtsPerReq, 100 );
-                    SetProperty( ref _maxDistMultiplier, 3 );
-                    SetProperty( ref _distanceValue, 2.0 );
-                    SetProperty( ref _selectedUnitType, GeoProcessor.UnitTypes.km );
+                    MaxPointsPerRequest = 100;
+                    MaxDistanceMultiplier = 3;
+                    DistanceValue = 2.0;
+                    SelectedUnitType = GeoProcessor.UnitTypes.km;
                 }
+
+                if( _setState == PropertySettingState.ProcessorTypeChange )
+                    _setState = PropertySettingState.Normal;
             }
         }
 
@@ -107,10 +124,14 @@ namespace J4JSoftware.GeoProcessor
             set
             {
                 SetProperty( ref _apiKey, value );
+                OnSettingsChanged();
 
-                _userConfig.APIKeys[ SelectedProcessorType ].Value = value;
+                if( _setState != PropertySettingState.Normal 
+                    || !_userConfig.APIKeys.TryGetValue( SelectedProcessorType, out var temp ) ) 
+                    return;
 
-                EncryptedAPIKey = _userConfig.APIKeys[ SelectedProcessorType ].EncryptedValue;
+                temp.Value = value;
+                EncryptedAPIKey = temp.EncryptedValue;
             }
         }
 
@@ -123,7 +144,18 @@ namespace J4JSoftware.GeoProcessor
         public int MaxDistanceMultiplier
         {
             get => _maxDistMultiplier;
-            set => SetProperty( ref _maxDistMultiplier, value );
+
+            set
+            {
+                SetProperty( ref _maxDistMultiplier, value );
+                OnSettingsChanged();
+
+                if( _setState != PropertySettingState.Normal 
+                    || !_appConfig.Processors.TryGetValue( SelectedProcessorType, out var temp ) ) 
+                    return;
+
+                temp.MaxDistanceMultiplier = value;
+            }
         }
 
         public Visibility RequestLimitVisibility
@@ -135,7 +167,17 @@ namespace J4JSoftware.GeoProcessor
         public int MaxPointsPerRequest
         {
             get => _maxPtsPerReq;
-            set => SetProperty( ref _maxPtsPerReq, value );
+            set
+            {
+                SetProperty( ref _maxPtsPerReq, value );
+                OnSettingsChanged();
+
+                if( _setState != PropertySettingState.Normal 
+                    || !_appConfig.Processors.TryGetValue( SelectedProcessorType, out var temp ) ) 
+                    return;
+
+                temp.MaxPointsPerRequest = value;
+            }
         }
 
         public ObservableCollection<UnitTypes> UnitTypes { get; }
@@ -147,8 +189,13 @@ namespace J4JSoftware.GeoProcessor
             set
             {
                 SetProperty( ref _selectedUnitType, value );
+                OnSettingsChanged();
 
-                _appConfig.Processors[ SelectedProcessorType ].MaxSeparation.ChangeUnitType( value );
+                if( _setState != PropertySettingState.Normal 
+                    || !_appConfig.Processors.TryGetValue( SelectedProcessorType, out var temp ) ) 
+                    return;
+
+                temp.MaxSeparation.ChangeUnitType( value );
             }
         }
 
@@ -162,9 +209,20 @@ namespace J4JSoftware.GeoProcessor
                     return;
 
                 SetProperty( ref _distanceValue, value );
+                OnSettingsChanged();
 
-                _appConfig.Processors[ SelectedProcessorType ].MaxSeparation.ChangeOriginalValue( value );
+                if( _setState != PropertySettingState.Normal 
+                    || !_appConfig.Processors.TryGetValue( SelectedProcessorType, out var temp ) ) 
+                    return;
+
+                temp.MaxSeparation.ChangeOriginalValue( value );
             }
+        }
+
+        private void OnSettingsChanged()
+        {
+            if( _setState == PropertySettingState.Normal )
+                Messenger.Send( new SettingsChangedMessage(), "primary" );
         }
     }
 }

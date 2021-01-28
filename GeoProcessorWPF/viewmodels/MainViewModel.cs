@@ -18,6 +18,7 @@ namespace J4JSoftware.GeoProcessor
 
         private bool _configIsValid;
         private ProcessWindow? _procWin;
+        private bool _settingsChanged;
 
         public MainViewModel(
             IAppConfig appConfig,
@@ -47,6 +48,10 @@ namespace J4JSoftware.GeoProcessor
             Messenger.Register<MainViewModel, ProcessingCompletedMessage, string>( this, 
                 "primary",
                 ProcessCompletedMessageHandler );
+
+            Messenger.Register<MainViewModel, SettingsChangedMessage, string>(this,
+                "primary",
+                SettingsChangedHandler );
         }
 
         protected override void OnDeactivated()
@@ -56,18 +61,32 @@ namespace J4JSoftware.GeoProcessor
             Messenger.UnregisterAll(this);
         }
 
-        private void FileConfigurationMessageHandler( object recipient, FileConfigurationMessage fcMesg )
+        private void FileConfigurationMessageHandler( MainViewModel recipient, FileConfigurationMessage fcMesg )
         {
             ConfigurationIsValid = fcMesg.ConfigurationIsValid;
         }
 
-        private void ProcessCompletedMessageHandler( object recipient, ProcessingCompletedMessage pcMesg ) =>
+        private void ProcessCompletedMessageHandler( MainViewModel recipient, ProcessingCompletedMessage pcMesg )
+        {
             _procWin?.Close();
+            _procWin = null;
+        }
+
+        private void SettingsChangedHandler( MainViewModel recipient, SettingsChangedMessage scMesg )
+        {
+            SettingsChanged = true;
+        }
 
         public bool ConfigurationIsValid
         {
             get => _configIsValid;
             private set => SetProperty( ref _configIsValid, value );
+        }
+
+        public bool SettingsChanged
+        {
+            get => _settingsChanged;
+            private set => SetProperty( ref _settingsChanged, value );
         }
 
         public ICommand SaveCommand { get; }

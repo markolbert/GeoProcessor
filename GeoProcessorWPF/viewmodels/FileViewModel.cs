@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using J4JSoftware.Logging;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
@@ -83,6 +84,20 @@ namespace J4JSoftware.GeoProcessor
             InputPath = dlg.FileName;
         }
 
+        public string InputPath
+        {
+            get => _inputPath;
+
+            private set
+            {
+                SetProperty( ref _inputPath, value );
+
+                _appConfig.InputFile.FilePath = value;
+
+                Validate();
+            }
+        }
+
         public ICommand OutputFileCommand { get; }
 
         private void OutputFileDialog()
@@ -100,20 +115,6 @@ namespace J4JSoftware.GeoProcessor
                 return;
 
             OutputPath = dlg.FileName;
-        }
-
-        public string InputPath
-        {
-            get => _inputPath;
-
-            private set
-            {
-                SetProperty( ref _inputPath, value );
-
-                _appConfig.InputFile.FilePath = value;
-
-                Validate();
-            }
         }
 
         public string OutputPath
@@ -168,7 +169,9 @@ namespace J4JSoftware.GeoProcessor
                 SetProperty( ref _exportType, value );
 
                 _appConfig.ExportType = value;
+
                 SetProperty( ref _outputPath, _appConfig.OutputFile.FilePath );
+                OnPropertyChanged( nameof(OutputPath) );
             }
         }
 

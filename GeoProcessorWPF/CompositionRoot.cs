@@ -93,36 +93,46 @@ namespace J4JSoftware.GeoProcessor
             if( InDesignMode )
             {
                 builder.RegisterType<DesignTimeMainViewModel>()
-                    .AsImplementedInterfaces();
+                    .AsImplementedInterfaces()
+                    .SingleInstance();
 
                 builder.RegisterType<DesignTimeFileViewModel>()
-                    .AsImplementedInterfaces();
+                    .AsImplementedInterfaces()
+                    .SingleInstance();
 
                 builder.RegisterType<DesignTimeRouteOptionsViewModel>()
-                    .AsImplementedInterfaces();
+                    .AsImplementedInterfaces()
+                    .SingleInstance();
             
                 builder.RegisterType<DesignTimeProcessorViewModel>()
-                    .AsImplementedInterfaces();
+                    .AsImplementedInterfaces()
+                    .SingleInstance();
 
                 builder.RegisterType<DesignTimeProcessFileViewModel>()
-                    .AsImplementedInterfaces();
+                    .AsImplementedInterfaces()
+                    .SingleInstance();
             }
             else
             {
                 builder.RegisterType<MainViewModel>()
-                    .AsImplementedInterfaces();
+                    .AsImplementedInterfaces()
+                    .SingleInstance();
 
                 builder.RegisterType<FileViewModel>()
-                    .AsImplementedInterfaces();
+                    .AsImplementedInterfaces()
+                    .SingleInstance();
 
                 builder.RegisterType<RouteOptionsViewModel>()
-                    .AsImplementedInterfaces();
+                    .AsImplementedInterfaces()
+                    .SingleInstance();
             
                 builder.RegisterType<ProcessorViewModel>()
-                    .AsImplementedInterfaces();
+                    .AsImplementedInterfaces()
+                    .SingleInstance();
 
                 builder.RegisterType<ProcessFileViewModel>()
-                    .AsImplementedInterfaces();
+                    .AsImplementedInterfaces()
+                    .SingleInstance();
             }
             
             builder.RegisterType<MainWindow>()

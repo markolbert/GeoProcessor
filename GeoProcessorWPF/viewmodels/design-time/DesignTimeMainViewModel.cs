@@ -13,6 +13,7 @@ namespace J4JSoftware.GeoProcessor
     public class DesignTimeMainViewModel : ObservableRecipient, IMainViewModel
     {
         private bool _configIsValid;
+        private bool _settingsChanged;
 
         public DesignTimeMainViewModel(
             IFileViewModel fileVM,
@@ -33,6 +34,12 @@ namespace J4JSoftware.GeoProcessor
         {
             get => _configIsValid;
             private set => SetProperty( ref _configIsValid, value );
+        }
+
+        public bool SettingsChanged
+        {
+            get => _settingsChanged;
+            private set => SetProperty( ref _settingsChanged, value );
         }
 
         public ICommand SaveCommand { get; }
