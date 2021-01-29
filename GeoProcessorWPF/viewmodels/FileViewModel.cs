@@ -131,6 +131,7 @@ namespace J4JSoftware.GeoProcessor
                 _appConfig.InputFile.FilePath = value;
 
                 Validate();
+                Messenger.Send( new SettingsChangedMessage(), "primary" );
             }
         }
 
@@ -170,6 +171,7 @@ namespace J4JSoftware.GeoProcessor
                     _logger?.Error( mesg );
 
                     SetProperty( ref _outputPath, _appConfig.OutputFile.FilePath );
+                    Messenger.Send( new SettingsChangedMessage(), "primary" );
                     
                     return;
                 }
@@ -179,6 +181,7 @@ namespace J4JSoftware.GeoProcessor
                 if( SelectedExportType != ExportType.Unknown )
                 {
                     SetProperty( ref _outputPath, _appConfig.OutputFile.FilePath );
+                    Messenger.Send( new SettingsChangedMessage(), "primary" );
 
                     return;
                 }
@@ -191,6 +194,8 @@ namespace J4JSoftware.GeoProcessor
                 _appConfig.OutputFile.Type = ExportType.KML;
 
                 SetProperty( ref _outputPath, _appConfig.OutputFile.FilePath );
+
+                Messenger.Send( new SettingsChangedMessage(), "primary" );
             }
         }
 
@@ -208,6 +213,8 @@ namespace J4JSoftware.GeoProcessor
 
                 SetProperty( ref _outputPath, _appConfig.OutputFile.FilePath );
                 OnPropertyChanged( nameof(OutputPath) );
+
+                Messenger.Send( new SettingsChangedMessage(), "primary" );
             }
         }
 
@@ -216,7 +223,15 @@ namespace J4JSoftware.GeoProcessor
         public ProcessorType SelectedSnappingType
         {
             get => _snapProc;
-            set => SetProperty( ref _snapProc, value );
+
+            set
+            {
+                SetProperty( ref _snapProc, value );
+            
+                _appConfig.ProcessorType = value;
+
+                Messenger.Send( new SettingsChangedMessage(), "primary" );
+            }
         }
 
         private async void DisplayMessageAsync( string message, string dlgTitle = "GeoProcessor" )

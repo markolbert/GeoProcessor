@@ -55,9 +55,7 @@ namespace J4JSoftware.GeoProcessor
         public Dictionary<ProcessorType, ProcessorInfo> Processors { get; set; } =
             new();
 
-        public ProcessorInfo ProcessorInfo => Processors.ContainsKey( ProcessorType )
-            ? Processors[ ProcessorType ]
-            : new ProcessorInfo();
+        public ProcessorInfo? ProcessorInfo => Processors.TryGetValue( ProcessorType, out var retVal ) ? retVal : null;
 
         public string APIKey { get; set; } = string.Empty;
 

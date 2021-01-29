@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.ObjectModel;
+using System.IO;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Input;
@@ -9,6 +10,7 @@ using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.Toolkit.Mvvm.Messaging;
+using Twilio.TwiML.Messaging;
 
 namespace J4JSoftware.GeoProcessor
 {
@@ -45,7 +47,11 @@ namespace J4JSoftware.GeoProcessor
             // store configuration backups
             _prevUserConfig = _userConfig.Copy();
             _cachedAppConfig = new CachedAppConfig( _appConfig );
+
+            UpdateMessages();
         }
+
+        #region Messaging
 
         protected override void OnActivated()
         {
@@ -85,7 +91,10 @@ namespace J4JSoftware.GeoProcessor
         private void SettingsChangedHandler( MainViewModel recipient, SettingsChangedMessage scMesg )
         {
             SettingsChanged = true;
+            UpdateMessages();
         }
+
+        #endregion
 
         public bool ConfigurationIsValid
         {
@@ -98,6 +107,29 @@ namespace J4JSoftware.GeoProcessor
             get => _settingsChanged;
             private set => SetProperty( ref _settingsChanged, value );
         }
+
+        public ObservableCollection<string> Messages { get; } = new();
+
+        private void UpdateMessages()
+        {
+            Messages.Clear();
+
+            if( string.IsNullOrEmpty(_appConfig.InputFile.FilePath  ))
+                Messages.Add("You need to specify a file to process (Process tab)"  );
+
+            if( string.IsNullOrEmpty(_appConfig.OutputFile.FilePath  ))
+                Messages.Add("You need to specify an output file (Process tab)"  );
+
+            if( _appConfig.ProcessorInfo == null )
+                Messages.Add( "No processors are defined or you need to select one (Process tab)" );
+            else
+            {
+                if( !_appConfig.ProcessorInfo.SupportsSnapping )
+                    Messages.Add( "The selected processor does not support snap-to-route functionality (Process tab)" );
+            }
+        }
+
+        #region Commands
 
         public ICommand SaveCommand { get; }
 
@@ -155,5 +187,7 @@ namespace J4JSoftware.GeoProcessor
             _procWin = new ProcessWindow();
             _procWin.ShowDialog();
         }
+
+        #endregion
     }
 }

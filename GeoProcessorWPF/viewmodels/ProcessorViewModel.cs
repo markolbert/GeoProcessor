@@ -111,8 +111,6 @@ namespace J4JSoftware.GeoProcessor
 
                 OnSettingsChanged();
 
-                _appConfig.ProcessorType = value;
-
                 if( _appConfig.Processors.TryGetValue( _processorType, out var processorInfo ) )
                 {
                     APIKeyVisible = processorInfo.RequiresKey ? Visibility.Visible : Visibility.Collapsed;
