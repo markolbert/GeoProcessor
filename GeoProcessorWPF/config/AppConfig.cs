@@ -14,12 +14,47 @@ namespace J4JSoftware.GeoProcessor
                 "GeoProcessor.kml" );
         }
 
+        public void RestoreFrom( CachedAppConfig src )
+        {
+            InputFile.FilePath = src.InputPath;
+            OutputFile.FilePath = src.OutputPath;
+            ProcessorType = src.ProcessorType;
+
+            Processors.Clear();
+
+            foreach( var kvp in src.Processors )
+            {
+                var cachedPI = new ProcessorInfo
+                {
+                    HasPointsLimit = kvp.Value.HasPointsLimit,
+                    MaxDistanceMultiplier = kvp.Value.MaxDistanceMultiplier,
+                    MaxPointsPerRequest = kvp.Value.MaxPointsPerRequest,
+                    MaxSeparation = new Distance( kvp.Value.MaxSeparation.Unit, kvp.Value.MaxSeparation.OriginalValue ),
+                    RequiresKey = kvp.Value.RequiresKey,
+                    SupportsSnapping = kvp.Value.SupportsSnapping
+                };
+
+                Processors.Add( kvp.Key, cachedPI );
+            }
+
+            APIKey = src.APIKey;
+            RouteWidth = src.RouteWidth;
+            RouteColor = src.RouteColor;
+            RouteHighlightColor = src.RouteHighlightColor;
+        }
+
+        public string ApplicationConfigurationFolder { get; set; } = string.Empty;
+        public string UserConfigurationFolder { get; set; } = string.Empty;
+        public NetEventConfig? NetEventChannelConfiguration { get; set; }
+
         public InputFileInfo InputFile { get; } = new();
         public OutputFileInfo OutputFile { get; } = new();
 
         public ProcessorType ProcessorType { get; set; } = ProcessorType.Undefined;
+
         public Dictionary<ProcessorType, ProcessorInfo> Processors { get; set; } =
             new();
+
         public ProcessorInfo ProcessorInfo => Processors.ContainsKey( ProcessorType )
             ? Processors[ ProcessorType ]
             : new ProcessorInfo();
@@ -37,5 +72,5 @@ namespace J4JSoftware.GeoProcessor
         public Color RouteHighlightColor { get; set; } = Color.DarkTurquoise;
 
         public J4JLoggerConfiguration? Logging { get; set; }
-        }
+    }
 }

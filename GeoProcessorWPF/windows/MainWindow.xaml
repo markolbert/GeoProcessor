@@ -31,12 +31,19 @@
             <Button DockPanel.Dock="Right"
                     Margin="5, 5, 10,10"
                     HorizontalAlignment="Right"
-                    Content="Save Settings"
+                    Content="Reload"
+                    IsEnabled="{Binding SettingsChanged}"
+                    Command="{Binding ReloadCommand}" />
+
+            <Button DockPanel.Dock="Right"
+                    Margin="5, 5, 5,10"
+                    HorizontalAlignment="Right"
+                    Content="Save"
                     IsEnabled="{Binding SettingsChanged}"
                     Command="{Binding SaveCommand}" />
 
             <Button DockPanel.Dock="Right"
-                    Margin="5, 5, 10,10"
+                    Margin="5, 5, 5,10"
                     HorizontalAlignment="Right"
                     Content="Process File"
                     IsEnabled="{Binding ConfigurationIsValid}"
@@ -267,14 +274,15 @@
                     <Label Grid.Column="0" Grid.Row="2"
                            Content="Encrypted API Key"
                            Margin="5,0,5,0"
-                           VerticalAlignment="Center" 
+                           VerticalAlignment="Top" 
                            Visibility="{Binding APIKeyVisible}" Grid.ColumnSpan="2" />
 
-                    <TextBox Grid.Column="2" Grid.Row="2"
-                             VerticalAlignment ="Center"
-                             Margin="5,0,5,0" 
+                    <TextBlock Grid.Column="2" Grid.Row="2"
+                             VerticalAlignment ="Top"
+                             Margin="5" 
                              MinWidth="200"
-                             IsReadOnly="True"
+                             Background="PaleTurquoise"
+                             TextWrapping="Wrap"
                              Text="{Binding EncryptedAPIKey, Mode=OneWay }"
                              Visibility="{Binding APIKeyVisible}"/>
 

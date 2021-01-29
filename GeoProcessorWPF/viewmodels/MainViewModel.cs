@@ -2,11 +2,13 @@
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Input;
+using J4JSoftware.DependencyInjection;
 using J4JSoftware.Logging;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
+using Microsoft.Toolkit.Mvvm.Messaging;
 
 namespace J4JSoftware.GeoProcessor
 {
@@ -19,6 +21,8 @@ namespace J4JSoftware.GeoProcessor
         private bool _configIsValid;
         private ProcessWindow? _procWin;
         private bool _settingsChanged;
+        private UserConfig _prevUserConfig;
+        private CachedAppConfig _cachedAppConfig;
 
         public MainViewModel(
             IAppConfig appConfig,
@@ -32,9 +36,15 @@ namespace J4JSoftware.GeoProcessor
             _logger?.SetLoggedType( GetType() );
 
             SaveCommand = new RelayCommand( SaveCommandHandlerAsync );
+            ReloadCommand = new RelayCommand( ReloadCommandHandler );
             ProcessCommand = new RelayCommand( ProcessCommandHandlerAsync );
 
+            // go live for messages
             IsActive = true;
+
+            // store configuration backups
+            _prevUserConfig = _userConfig.Copy();
+            _cachedAppConfig = new CachedAppConfig( _appConfig );
         }
 
         protected override void OnActivated()
@@ -98,14 +108,32 @@ namespace J4JSoftware.GeoProcessor
             var userText = JsonSerializer.Serialize( _userConfig, options );
 
             await File.WriteAllTextAsync(
-                Path.Combine( CompositionRoot.Default.UserConfigurationFolder, CompositionRoot.UserConfigFile ),
+                Path.Combine( _appConfig.UserConfigurationFolder, CompositionRoot.UserConfigFile ),
                 userText );
+
+            _prevUserConfig = _userConfig.Copy();
 
             var appText = JsonSerializer.Serialize( _appConfig, options );
 
             await File.WriteAllTextAsync(
-                Path.Combine( CompositionRoot.Default.ApplicationConfigurationFolder, CompositionRoot.AppConfigFile ),
+                Path.Combine( _appConfig.ApplicationConfigurationFolder, CompositionRoot.AppConfigFile ),
                 appText );
+
+            _cachedAppConfig = new CachedAppConfig( _appConfig );
+
+            SettingsChanged = false;
+        }
+
+        public ICommand ReloadCommand { get; }
+
+        private void ReloadCommandHandler()
+        {
+            _appConfig.RestoreFrom( _cachedAppConfig );
+            _userConfig.RestoreFrom( _prevUserConfig );
+
+            Messenger.Send( new SettingsReloadedMessage( _appConfig, _userConfig ), "primary" );
+
+            SettingsChanged = false;
         }
 
         public ICommand ProcessCommand { get; }

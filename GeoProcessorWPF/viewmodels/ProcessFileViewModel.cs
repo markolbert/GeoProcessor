@@ -42,10 +42,9 @@ namespace J4JSoftware.GeoProcessor
             _logger = logger;
             _logger?.SetLoggedType( GetType() );
 
-            CompositionRoot.Default.NetEventChannelConfiguration.LogEvent += DisplayLogEventAsync;
-
             _appConfig = appConfig;
             _appConfig.APIKey = userConfig.GetAPIKey( _appConfig.ProcessorType );
+            _appConfig.NetEventChannelConfiguration!.LogEvent += DisplayLogEventAsync;
 
             _importers = importers;
 

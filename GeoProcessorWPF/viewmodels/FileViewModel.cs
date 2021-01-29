@@ -24,10 +24,10 @@ namespace J4JSoftware.GeoProcessor
     {
         public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
-        private readonly IAppConfig _appConfig;
         private readonly FileViewModelValidator _validator = new();
         private readonly IJ4JLogger? _logger;
 
+        private IAppConfig _appConfig;
         private string _inputPath = string.Empty;
         private ExportType _exportType = ExportType.Unknown;
         private string _outputPath = string.Empty;
@@ -47,6 +47,23 @@ namespace J4JSoftware.GeoProcessor
             ExportTypes = new ObservableCollection<ExportType>( Enum.GetValues<ExportType>()
                 .Where( x => x != ExportType.Unknown ) );
 
+            InitSnappingTypes(userConfig);
+
+            SelectedSnappingType = SnappingTypes!.Any() ? SnappingTypes.First() : ProcessorType.Undefined;
+
+            OutputPath = _appConfig.OutputFile.FilePath;
+
+            Validate( "SnappingTypes" );
+
+            InputFileCommand = new RelayCommand( InputFileDialog );
+            OutputFileCommand = new RelayCommand( OutputFileDialog );
+
+            // go live for messages
+            IsActive = true;
+        }
+
+        private void InitSnappingTypes( IUserConfig userConfig )
+        {
             SnappingTypes = new ObservableCollection<ProcessorType>( _appConfig.Processors
                 .Where( kvp =>
                     kvp.Value.SupportsSnapping
@@ -55,14 +72,33 @@ namespace J4JSoftware.GeoProcessor
                               && !string.IsNullOrEmpty( userConfig.APIKeys[ kvp.Key ].Value ) ) ) )
                 .Select( kvp => kvp.Key ) );
 
-            SelectedSnappingType = SnappingTypes.Any() ? SnappingTypes.First() : ProcessorType.Undefined;
+            OnPropertyChanged( nameof(SnappingTypes) );
+        }
 
-            OutputPath = _appConfig.OutputFile.FilePath;
+        protected override void OnActivated()
+        {
+            base.OnActivated();
+
+            Messenger.Register<FileViewModel, SettingsReloadedMessage, string>( this, 
+                "primary",
+                SettingsReloadedMessageHandler );
+        }
+
+        protected override void OnDeactivated()
+        {
+            base.OnDeactivated();
+
+            Messenger.UnregisterAll(this);
+        }
+
+        private void SettingsReloadedMessageHandler( FileViewModel recipient, SettingsReloadedMessage srMesg )
+        {
+            _appConfig = srMesg.AppConfig;
+
+            InitSnappingTypes(srMesg.UserConfig);
+            OnPropertyChanged( nameof(SnappingTypes) );
 
             Validate( "SnappingTypes" );
-
-            InputFileCommand = new RelayCommand( InputFileDialog );
-            OutputFileCommand = new RelayCommand( OutputFileDialog );
         }
 
         public ICommand InputFileCommand { get; }
@@ -175,7 +211,7 @@ namespace J4JSoftware.GeoProcessor
             }
         }
 
-        public ObservableCollection<ProcessorType> SnappingTypes { get; }
+        public ObservableCollection<ProcessorType> SnappingTypes { get; private set; } 
 
         public ProcessorType SelectedSnappingType
         {

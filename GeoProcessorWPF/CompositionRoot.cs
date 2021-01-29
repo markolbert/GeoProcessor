@@ -1,35 +1,22 @@
 ﻿using System;
 using System.IO;
-using System.Windows;
 using Autofac;
 using J4JSoftware.DependencyInjection;
 using J4JSoftware.Logging;
+using J4JSoftware.WPFViewModel;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace J4JSoftware.GeoProcessor
 {
-    public class CompositionRoot : J4JCompositionRoot<J4JLoggerConfiguration>
+    public class CompositionRoot : J4JViewModelLocator<J4JLoggerConfiguration>
     {
         public const string AppName = "GeoProcessor";
         public const string AppConfigFile = "appConfig.json";
         public const string UserConfigFile = "userConfig.json";
 
-        public static string AppUserFolder = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "J4JSoftware",
-            AppName);
-
-        public static CompositionRoot Default { get; }
-
-        static CompositionRoot()
-        {
-            Default = new CompositionRoot();
-
-            Default.Initialize();
-        }
-
-        private CompositionRoot()
+        public CompositionRoot()
             : base( "J4JSoftware", AppName, "J4JSoftware.GeoProcessor.DataProtection" )
         {
             NetEventChannelConfiguration = new NetEventConfig
@@ -58,83 +45,84 @@ namespace J4JSoftware.GeoProcessor
                 ConfigurationBasedLogging( provider );
             }
 
-            UseConsoleLifetime = true;
+            Initialize();
         }
 
-        public bool InDesignMode => System.ComponentModel.DesignerProperties
-            .GetIsInDesignMode( new DependencyObject() );
-
         public NetEventConfig NetEventChannelConfiguration { get; }
+        public IMainViewModel MainViewModel => Host!.Services.GetRequiredService<IMainViewModel>();
+        public IProcessFileViewModel ProcessFileViewModel => Host!.Services.GetRequiredService<IProcessFileViewModel>();
+        public IFileViewModel FileViewModel => Host!.Services.GetRequiredService<IFileViewModel>();
+        public IRouteOptionsViewModel RouteOptionsViewModel => Host!.Services.GetRequiredService<IRouteOptionsViewModel>();
+        public IProcessorViewModel ProcessorViewModel => Host!.Services.GetRequiredService<IProcessorViewModel>();
 
         protected override void SetupConfigurationEnvironment( IConfigurationBuilder builder )
         {
             base.SetupConfigurationEnvironment( builder );
 
-            var appDir = InDesignMode ? AppContext.BaseDirectory : Environment.CurrentDirectory;
-
             builder.SetBasePath( Environment.CurrentDirectory )
-                .AddJsonFile( Path.Combine( appDir, AppConfigFile ), false,false )
-                .AddJsonFile( Path.Combine( AppUserFolder, UserConfigFile ), true, false )
+                .AddJsonFile( Path.Combine( ApplicationConfigurationFolder, AppConfigFile ), false,false )
+                .AddJsonFile( Path.Combine( UserConfigurationFolder, UserConfigFile ), true, false )
                 .AddUserSecrets<CompositionRoot>();
+        }
+
+        protected override void RegisterViewModels( ViewModelDependencyBuilder builder )
+        {
+            base.RegisterViewModels( builder );
+
+            builder.RegisterViewModelInterface<IMainViewModel>()
+                .DesignTime<DesignTimeMainViewModel>()
+                .RunTime<MainViewModel>();
+
+            builder.RegisterViewModelInterface<IFileViewModel>()
+                .DesignTime<DesignTimeFileViewModel>()
+                .RunTime<FileViewModel>();
+
+            builder.RegisterViewModelInterface<IRouteOptionsViewModel>()
+                .DesignTime<DesignTimeRouteOptionsViewModel>()
+                .RunTime<RouteOptionsViewModel>();
+
+            builder.RegisterViewModelInterface<IProcessorViewModel>()
+                .DesignTime<DesignTimeProcessorViewModel>()
+                .RunTime<ProcessorViewModel>();
+
+            builder.RegisterViewModelInterface<IProcessFileViewModel>()
+                .DesignTime<DesignTimeProcessFileViewModel>()
+                .RunTime<ProcessFileViewModel>();
         }
 
         protected override void SetupDependencyInjection( HostBuilderContext hbc, ContainerBuilder builder )
         {
             base.SetupDependencyInjection( hbc, builder );
 
-            builder.Register( c => hbc.Configuration.Get<AppConfig>() )
+            builder.Register( c =>
+                {
+                    var retVal = hbc.Configuration.Get<AppConfig>();
+
+                    retVal.ApplicationConfigurationFolder = ApplicationConfigurationFolder;
+                    retVal.UserConfigurationFolder = UserConfigurationFolder;
+                    retVal.NetEventChannelConfiguration = NetEventChannelConfiguration;
+
+                    return retVal;
+                } )
                 .AsImplementedInterfaces()
                 .SingleInstance();
 
-            builder.Register( c => hbc.Configuration.Get<UserConfig>() )
+            builder.Register( c =>
+                {
+                    var retVal = hbc.Configuration.Get<UserConfig>();
+
+                    var protection = c.Resolve<IJ4JProtection>();
+
+                    foreach( var kvp in retVal.APIKeys )
+                    {
+                        kvp.Value.Initialize( protection );
+                    }
+
+                    return retVal;
+                } )
                 .AsImplementedInterfaces()
                 .SingleInstance();
 
-            if( InDesignMode )
-            {
-                builder.RegisterType<DesignTimeMainViewModel>()
-                    .AsImplementedInterfaces()
-                    .SingleInstance();
-
-                builder.RegisterType<DesignTimeFileViewModel>()
-                    .AsImplementedInterfaces()
-                    .SingleInstance();
-
-                builder.RegisterType<DesignTimeRouteOptionsViewModel>()
-                    .AsImplementedInterfaces()
-                    .SingleInstance();
-            
-                builder.RegisterType<DesignTimeProcessorViewModel>()
-                    .AsImplementedInterfaces()
-                    .SingleInstance();
-
-                builder.RegisterType<DesignTimeProcessFileViewModel>()
-                    .AsImplementedInterfaces()
-                    .SingleInstance();
-            }
-            else
-            {
-                builder.RegisterType<MainViewModel>()
-                    .AsImplementedInterfaces()
-                    .SingleInstance();
-
-                builder.RegisterType<FileViewModel>()
-                    .AsImplementedInterfaces()
-                    .SingleInstance();
-
-                builder.RegisterType<RouteOptionsViewModel>()
-                    .AsImplementedInterfaces()
-                    .SingleInstance();
-            
-                builder.RegisterType<ProcessorViewModel>()
-                    .AsImplementedInterfaces()
-                    .SingleInstance();
-
-                builder.RegisterType<ProcessFileViewModel>()
-                    .AsImplementedInterfaces()
-                    .SingleInstance();
-            }
-            
             builder.RegisterType<MainWindow>()
                 .AsSelf();
 

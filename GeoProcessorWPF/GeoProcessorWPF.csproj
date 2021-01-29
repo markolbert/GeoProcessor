@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <Compile Remove="config\AppConfigDesignTime.cs" />
+    <Compile Remove="viewmodels\ViewModelLocator.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,6 +28,7 @@
     <ProjectReference Include="..\..\J4JLogging\J4JLogging\J4JLogging.csproj" />
     <ProjectReference Include="..\..\ProgrammingUtilities\DependencyInjection\DependencyInjection.csproj" />
     <ProjectReference Include="..\..\ProgrammingUtilities\VisualUtilities\VisualUtilities.csproj" />
+    <ProjectReference Include="..\..\ProgrammingUtilities\WPFViewModel\WPFViewModel.csproj" />
     <ProjectReference Include="..\AutofacGeoProcessor\AutofacGeoProcessor.csproj" />
     <ProjectReference Include="..\GeoProcessor\GeoProcessor.csproj" />
   </ItemGroup>

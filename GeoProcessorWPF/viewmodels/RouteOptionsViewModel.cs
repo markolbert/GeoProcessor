@@ -6,9 +6,9 @@ namespace J4JSoftware.GeoProcessor
 {
     public class RouteOptionsViewModel : ObservableRecipient, IRouteOptionsViewModel
     {
-        private readonly IAppConfig _appConfig;
         private readonly IJ4JLogger? _logger;
 
+        private IAppConfig _appConfig;
         private int _routeWidth;
         private Color _routeColor;
         private Color _highlightColor;
@@ -29,6 +29,34 @@ namespace J4JSoftware.GeoProcessor
 
             // we didn't want to generate settings changed messages during initial configuration
             _suppressChangeMessages = false;
+
+            // go live for messages
+            IsActive = true;
+        }
+
+        protected override void OnActivated()
+        {
+            base.OnActivated();
+
+            Messenger.Register<RouteOptionsViewModel, SettingsReloadedMessage, string>( this, 
+                "primary",
+                SettingsReloadedMessageHandler );
+        }
+
+        protected override void OnDeactivated()
+        {
+            base.OnDeactivated();
+
+            Messenger.UnregisterAll(this);
+        }
+
+        private void SettingsReloadedMessageHandler( RouteOptionsViewModel recipient, SettingsReloadedMessage srMesg )
+        {
+            _appConfig = srMesg.AppConfig;
+
+            RouteWidth = srMesg.AppConfig.RouteWidth;
+            RouteColor = srMesg.AppConfig.RouteColor.ToMediaColor();
+            RouteHighlightColor = srMesg.AppConfig.RouteHighlightColor.ToMediaColor();
         }
 
         public int RouteWidth

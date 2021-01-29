@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -9,26 +10,32 @@ namespace J4JSoftware.GeoProcessor
     /// </summary>
     public partial class App : Application
     {
-        private readonly IHost _host;
+        //private readonly IHost _host;
 
         public App()
         {
-            _host = CompositionRoot.Default.Host!;
+            //_host = CompositionRoot.Default.Host!;
         }
 
         private async void Application_Startup( object sender, StartupEventArgs e )
         {
-            await _host.StartAsync();
+            var compRoot = TryFindResource( "ViewModelLocator" ) as CompositionRoot;
+            if( compRoot?.Host == null )
+                throw new NullReferenceException( "Couldn't find ViewModelLocator resource" );
 
-            var mainWindow = _host.Services.GetRequiredService<MainWindow>();
+            await compRoot.Host.StartAsync();
+
+            var mainWindow = compRoot.Host.Services.GetRequiredService<MainWindow>();
             mainWindow.Show();
         }
 
         private async void Application_Exit( object sender, ExitEventArgs e )
         {
-            using( _host )
+            var compRoot = (CompositionRoot) TryFindResource( "ViewModelLocator" );
+
+            using( compRoot.Host! )
             {
-                await _host.StopAsync();
+                await compRoot.Host!.StopAsync();
             }
         }
     }

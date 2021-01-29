@@ -57,6 +57,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleUtilities", "..\Prog
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoProcessorWPF", "GeoProcessorWPF\GeoProcessorWPF.csproj", "{26C0D173-954F-4476-8C3C-79A4249C1E36}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WPFViewModel", "..\ProgrammingUtilities\WPFViewModel\WPFViewModel.csproj", "{3F863A22-4682-4A7E-BE91-53686EA1D780}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -107,6 +109,10 @@ Global
 		{26C0D173-954F-4476-8C3C-79A4249C1E36}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26C0D173-954F-4476-8C3C-79A4249C1E36}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{26C0D173-954F-4476-8C3C-79A4249C1E36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F863A22-4682-4A7E-BE91-53686EA1D780}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F863A22-4682-4A7E-BE91-53686EA1D780}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F863A22-4682-4A7E-BE91-53686EA1D780}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F863A22-4682-4A7E-BE91-53686EA1D780}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -119,6 +125,7 @@ Global
 		{62EB80C2-C53A-48CB-BC0D-67D4F40A5881} = {46B961C5-1883-4706-8633-66984BA48596}
 		{67D12E27-03F7-4BC9-BE34-4BCC782716FC} = {5AD3F041-D553-492B-948D-E58BDA4373CF}
 		{7F59F25F-4F4F-4361-8C6D-C52972F56269} = {5AD3F041-D553-492B-948D-E58BDA4373CF}
+		{3F863A22-4682-4A7E-BE91-53686EA1D780} = {5AD3F041-D553-492B-948D-E58BDA4373CF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FE44BCE1-11E4-4584-BACC-44570810FB77}

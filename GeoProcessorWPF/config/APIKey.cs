@@ -1,50 +1,78 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Text.Json.Serialization;
+using J4JSoftware.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 
 namespace J4JSoftware.GeoProcessor
 {
-    public class APIKey : ObservableObject
+    public class APIKey
     {
-        private string _encryptedKey = string.Empty;
-        private string _key = string.Empty;
+        private string? _encryptedKey;
+        private string? _key;
+
+        public void Initialize( IJ4JProtection protection )
+        {
+            Protection = protection;
+        }
+
+        internal IJ4JProtection? Protection { get; private set; }
 
         public ProcessorType Type { get; set; }
 
         public string EncryptedValue
         {
-            get => _encryptedKey;
-
-            set
+            get
             {
-                SetProperty( ref _encryptedKey, value );
+                if( _encryptedKey != null )
+                    return _encryptedKey;
 
-                // no point decrypting empty or null strings
-                if( string.IsNullOrEmpty( _encryptedKey ) )
-                    return;
+                // abort if we haven't been initialized or the plain text key is undefined/not yet set
+                if( Protection == null || string.IsNullOrEmpty(_key) ) 
+                    return string.Empty;
 
-                if( CompositionRoot.Default.Unprotect( _encryptedKey, out var decrypted ) )
-                    SetProperty( ref _key, decrypted! );
+                if( Protection == null )
+                    throw new NullReferenceException( $"{nameof(APIKey)} is not initialized. {nameof(Initialize)}() must be called before use." );
+
+                if( !Protection.Protect( _key!, out var encrypted ) ) 
+                    return string.Empty;
+
+                _encryptedKey = encrypted!;
+                return _encryptedKey;
             }
+
+            set => _encryptedKey = value;
         }
 
         [ JsonIgnore ]
         public string Value
         {
-            get => _key;
+            get
+            {
+                if( _key != null )
+                    return _key;
+
+                // abort if we haven't been initialized or the encrypted key is undefined/not yet set
+                if( Protection == null || string.IsNullOrEmpty( _encryptedKey ) ) 
+                    return string.Empty;
+
+                if( !Protection.Unprotect( _encryptedKey!, out var decrypted ) ) 
+                    return string.Empty;
+
+                _key = decrypted!;
+                return _key;
+            }
 
             set
             {
-                SetProperty( ref _key, value );
+                _key = value;
 
-                // no point encrypting empty or null strings
-                if( string.IsNullOrEmpty( _key ) )
-                    return;
-
-                if( CompositionRoot.Default.Protect( _key, out var encrypted ) )
-                    SetProperty( ref _encryptedKey, encrypted! );
+                // force re-encryption
+                _encryptedKey = null;
             }
         }
 
+        // this lets us hide Value from being written but still be able to read it 
+        // (for example, from the user secrets store)
         [JsonPropertyName("Value")]
         private string ValueHidden
         {

@@ -16,10 +16,10 @@ namespace J4JSoftware.GeoProcessor
             Normal
         }
 
-        private readonly IAppConfig _appConfig;
-        private readonly IUserConfig _userConfig;
         private readonly IJ4JLogger? _logger;
 
+        private IAppConfig _appConfig;
+        private IUserConfig _userConfig;
         private Visibility _apiKeyVisibility = Visibility.Collapsed;
         private Visibility _requestLimitVisibility = Visibility.Collapsed;
         private ProcessorType _processorType = ProcessorType.Undefined;
@@ -54,6 +54,45 @@ namespace J4JSoftware.GeoProcessor
                 : GeoProcessor.UnitTypes.km;
 
             _setState = PropertySettingState.Normal;
+
+            // go live for messages
+            IsActive = true;
+        }
+
+        protected override void OnActivated()
+        {
+            base.OnActivated();
+
+            Messenger.Register<ProcessorViewModel, SettingsReloadedMessage, string>( this, 
+                "primary",
+                SettingsReloadedMessageHandler );
+        }
+
+        protected override void OnDeactivated()
+        {
+            base.OnDeactivated();
+
+            Messenger.UnregisterAll(this);
+        }
+
+        private void SettingsReloadedMessageHandler( ProcessorViewModel recipient, SettingsReloadedMessage srMesg )
+        {
+            _appConfig = srMesg.AppConfig;
+            _userConfig = srMesg.UserConfig;
+
+            if( _userConfig.APIKeys.TryGetValue( SelectedProcessorType, out var temp ) )
+            {
+                APIKey = temp!.Value;
+                EncryptedAPIKey = temp.EncryptedValue;
+            }
+
+            if( !_appConfig.Processors.TryGetValue( SelectedProcessorType, out var procInfo ) ) 
+                return;
+
+            MaxPointsPerRequest = procInfo!.MaxPointsPerRequest;
+            MaxDistanceMultiplier = procInfo.MaxDistanceMultiplier;
+            DistanceValue = procInfo.MaxSeparation.OriginalValue;
+            SelectedUnitType = procInfo.MaxSeparation.Unit;
         }
 
         public ObservableCollection<ProcessorType> ProcessorTypes { get; }
