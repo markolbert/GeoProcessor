@@ -4,13 +4,13 @@ using Microsoft.Toolkit.Mvvm.ComponentModel;
 
 namespace J4JSoftware.GeoProcessor
 {
-    public class DesignTimeRouteOptionsViewModel : ObservableRecipient, IRouteOptionsViewModel
+    public class DesignTimeRouteDisplayViewModel : ObservableRecipient, IRouteDisplayViewModel
     {
         private int _routeWidth;
         private Color _routeColor;
         private Color _highlightColor;
 
-        public DesignTimeRouteOptionsViewModel()
+        public DesignTimeRouteDisplayViewModel()
         {
             RouteWidth = 4;
             RouteColor = System.Drawing.Color.Red.ToMediaColor();

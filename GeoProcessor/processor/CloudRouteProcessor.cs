@@ -11,8 +11,9 @@ namespace J4JSoftware.GeoProcessor
     {
         protected CloudRouteProcessor( 
             IImportConfig config, 
+            ProcessorType processorType,
             IJ4JLogger? logger ) 
-            : base( config, logger )
+            : base( config, processorType, logger )
         {
             APIKey = config.APIKey;
         }
@@ -124,7 +125,7 @@ namespace J4JSoftware.GeoProcessor
             while (ptsChunked < points.Count - 1)
             {
                 var coordinates = points.Skip(ptsChunked)
-                    .Take(Configuration.MaxPointsPerRequest)
+                    .Take(ProcessorType.MaxPointsPerRequest())
                     .ToList();
 
                 retVal.Add(coordinates);

@@ -7,6 +7,7 @@ using Autofac.Features.Indexed;
 using J4JSoftware.ConsoleUtilities;
 using J4JSoftware.Logging;
 using Microsoft.Extensions.Hosting;
+#pragma warning disable 8618
 
 namespace J4JSoftware.GeoProcessor
 {

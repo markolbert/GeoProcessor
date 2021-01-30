@@ -13,7 +13,6 @@ namespace J4JSoftware.GeoProcessor
         string EncryptedAPIKey { get; }
         int MaxDistanceMultiplier { get; set; }
         Visibility RequestLimitVisibility { get; }
-        int MaxPointsPerRequest { get; set; }
         ObservableCollection<UnitTypes> UnitTypes { get; }
         UnitTypes SelectedUnitType { get; set; }
         double DistanceValue { get; set; }

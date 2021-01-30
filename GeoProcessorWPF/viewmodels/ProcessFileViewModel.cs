@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -25,11 +27,9 @@ namespace J4JSoftware.GeoProcessor
         private readonly IJ4JLogger? _logger;
         private readonly CancellationTokenSource _cancellationSrc = new CancellationTokenSource();
 
+        private ProcessorState _procState;
         private int _pointProcessed;
         private string _phase = string.Empty;
-        private ProcessState _procState = ProcessState.Ready;
-        private string _cmdButtonText = string.Empty;
-        private Visibility _cancelVisibility = Visibility.Visible;
 
         public ProcessFileViewModel(
             IAppConfig appConfig,
@@ -43,35 +43,32 @@ namespace J4JSoftware.GeoProcessor
             _logger?.SetLoggedType( GetType() );
 
             _appConfig = appConfig;
-            _appConfig.APIKey = userConfig.GetAPIKey( _appConfig.ProcessorType );
             _appConfig.NetEventChannelConfiguration!.LogEvent += DisplayLogEventAsync;
 
             _importers = importers;
 
             _exporter = exporters[ _appConfig.ExportType ];
             _distProc = snapProcessors[ ProcessorType.Distance ];
-
             _routeProc = snapProcessors[ _appConfig.ProcessorType ];
+
+            // processing status
             _routeProc.PointsProcessed += DisplayPointsProcessedAsync;
             PointsProcessed = 0;
 
-            ProcessCommand = new RelayCommand( ProcessCommandAsync );
-            CancelCommand = new RelayCommand( CancelCommandHandler );
+            AbortCommand = new RelayCommand( AbortCommandHandler );
+
+            _appConfig.APIKey = userConfig.GetAPIKey( _appConfig.ProcessorType );
 
             if( string.IsNullOrEmpty( _appConfig.APIKey ) )
             {
-                _procState = ProcessState.Aborted;
+                ProcessorState = GeoProcessor.ProcessorState.Aborted;
 
                 _logger?.Error( "{0} API Key is undefined", _appConfig.ProcessorType );
 
-                CommandButtonText = "Close";
                 Phase = "Processing not possible";
-
-                return;
+                ProcessorState = GeoProcessor.ProcessorState.Aborted;
             }
-
-            CommandButtonText = "Start";
-            Phase = "Ready to begin...";
+            else ProcessorState = GeoProcessor.ProcessorState.Ready;
         }
 
         private async void DisplayPointsProcessedAsync( object? sender, int points )
@@ -84,6 +81,18 @@ namespace J4JSoftware.GeoProcessor
         {
             Messages.Add( e.LogMessage );
             await Dispatcher.Yield();
+        }
+
+        public ProcessorState ProcessorState
+        {
+            get => _procState;
+
+            private set
+            {
+                _procState = value;
+
+                Messenger.Send( new ProcessorStateMessage( _procState ), "primary" );
+            }
         }
 
         public string Phase
@@ -100,66 +109,20 @@ namespace J4JSoftware.GeoProcessor
 
         public ObservableCollection<string> Messages { get; } = new();
 
-        public string CommandButtonText
+        public ICommand AbortCommand { get; }
+
+        private void AbortCommandHandler()
         {
-            get => _cmdButtonText;
-            private set => SetProperty( ref _cmdButtonText, value );
+            ProcessorState = ProcessorState.Aborted;
+
+            _cancellationSrc.Cancel();
         }
 
-        public Visibility CancelVisibility
+        public async Task ProcessAsync()
         {
-            get => _cancelVisibility;
-            private set => SetProperty( ref _cancelVisibility, value );
-        }
+            if( ProcessorState == ProcessorState.Aborted )
+                return;
 
-        public ICommand CancelCommand { get; }
-
-        private void CancelCommandHandler()
-        {
-            Messenger.Send( new ProcessingCompletedMessage( true ), "primary" );
-        }
-
-        public ICommand ProcessCommand { get; }
-
-        private async void ProcessCommandAsync()
-        {
-            switch( _procState )
-            {
-                case ProcessState.Ready:
-                    CancelVisibility = Visibility.Collapsed;
-                    _procState = ProcessState.Running;
-                    CommandButtonText = "Abort";
-
-                    await Dispatcher.Yield();
-
-                    await ProcessAsync();
-
-                    return;
-
-                case ProcessState.Running:
-                    _procState = ProcessState.Aborted;
-                    _cancellationSrc.CancelAfter( 2000 );
-
-                    CommandButtonText = "Close";
-                    Phase = "Aborted";
-                    await Dispatcher.Yield();
-
-                    return;
-
-                case ProcessState.Finished:
-                    Messenger.Send( new ProcessingCompletedMessage( true ), "primary" );
-                    return;
-
-                case ProcessState.Aborted:
-                    Messenger.Send( new ProcessingCompletedMessage( false ), "primary" );
-                    return;
-            }
-
-            throw new InvalidEnumArgumentException( $"Unsupported {nameof(ProcessState)} '{_procState}'" );
-        }
-
-        private async Task ProcessAsync()
-        {
             Phase = $"Loading {_appConfig.InputFile.FilePath}";
             await Dispatcher.Yield();
 
@@ -222,9 +185,8 @@ namespace J4JSoftware.GeoProcessor
                 await _exporter.ExportAsync( pointSets[ idx ], idx, _cancellationSrc.Token );
             }
 
-            _procState = ProcessState.Finished;
+            ProcessorState = ProcessorState.Finished;
             Phase = "Done";
-            CommandButtonText = "Close";
             await Dispatcher.Yield();
         }
 

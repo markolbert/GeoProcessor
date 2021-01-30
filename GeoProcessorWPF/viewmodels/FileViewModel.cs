@@ -24,14 +24,13 @@ namespace J4JSoftware.GeoProcessor
     {
         public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
-        private readonly FileViewModelValidator _validator = new();
+        private readonly FileValidator _validator = new();
         private readonly IJ4JLogger? _logger;
 
         private IAppConfig _appConfig;
         private string _inputPath = string.Empty;
         private ExportType _exportType = ExportType.Unknown;
         private string _outputPath = string.Empty;
-        private ProcessorType _snapProc;
         private Dictionary<string, List<string>>? _errors;
 
         public FileViewModel( 
@@ -47,58 +46,13 @@ namespace J4JSoftware.GeoProcessor
             ExportTypes = new ObservableCollection<ExportType>( Enum.GetValues<ExportType>()
                 .Where( x => x != ExportType.Unknown ) );
 
-            InitSnappingTypes(userConfig);
-
-            SelectedSnappingType = SnappingTypes!.Any() ? SnappingTypes.First() : ProcessorType.Undefined;
-
             OutputPath = _appConfig.OutputFile.FilePath;
-
-            Validate( "SnappingTypes" );
 
             InputFileCommand = new RelayCommand( InputFileDialog );
             OutputFileCommand = new RelayCommand( OutputFileDialog );
 
             // go live for messages
             IsActive = true;
-        }
-
-        private void InitSnappingTypes( IUserConfig userConfig )
-        {
-            SnappingTypes = new ObservableCollection<ProcessorType>( _appConfig.Processors
-                .Where( kvp =>
-                    kvp.Value.SupportsSnapping
-                    && ( !kvp.Value.RequiresKey
-                         || ( userConfig.APIKeys.ContainsKey( kvp.Key )
-                              && !string.IsNullOrEmpty( userConfig.APIKeys[ kvp.Key ].Value ) ) ) )
-                .Select( kvp => kvp.Key ) );
-
-            OnPropertyChanged( nameof(SnappingTypes) );
-        }
-
-        protected override void OnActivated()
-        {
-            base.OnActivated();
-
-            Messenger.Register<FileViewModel, SettingsReloadedMessage, string>( this, 
-                "primary",
-                SettingsReloadedMessageHandler );
-        }
-
-        protected override void OnDeactivated()
-        {
-            base.OnDeactivated();
-
-            Messenger.UnregisterAll(this);
-        }
-
-        private void SettingsReloadedMessageHandler( FileViewModel recipient, SettingsReloadedMessage srMesg )
-        {
-            _appConfig = srMesg.AppConfig;
-
-            InitSnappingTypes(srMesg.UserConfig);
-            OnPropertyChanged( nameof(SnappingTypes) );
-
-            Validate( "SnappingTypes" );
         }
 
         public ICommand InputFileCommand { get; }
@@ -213,22 +167,6 @@ namespace J4JSoftware.GeoProcessor
 
                 SetProperty( ref _outputPath, _appConfig.OutputFile.FilePath );
                 OnPropertyChanged( nameof(OutputPath) );
-
-                Messenger.Send( new SettingsChangedMessage(), "primary" );
-            }
-        }
-
-        public ObservableCollection<ProcessorType> SnappingTypes { get; private set; } 
-
-        public ProcessorType SelectedSnappingType
-        {
-            get => _snapProc;
-
-            set
-            {
-                SetProperty( ref _snapProc, value );
-            
-                _appConfig.ProcessorType = value;
 
                 Messenger.Send( new SettingsChangedMessage(), "primary" );
             }

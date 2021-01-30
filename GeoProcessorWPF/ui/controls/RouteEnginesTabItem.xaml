@@ -1,0 +1,115 @@
+﻿<UserControl x:Class="J4JSoftware.GeoProcessor.RouteEnginesTabItem"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:J4JSoftware.GeoProcessor"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="200" d:DesignWidth="450"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             TextElement.FontWeight="Normal"
+             TextElement.FontSize="14"
+             Background="{DynamicResource MaterialDesignPaper}" 
+             DataContext="{Binding ProcessorViewModel, Source={StaticResource ViewModelLocator}}">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Label Grid.Column="0" Grid.Row="0"
+               Content="Engine Type"
+               VerticalAlignment="Center" />
+
+        <ComboBox Grid.Column="1" Grid.Row="0"
+                  HorizontalAlignment="Left"
+                  Margin="5" 
+                  IsEditable="False"
+                  ItemsSource="{Binding ProcessorTypes}"
+                  SelectedItem="{Binding SelectedProcessorType}"/>
+
+        <Label Grid.Column="0" Grid.Row="1"
+               Content="API Key"
+               VerticalAlignment="Center"
+               Visibility="{Binding APIKeyVisible}" Grid.ColumnSpan="2" />
+
+        <TextBox Grid.Column="1" Grid.Row="1"
+                 VerticalAlignment ="Center"
+                 Margin="5"
+                 MinWidth="200"
+                 Text="{Binding APIKey}"
+                 Visibility="{Binding APIKeyVisible}"/>
+
+        <Label Grid.Column="0" Grid.Row="2"
+               Content="Encrypted API Key"
+               VerticalAlignment="Top" 
+               Visibility="{Binding APIKeyVisible}" Grid.ColumnSpan="2" />
+
+        <TextBlock Grid.Column="1" Grid.Row="2"
+                 VerticalAlignment ="Top"
+                 Margin="5" 
+                 MinWidth="200"
+                 Background="PaleTurquoise"
+                 TextWrapping="Wrap"
+                 Text="{Binding EncryptedAPIKey, Mode=OneWay }"
+                 Visibility="{Binding APIKeyVisible}"/>
+
+        <Label Grid.Column="0" Grid.Row="3"
+               Content="Maximum Distance Multiplier"
+               VerticalAlignment="Center" 
+               Visibility="{Binding APIKeyVisible}" Grid.ColumnSpan="2" />
+
+        <mah:NumericUpDown Grid.Column="1" Grid.Row="3"
+                           HorizontalAlignment="Left"
+                           Margin="5"
+                           Minimum="1"
+                           Maximum="20"
+                           Visibility="{Binding APIKeyVisible}"
+                           Value="{Binding Path=MaxDistanceMultiplier, Mode=TwoWay }"/>
+
+        <Label Grid.Column="0" Grid.Row="4"
+               Content="Points per Request"
+               VerticalAlignment="Center" 
+               Visibility="{Binding RequestLimitVisibility}" Grid.ColumnSpan="2" />
+
+        <mah:NumericUpDown Grid.Column="1" Grid.Row="4"
+                           HorizontalAlignment="Left"
+                           Margin="5"
+                           Minimum="1"
+                           Maximum="100"
+                           Visibility="{Binding RequestLimitVisibility}"
+                           Value="{Binding Path=MaxPointsPerRequest, Mode=TwoWay }"/>
+
+        <Label Grid.Column="0" Grid.Row="5"
+               Content="Maximum Separation"
+               VerticalAlignment="Center" />
+
+        <StackPanel Grid.Column="1" Grid.Row="5"
+                    Orientation="Horizontal">
+
+            <TextBox Margin="5"
+                     VerticalAlignment="Center"
+                     Width="75" 
+                     Text="{Binding DistanceValue, Mode=TwoWay, Converter={StaticResource textToDouble}}"/>
+
+            <ComboBox Margin="0, 5"
+                      VerticalAlignment="Center"
+                      IsEditable="False"
+                      ItemsSource="{Binding UnitTypes}"
+                      SelectedItem="{Binding SelectedUnitType}" />
+
+        </StackPanel>
+
+    </Grid>
+</UserControl>

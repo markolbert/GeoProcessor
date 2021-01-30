@@ -9,13 +9,31 @@ namespace J4JSoftware.GeoProcessor
 {
     public static class GeoExtensions
     {
-        public static bool IsSecuredProcessor( this ProcessorType procType )
+        public static bool SnapsToRoute( this ProcessorType procType )
         {
             var memInfo = typeof(ProcessorType).GetField( procType.ToString() );
             if( memInfo == null )
                 return false;
 
-            return memInfo.GetCustomAttribute<SecuredProcessorTypeAttribute>() != null;
+            return memInfo.GetCustomAttribute<ProcessorTypeInfoAttribute>()?.IsSnapToRoute ?? false;
+        }
+
+        public static bool RequiresAPIKey( this ProcessorType procType )
+        {
+            var memInfo = typeof(ProcessorType).GetField( procType.ToString() );
+            if( memInfo == null )
+                return false;
+
+            return memInfo.GetCustomAttribute<ProcessorTypeInfoAttribute>()?.RequiresAPIKey ?? false;
+        }
+
+        public static int MaxPointsPerRequest( this ProcessorType procType )
+        {
+            var memInfo = typeof(ProcessorType).GetField( procType.ToString() );
+            if( memInfo == null )
+                return 100;
+
+            return memInfo.GetCustomAttribute<ProcessorTypeInfoAttribute>()?.MaxPointsPerRequest ?? 100;
         }
 
         public static TAttr? GetTargetType<THandler, TAttr>()

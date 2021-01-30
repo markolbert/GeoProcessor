@@ -1,8 +1,13 @@
-﻿using System.Collections.ObjectModel;
-using System.Windows;
+﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
+using System;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows.Input;
-using Microsoft.Toolkit.Mvvm.ComponentModel;
-using Microsoft.Toolkit.Mvvm.Input;
+// ReSharper disable CollectionNeverUpdated.Local
+// ReSharper disable UnassignedGetOnlyAutoProperty
+#pragma warning disable 1998
+#pragma warning disable 8618
+#pragma warning disable 649
 
 namespace J4JSoftware.GeoProcessor
 {
@@ -11,7 +16,6 @@ namespace J4JSoftware.GeoProcessor
         private int _pointProcessed;
         private string _phase = string.Empty;
         private string _cmdButtonText = string.Empty;
-        private Visibility _cancelVisibility = Visibility.Visible;
 
         public DesignTimeProcessFileViewModel()
         {
@@ -20,12 +24,12 @@ namespace J4JSoftware.GeoProcessor
                 Messages.Add( $"Message #{idx + 1}" );
             }
 
-            ProcessCommand = new RelayCommand<ProcessWindow>( ProcessCommandAsync );
-
             CommandButtonText = "Start";
             Phase = "Ready to begin...";
             PointsProcessed = 55000;
         }
+
+        public ProcessorState ProcessorState { get; }
 
         public string Phase
         {
@@ -47,20 +51,11 @@ namespace J4JSoftware.GeoProcessor
             private set => SetProperty( ref _cmdButtonText, value );
         }
 
-        public bool Succeeded => true;
-        
-        public Visibility CancelVisibility
+        public ICommand AbortCommand {get;}
+
+        public async Task ProcessAsync()
         {
-            get => _cancelVisibility;
-            private set => SetProperty( ref _cancelVisibility, value );
-        }
-
-        public ICommand CancelCommand {get;}
-
-        public ICommand ProcessCommand { get; }
-
-        private async void ProcessCommandAsync( ProcessWindow theWindow )
-        {
+            throw new NotImplementedException();
         }
     }
 }

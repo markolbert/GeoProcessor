@@ -20,7 +20,7 @@ namespace J4JSoftware.GeoProcessor
         }
         public OutputFileInfo OutputFile { get; } = new();
 
-        public ProcessorType ProcessorType { get; set; } = ProcessorType.Undefined;
+        public ProcessorType ProcessorType { get; set; } = ProcessorType.None;
         public Dictionary<ProcessorType, ProcessorInfo> Processors { get; set; } =
             new Dictionary<ProcessorType, ProcessorInfo>();
         public ProcessorInfo ProcessorInfo => Processors.ContainsKey( ProcessorType )

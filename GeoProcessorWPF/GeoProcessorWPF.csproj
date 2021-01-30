@@ -11,6 +11,10 @@
 
   <ItemGroup>
     <Compile Remove="config\AppConfigDesignTime.cs" />
+    <Compile Remove="viewmodels\design-time\DesignTimeFileViewModel.cs" />
+    <Compile Remove="viewmodels\FileViewModel.cs" />
+    <Compile Remove="viewmodels\interfaces\IFileViewModel.cs" />
+    <Compile Remove="viewmodels\validators\ProcessFileViewModelValidator.cs" />
     <Compile Remove="viewmodels\ViewModelLocator.cs" />
   </ItemGroup>
 
@@ -41,6 +45,13 @@
 
   <ItemGroup>
     <PackageReference Update="Microsoft.VCRTForwarders.140" Version="1.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="ui\OptionsWindow.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 
 </Project>

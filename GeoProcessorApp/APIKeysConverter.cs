@@ -23,7 +23,7 @@ namespace J4JSoftware.GeoProcessor
             writer.WriteStartObject("APIKeys");
 
             foreach( var kvp in value.APIKeys
-                .Where( k => k.Key.IsSecuredProcessor() ) )
+                .Where( k => k.Key.RequiresAPIKey() ) )
             {
                 writer.WriteStartObject(kvp.Key.ToString());
 

@@ -26,12 +26,8 @@ namespace J4JSoftware.GeoProcessor
             {
                 var cachedPI = new ProcessorInfo
                 {
-                    HasPointsLimit = kvp.Value.HasPointsLimit,
                     MaxDistanceMultiplier = kvp.Value.MaxDistanceMultiplier,
-                    MaxPointsPerRequest = kvp.Value.MaxPointsPerRequest,
                     MaxSeparation = new Distance( kvp.Value.MaxSeparation.Unit, kvp.Value.MaxSeparation.OriginalValue ),
-                    RequiresKey = kvp.Value.RequiresKey,
-                    SupportsSnapping = kvp.Value.SupportsSnapping
                 };
 
                 Processors.Add( kvp.Key, cachedPI );
@@ -50,7 +46,7 @@ namespace J4JSoftware.GeoProcessor
         public InputFileInfo InputFile { get; } = new();
         public OutputFileInfo OutputFile { get; } = new();
 
-        public ProcessorType ProcessorType { get; set; } = ProcessorType.Undefined;
+        public ProcessorType ProcessorType { get; set; } = ProcessorType.None;
 
         public Dictionary<ProcessorType, ProcessorInfo> Processors { get; set; } =
             new();

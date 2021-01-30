@@ -1,21 +1,17 @@
-﻿using System;
-
-namespace J4JSoftware.GeoProcessor
+﻿namespace J4JSoftware.GeoProcessor
 {
-    public class SecuredProcessorTypeAttribute : Attribute
-    {
-    }
-
     public enum ProcessorType
     {
-        [SecuredProcessorType] 
+        [ProcessorTypeInfo(true, true, 100)] 
         Bing,
 
+        [ProcessorTypeInfo(false, false)] 
         Distance,
         
-        [SecuredProcessorType]
+        [ProcessorTypeInfo(true, true, 100)] 
         Google,
         
-        Undefined
+        [ProcessorTypeInfo(false, false)] 
+        None
     }
 }

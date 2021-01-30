@@ -57,7 +57,7 @@ namespace J4JSoftware.GeoProcessor
             }
 
             var secureProcessors = _config.Processors
-                                       ?.Where( p => p.Key.IsSecuredProcessor() )
+                                       ?.Where( p => p.Key.RequiresAPIKey() )
                                        .Select( p => p.Key )
                                        .ToList()
                                    ?? new List<ProcessorType>();
@@ -77,7 +77,7 @@ namespace J4JSoftware.GeoProcessor
                     _config.ProcessorType switch
                     {
                         ProcessorType.Distance => ProcessorType.Google,
-                        ProcessorType.Undefined => ProcessorType.Google,
+                        ProcessorType.None => ProcessorType.Google,
                         _ => _config.ProcessorType
                     },
                     secureProcessors );

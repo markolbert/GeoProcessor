@@ -11,11 +11,10 @@ namespace J4JSoftware.GeoProcessor
     {
         private Visibility _apiKeyVisibility = Visibility.Collapsed;
         private Visibility _requestLimitVisibility = Visibility.Collapsed;
-        private ProcessorType _processorType = ProcessorType.Undefined;
+        private ProcessorType _processorType = ProcessorType.None;
         private string _apiKey = string.Empty;
         private string _encyptedApiKey = string.Empty;
         private int _maxDistMultiplier;
-        private int _maxPtsPerReq;
         private UnitTypes _selectedUnitType;
         private double _distanceValue;
 
@@ -66,12 +65,6 @@ namespace J4JSoftware.GeoProcessor
         {
             get => _requestLimitVisibility;
             private set => SetProperty( ref _requestLimitVisibility, value );
-        }
-
-        public int MaxPointsPerRequest
-        {
-            get => _maxPtsPerReq;
-            set => SetProperty( ref _maxPtsPerReq, value );
         }
 
         public ObservableCollection<UnitTypes> UnitTypes { get; }

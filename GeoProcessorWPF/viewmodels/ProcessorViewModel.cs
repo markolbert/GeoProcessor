@@ -22,14 +22,13 @@ namespace J4JSoftware.GeoProcessor
         private IUserConfig _userConfig;
         private Visibility _apiKeyVisibility = Visibility.Collapsed;
         private Visibility _requestLimitVisibility = Visibility.Collapsed;
-        private ProcessorType _processorType = ProcessorType.Undefined;
+        private ProcessorType _processorType = ProcessorType.None;
         private string _apiKey = string.Empty;
         private string _encyptedApiKey = string.Empty;
         private int _maxDistMultiplier;
-        private int _maxPtsPerReq;
         private UnitTypes _selectedUnitType;
         private double _distanceValue;
-        private PropertySettingState _setState = PropertySettingState.Initial;
+        private PropertySettingState _setState;
 
         public ProcessorViewModel(
             IAppConfig appConfig,
@@ -43,7 +42,7 @@ namespace J4JSoftware.GeoProcessor
             _logger?.SetLoggedType( GetType() );
 
             ProcessorTypes = new ObservableCollection<ProcessorType>( Enum.GetValues<ProcessorType>()
-                .Where( x => x != ProcessorType.Undefined ) );
+                .Where( x => x != ProcessorType.None ) );
 
             SelectedProcessorType = ProcessorTypes.FirstOrDefault( x => x != ProcessorType.Distance );
 
@@ -89,7 +88,6 @@ namespace J4JSoftware.GeoProcessor
             if( !_appConfig.Processors.TryGetValue( SelectedProcessorType, out var procInfo ) ) 
                 return;
 
-            MaxPointsPerRequest = procInfo!.MaxPointsPerRequest;
             MaxDistanceMultiplier = procInfo.MaxDistanceMultiplier;
             DistanceValue = procInfo.MaxSeparation.OriginalValue;
             SelectedUnitType = procInfo.MaxSeparation.Unit;
@@ -111,12 +109,14 @@ namespace J4JSoftware.GeoProcessor
 
                 OnSettingsChanged();
 
+                APIKeyVisible = _processorType.RequiresAPIKey() ? Visibility.Visible : Visibility.Collapsed;
+
+                RequestLimitVisibility = _processorType.MaxPointsPerRequest() != Int32.MaxValue
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+
                 if( _appConfig.Processors.TryGetValue( _processorType, out var processorInfo ) )
                 {
-                    APIKeyVisible = processorInfo.RequiresKey ? Visibility.Visible : Visibility.Collapsed;
-                    RequestLimitVisibility = processorInfo.HasPointsLimit ? Visibility.Visible : Visibility.Collapsed;
-
-                    MaxPointsPerRequest = processorInfo.MaxPointsPerRequest;
                     MaxDistanceMultiplier = processorInfo.MaxDistanceMultiplier;
                     DistanceValue = processorInfo.MaxSeparation.OriginalValue;
                     SelectedUnitType = processorInfo.MaxSeparation.Unit;
@@ -134,10 +134,6 @@ namespace J4JSoftware.GeoProcessor
                 }
                 else
                 {
-                    APIKeyVisible = Visibility.Collapsed;
-                    RequestLimitVisibility=Visibility.Collapsed;
-
-                    MaxPointsPerRequest = 100;
                     MaxDistanceMultiplier = 3;
                     DistanceValue = 2.0;
                     SelectedUnitType = GeoProcessor.UnitTypes.km;
@@ -201,22 +197,6 @@ namespace J4JSoftware.GeoProcessor
             private set => SetProperty( ref _requestLimitVisibility, value );
         }
 
-        public int MaxPointsPerRequest
-        {
-            get => _maxPtsPerReq;
-            set
-            {
-                SetProperty( ref _maxPtsPerReq, value );
-                OnSettingsChanged();
-
-                if( _setState != PropertySettingState.Normal 
-                    || !_appConfig.Processors.TryGetValue( SelectedProcessorType, out var temp ) ) 
-                    return;
-
-                temp.MaxPointsPerRequest = value;
-            }
-        }
-
         public ObservableCollection<UnitTypes> UnitTypes { get; }
 
         public UnitTypes SelectedUnitType
@@ -259,7 +239,7 @@ namespace J4JSoftware.GeoProcessor
         private void OnSettingsChanged()
         {
             if( _setState == PropertySettingState.Normal )
-                Messenger.Send( new SettingsChangedMessage(), "primary" );
+                Messenger.Send( new SettingsChangedMessage(SettingsPage.Processors), "primary" );
         }
     }
 }

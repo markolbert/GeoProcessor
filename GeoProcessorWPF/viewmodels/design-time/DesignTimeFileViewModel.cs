@@ -13,12 +13,19 @@ using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.Win32;
+// ReSharper disable CollectionNeverUpdated.Local
+#pragma warning disable 8618
+#pragma warning disable 649
 
 namespace J4JSoftware.GeoProcessor
 {
     public class DesignTimeFileViewModel : ObservableRecipient, IFileViewModel
     {
-        public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
+        public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged
+        {
+            add { }
+            remove { }
+        }
 
         private string _inputPath = string.Empty;
         private ExportType _exportType = ExportType.Unknown;

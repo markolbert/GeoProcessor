@@ -3,7 +3,7 @@ using System.Windows.Media;
 
 namespace J4JSoftware.GeoProcessor
 {
-    public interface IRouteOptionsViewModel : INotifyPropertyChanged, INotifyPropertyChanging
+    public interface IRouteDisplayViewModel : INotifyPropertyChanged, INotifyPropertyChanging
     {
         int RouteWidth { get; set; }
         Color RouteColor { get; set; }

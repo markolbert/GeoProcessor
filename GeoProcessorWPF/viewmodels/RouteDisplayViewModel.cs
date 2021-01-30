@@ -4,7 +4,7 @@ using Microsoft.Toolkit.Mvvm.ComponentModel;
 
 namespace J4JSoftware.GeoProcessor
 {
-    public class RouteOptionsViewModel : ObservableRecipient, IRouteOptionsViewModel
+    public class RouteDisplayViewModel : ObservableRecipient, IRouteDisplayViewModel
     {
         private readonly IJ4JLogger? _logger;
 
@@ -14,7 +14,7 @@ namespace J4JSoftware.GeoProcessor
         private Color _highlightColor;
         private bool _suppressChangeMessages = true;
 
-        public RouteOptionsViewModel(
+        public RouteDisplayViewModel(
             IAppConfig appConfig,
             IJ4JLogger? logger )
         {
@@ -38,7 +38,7 @@ namespace J4JSoftware.GeoProcessor
         {
             base.OnActivated();
 
-            Messenger.Register<RouteOptionsViewModel, SettingsReloadedMessage, string>( this, 
+            Messenger.Register<RouteDisplayViewModel, SettingsReloadedMessage, string>( this, 
                 "primary",
                 SettingsReloadedMessageHandler );
         }
@@ -50,7 +50,7 @@ namespace J4JSoftware.GeoProcessor
             Messenger.UnregisterAll(this);
         }
 
-        private void SettingsReloadedMessageHandler( RouteOptionsViewModel recipient, SettingsReloadedMessage srMesg )
+        private void SettingsReloadedMessageHandler( RouteDisplayViewModel recipient, SettingsReloadedMessage srMesg )
         {
             _appConfig = srMesg.AppConfig;
 
@@ -101,7 +101,7 @@ namespace J4JSoftware.GeoProcessor
         private void OnSettingsChanged()
         {
             if( !_suppressChangeMessages )
-                Messenger.Send( new SettingsChangedMessage(), "primary" );
+                Messenger.Send( new SettingsChangedMessage( SettingsPage.RouteDisplay ), "primary" );
         }
     }
 }

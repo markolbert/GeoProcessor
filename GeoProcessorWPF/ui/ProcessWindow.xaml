@@ -29,49 +29,12 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Label Grid.Column="0" Grid.Row="0"
-               VerticalAlignment="Center"
-               Content="Phase"/>
-
-        <TextBlock Grid.Column="1" Grid.Row="0"
-                   Margin="5"
-                   VerticalAlignment="Center"
-                   Text="{Binding Phase }" />
-
-        <Label Grid.Column="0" Grid.Row="1"
-               VerticalAlignment="Center"
-               Content="Points Processed"/>
-
-        <TextBlock Grid.Column="1" Grid.Row="1"
-                   Margin="5"
-                   VerticalAlignment="Center"
-                   Text="{Binding PointsProcessed, StringFormat=N0}" />
-
-        <Label Grid.Column="0" Grid.Row="2"
-               VerticalAlignment="Top"
-               Content="Messages" />
-
-        <ScrollViewer Grid.Column="1" Grid.Row="2"
-                      HorizontalScrollBarVisibility="Auto"
-                      VerticalScrollBarVisibility="Auto"
-                      Margin="5">
-            <ItemsControl VerticalAlignment="Top"
-                          Margin="0"
-                          ItemsSource="{Binding Messages}" >
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Margin="0" 
-                                   Text="{Binding }"/>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </ScrollViewer>
-
-        <StackPanel Grid.Column="1" Grid.Row="3"
+        <StackPanel Grid.Column="1" Grid.Row="4"
                     Orientation="Horizontal"
                     HorizontalAlignment="Right" >
 

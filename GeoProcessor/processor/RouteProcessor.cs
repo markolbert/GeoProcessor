@@ -15,17 +15,23 @@ namespace J4JSoftware.GeoProcessor
 
         protected RouteProcessor(
             IGeoConfig config,
+            ProcessorType processorType,
             IJ4JLogger? logger )
         {
-            Configuration = config.ProcessorInfo;
+            Configuration = config.ProcessorInfo!;
             Processor = config.ProcessorType;
-            ReportingInterval = config.ProcessorInfo.MaxPointsPerRequest * 5;
+            ProcessorType = processorType;
+
+            ReportingInterval = ProcessorType.MaxPointsPerRequest() == Int32.MaxValue
+                ? 500
+                : ProcessorType.MaxPointsPerRequest() * 5;
 
             Logger = logger;
             Logger?.SetLoggedType( GetType() );
         }
 
         protected IJ4JLogger? Logger { get; }
+        protected ProcessorType ProcessorType { get; }
 
         public int ReportingInterval
         {
@@ -35,7 +41,10 @@ namespace J4JSoftware.GeoProcessor
             {
                 if( value <= 0 )
                 {
-                    var temp = Configuration.MaxPointsPerRequest * 5;
+                    var temp = ProcessorType.MaxPointsPerRequest() == Int32.MaxValue
+                        ? 500
+                        : ProcessorType.MaxPointsPerRequest() * 5;
+
                     _reportingInterval = temp;
 
                     Logger?.Error( "ReportingInterval must be >= 0, defaulting to {0}", temp );

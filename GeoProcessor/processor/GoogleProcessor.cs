@@ -19,7 +19,7 @@ namespace J4JSoftware.GeoProcessor
             IImportConfig config,
             IJ4JLogger? logger
         )
-            : base( config, logger )
+            : base( config, ProcessorType.Google, logger )
         {
             Type = GeoExtensions.GetTargetType<RouteProcessorAttribute>(GetType())!.Type;
         }

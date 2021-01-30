@@ -1,6 +1,6 @@
 ﻿namespace J4JSoftware.GeoProcessor
 {
-    internal enum ProcessState
+    public enum ProcessorState
     {
         Ready,
         Running,

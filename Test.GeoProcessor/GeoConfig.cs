@@ -20,8 +20,7 @@ namespace Test.GeoProcessor
         public ProcessorInfo ProcessorInfo { get; } = new()
         {
             MaxSeparation = new Distance( UnitTypes.km, 2 ), 
-            MaxDistanceMultiplier = 3, 
-            MaxPointsPerRequest = 100
+            MaxDistanceMultiplier = 3
         };
 
         public OutputFileInfo OutputFile { get; } = new OutputFileInfo();

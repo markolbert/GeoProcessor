@@ -17,7 +17,7 @@ namespace J4JSoftware.GeoProcessor
         {
             newValue = origValue;
 
-            if( origValue != ProcessorType.Undefined )
+            if( origValue != ProcessorType.None )
                 return UpdaterResult.OriginalOkay;
 
             Console.WriteLine();
@@ -27,7 +27,7 @@ namespace J4JSoftware.GeoProcessor
                 origValue,
                 ProcessorType.Google,
                 Enum.GetValues<ProcessorType>()
-                    .Where( x => GeoExtensions.IsSecuredProcessor( x ) )
+                    .Where( x => x.SnapsToRoute() )
                     .ToList() );
 
             return UpdaterResult.Changed;
