@@ -36,6 +36,12 @@
                     IsEnabled="{Binding ConfigurationIsValid}"
                     Command="{Binding ProcessCommand}" />
 
+            <Button DockPanel.Dock="Right"
+                    Margin="5, 5, 5,10"
+                    HorizontalAlignment="Right"
+                    Content="Options"
+                    Command="{Binding EditOptionsCommand}" />
+
         </DockPanel>
         
         <Grid DockPanel.Dock="Top" >

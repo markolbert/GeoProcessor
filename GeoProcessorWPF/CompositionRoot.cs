@@ -51,6 +51,7 @@ namespace J4JSoftware.GeoProcessor
         public NetEventConfig NetEventChannelConfiguration { get; }
         public IMainViewModel MainViewModel => Host!.Services.GetRequiredService<IMainViewModel>();
         public IProcessFileViewModel ProcessFileViewModel => Host!.Services.GetRequiredService<IProcessFileViewModel>();
+        public IOptionsViewModel OptionsViewModel => Host!.Services.GetRequiredService<IOptionsViewModel>();
         public IRouteDisplayViewModel RouteDisplayViewModel => Host!.Services.GetRequiredService<IRouteDisplayViewModel>();
         public IProcessorViewModel ProcessorViewModel => Host!.Services.GetRequiredService<IProcessorViewModel>();
 
@@ -71,6 +72,10 @@ namespace J4JSoftware.GeoProcessor
             builder.RegisterViewModelInterface<IMainViewModel>()
                 .DesignTime<DesignTimeMainViewModel>()
                 .RunTime<MainViewModel>();
+
+            builder.RegisterViewModelInterface<IOptionsViewModel>()
+                .DesignTime<DesignTimeOptionsViewModel>()
+                .RunTime<OptionsViewModel>();
 
             builder.RegisterViewModelInterface<IRouteDisplayViewModel>()
                 .DesignTime<DesignTimeRouteDisplayViewModel>()

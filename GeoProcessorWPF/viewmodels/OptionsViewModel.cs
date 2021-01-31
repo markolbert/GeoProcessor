@@ -1,37 +1,23 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
+﻿using System.IO;
 using System.Text.Json;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
-using Autofac.Features.Indexed;
-using J4JSoftware.DependencyInjection;
 using J4JSoftware.Logging;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
-using Microsoft.Toolkit.Mvvm.Messaging;
-using Microsoft.Win32;
-using Twilio.TwiML.Messaging;
 
 namespace J4JSoftware.GeoProcessor
 {
-    public class OptionsViewModel : ObservableRecipient
+    public class OptionsViewModel : ObservableRecipient, IOptionsViewModel
     {
+        private readonly IAppConfig _appConfig;
+        private readonly IUserConfig _userConfig;
         private readonly IJ4JLogger? _logger;
 
-        private IAppConfig _appConfig;
         private CachedAppConfig _cachedAppConfig;
-        private IUserConfig _userConfig;
         private UserConfig _prevUserConfig;
 
         private bool _settingsChanged;
@@ -57,9 +43,11 @@ namespace J4JSoftware.GeoProcessor
             // store configuration backups
             _prevUserConfig = _userConfig.Copy();
             _cachedAppConfig = new CachedAppConfig( _appConfig );
+
+            SettingsChanged = false;
         }
 
-        #region messages
+        #region Messaging
 
         protected override void OnActivated()
         {
@@ -124,11 +112,29 @@ namespace J4JSoftware.GeoProcessor
             _appConfig.RestoreFrom( _cachedAppConfig );
             _userConfig.RestoreFrom( _prevUserConfig );
 
-            Messenger.Send( new SettingsReloadedMessage( _appConfig, _userConfig ), "primary" );
-
             SettingsChanged = false;
         }
 
+        public ICommand CloseCommand { get; }
+
+        private async Task CloseCommandAsync()
+        {
+            if( SettingsChanged )
+            {
+                var mainWin = Application.Current.MainWindow as MetroWindow;
+
+                var dlgResult = await mainWin!.ShowMessageAsync( "Unsaved Changes",
+                    "There are unsaved changes. Are you sure you want to close?",
+                    MessageDialogStyle.AffirmativeAndNegative );
+
+                if( dlgResult != MessageDialogResult.Affirmative )
+                    return;
+            }
+
+            Messenger.Send( new OptionsWindowClosed(), "primary" );
+        }
+
         #endregion
+
     }
 }

@@ -17,15 +17,15 @@
         Height="450" Width="800">
 
     <DockPanel LastChildFill="True"
-               DataContext="{Binding RouteDisplayViewModel, Source={StaticResource ViewModelLocator} }">
+               DataContext="{Binding OptionsViewModel, Source={StaticResource ViewModelLocator} }">
 
         <DockPanel DockPanel.Dock="Bottom">
 
             <Button DockPanel.Dock="Right"
                     Margin="5, 5, 10,10"
                     HorizontalAlignment="Right"
-                    Content="Cancel"
-                    Command="{Binding CancelCommand}" />
+                    Content="Close"
+                    Command="{Binding CloseCommand}" />
 
             <Button DockPanel.Dock="Right"
                     Margin="5, 5, 10,10"

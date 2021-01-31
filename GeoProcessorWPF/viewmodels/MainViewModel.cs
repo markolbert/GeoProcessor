@@ -28,6 +28,7 @@ namespace J4JSoftware.GeoProcessor
         private readonly IJ4JLogger? _logger;
 
         private bool _configIsValid;
+        private OptionsWindow? _optionsWin;
         private ProcessWindow? _procWin;
         private ProcessorType _snapType;
 
@@ -68,7 +69,7 @@ namespace J4JSoftware.GeoProcessor
             // go live for messages
             IsActive = true;
 
-            ConfigurationIsValid = RouteSnappersExist();
+            Validate();
         }
 
         #region Messaging
@@ -101,8 +102,9 @@ namespace J4JSoftware.GeoProcessor
 
         private void OptionsWindowClosedHandler( MainViewModel recipient, OptionsWindowClosed owcMesg )
         {
+            _optionsWin?.Close();
+
             Validate();
-            ConfigurationIsValid = !Messages.Any();
         }
 
         #endregion
@@ -140,20 +142,6 @@ namespace J4JSoftware.GeoProcessor
 
         public ObservableCollection<string> Messages { get; private set; } = new();
 
-        //private void UpdateMessages()
-        //{
-        //    Messages.Clear();
-
-        //    if( string.IsNullOrEmpty(_appConfig.InputFile.FilePath  ))
-        //        Messages.Add("You need to specify a file to process (Process tab)"  );
-
-        //    if( string.IsNullOrEmpty(_appConfig.OutputFile.FilePath  ))
-        //        Messages.Add("You need to specify an output file (Process tab)"  );
-
-        //    if( !RouteSnappersExist() )
-        //        Messages.Add( "No processors are defined or you need to select one (Process tab)" );
-        //}
-
         #region Commands
 
         public ICommand ProcessCommand { get; }
@@ -182,11 +170,11 @@ namespace J4JSoftware.GeoProcessor
 
         private void EditOptionsCommandHandler()
         {
-            var optionsWin = new OptionsWindow();
+            _optionsWin = new OptionsWindow();
 
             // we receive a message from the dialog window when it closes,
             // and take action at that point
-            optionsWin.ShowDialog();
+            _optionsWin.ShowDialog();
         }
 
         #endregion
@@ -336,6 +324,8 @@ namespace J4JSoftware.GeoProcessor
             Messages = new ObservableCollection<string>( _errors.SelectMany( x => x.Value ) );
 
             ErrorsChanged?.Invoke( this, new DataErrorsChangedEventArgs( propName ) );
+
+            ConfigurationIsValid = !Messages.Any();
 
             //Messenger.Send( new FileConfigurationMessage( !_errors.Any() ), "primary" );
         }
