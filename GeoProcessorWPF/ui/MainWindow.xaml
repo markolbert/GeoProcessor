@@ -15,145 +15,10 @@
         Title="GeoProcessor" 
         Height="450" Width="800">
 
-    <Grid DataContext="{Binding MainViewModel, Source={StaticResource ViewModelLocator}}">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="0.6*"/>
-            <ColumnDefinition Width="0.4*"/>
-        </Grid.ColumnDefinitions>
+    <DockPanel LastChildFill="True" 
+               DataContext="{Binding MainViewModel, Source={StaticResource ViewModelLocator}}">
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-
-        <ScrollViewer Grid.Column="2" Grid.Row="0" Grid.RowSpan="4"
-                      MinWidth="200"
-                      Margin="5">
-            <ItemsControl ItemsSource="{Binding Messages}" >
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Foreground="Red"
-                                   Text="{Binding }"/>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </ScrollViewer>
-
-        <Label Grid.Column="0" Grid.Row="0"
-               VerticalAlignment="Center"
-               Content="Input File" />
-
-        <StackPanel Grid.Column="1" Grid.Row="0"
-                    Orientation="Horizontal" >
-            <TextBox IsReadOnly="True"
-                     Margin="5"
-                     MinWidth="300px"
-                     Text="{Binding InputPath, Mode=OneWay, ValidatesOnNotifyDataErrors=True}">
-
-                <Validation.ErrorTemplate>
-                    <ControlTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <AdornedElementPlaceholder x:Name="textBox" />
-                            <ItemsControl VerticalAlignment="Center"
-                                          Margin="35,5,5,5"
-                                          ItemsSource="{Binding}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding ErrorContent}" Foreground="Red" />
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </StackPanel>
-                    </ControlTemplate>
-                </Validation.ErrorTemplate>
-
-            </TextBox>
-            
-            <Button Content="..."
-                    Style="{DynamicResource MaterialDesignToolButton}"
-                    VerticalAlignment="Center"
-                    Command="{Binding InputFileCommand }" />
-        </StackPanel>
-
-        <Label Grid.Column="0" Grid.Row="1"
-               VerticalAlignment="Center"
-               Content="Output Type" />
-        <ComboBox Grid.Column="1" Grid.Row="1"
-                  Margin="5,0,0,0"
-                  HorizontalAlignment="Left"
-                  VerticalAlignment="Center"
-                  IsEditable="False"
-                  ItemsSource="{Binding ExportTypes}"
-                  SelectedItem="{Binding SelectedExportType}"/>
-
-        <Label Grid.Column="0" Grid.Row="2"
-               VerticalAlignment="Center"
-               Content="Output File" />
-        <StackPanel Grid.Column="1" Grid.Row="2"
-                    Orientation="Horizontal">
-            <TextBox IsReadOnly="True"
-                     Margin="5"
-                     MinWidth="300px"
-                     Text="{Binding OutputPath, Mode=OneWay}">
-
-                <Validation.ErrorTemplate>
-                    <ControlTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <AdornedElementPlaceholder x:Name="textBox" />
-                            <ItemsControl VerticalAlignment="Center"
-                                          Margin="35,5,5,5"
-                                          ItemsSource="{Binding}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding ErrorContent}" Foreground="Red" />
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </StackPanel>
-                    </ControlTemplate>
-                </Validation.ErrorTemplate>
-
-            </TextBox>
-            <Button Content="..."
-                    VerticalAlignment="Center"
-                    Style="{DynamicResource MaterialDesignToolButton}"
-                    Command="{Binding OutputFileCommand }" />
-        </StackPanel>
-
-        <Label Grid.Column="0" Grid.Row="3"
-               VerticalAlignment="Center"
-               Content="Snap-to-Route Processor" />
-
-        <ComboBox Grid.Column="1" Grid.Row="3"
-                  HorizontalAlignment="Left"
-                  VerticalAlignment="Center"
-                  Margin="5"
-                  ItemsSource="{Binding SnappingTypes, ValidatesOnNotifyDataErrors=True}"
-                  SelectedItem="{Binding SelectedSnappingType}">
-
-            <Validation.ErrorTemplate>
-                <ControlTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <AdornedElementPlaceholder x:Name="comboBox" />
-                        <ItemsControl VerticalAlignment="Center" 
-                                      Margin="5"
-                                      ItemsSource="{Binding}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding ErrorContent}" Foreground="Red" />
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
-                </ControlTemplate>
-            </Validation.ErrorTemplate>
-        </ComboBox>
-
-        <DockPanel Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="4">
+        <DockPanel Dock="Bottom">
             <StackPanel DockPanel.Dock="Left">
                 <TextBlock Margin="5">
                     Select the input file, the output type and the output file, and then click Process File.
@@ -165,27 +30,99 @@
             </StackPanel>
 
             <Button DockPanel.Dock="Right"
-                    Margin="5, 5, 10,10"
-                    HorizontalAlignment="Right"
-                    Content="Reload"
-                    IsEnabled="{Binding SettingsChanged}"
-                    Command="{Binding ReloadCommand}" />
-
-            <Button DockPanel.Dock="Right"
-                    Margin="5, 5, 5,10"
-                    HorizontalAlignment="Right"
-                    Content="Save"
-                    IsEnabled="{Binding SettingsChanged}"
-                    Command="{Binding SaveCommand}" />
-
-            <Button DockPanel.Dock="Right"
                     Margin="5, 5, 5,10"
                     HorizontalAlignment="Right"
                     Content="Process File"
                     IsEnabled="{Binding ConfigurationIsValid}"
                     Command="{Binding ProcessCommand}" />
-        </DockPanel>
 
-    </Grid>
+        </DockPanel>
+        
+        <Grid DockPanel.Dock="Top" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="0.5*"/>
+                <ColumnDefinition Width="0.5*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <ScrollViewer Grid.Column="2" Grid.Row="0" Grid.RowSpan="4"
+                          MinWidth="200"
+                          Margin="5">
+                <ItemsControl ItemsSource="{Binding Messages}" >
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Foreground="Red"
+                                       Margin="0,0,0,5"
+                                       TextWrapping="Wrap"
+                                       Text="{Binding }"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+            <Label Grid.Column="0" Grid.Row="0"
+                   VerticalAlignment="Center"
+                   Content="Input File" />
+
+            <StackPanel Grid.Column="1" Grid.Row="0"
+                        Orientation="Horizontal" >
+                <TextBox IsReadOnly="True"
+                         Margin="5"
+                         MinWidth="300px"
+                         Text="{Binding InputPath, Mode=OneWay}" />
+                
+                <Button Content="..."
+                        Style="{DynamicResource MaterialDesignToolButton}"
+                        VerticalAlignment="Center"
+                        Command="{Binding InputFileCommand }" />
+            </StackPanel>
+
+            <Label Grid.Column="0" Grid.Row="1"
+                   VerticalAlignment="Center"
+                   Content="Output Type" />
+            <ComboBox Grid.Column="1" Grid.Row="1"
+                      Margin="5,0,0,0"
+                      HorizontalAlignment="Left"
+                      VerticalAlignment="Center"
+                      IsEditable="False"
+                      ItemsSource="{Binding ExportTypes}"
+                      SelectedItem="{Binding SelectedExportType}"/>
+
+            <Label Grid.Column="0" Grid.Row="2"
+                   VerticalAlignment="Center"
+                   Content="Output File" />
+            <StackPanel Grid.Column="1" Grid.Row="2"
+                        Orientation="Horizontal">
+                <TextBox IsReadOnly="True"
+                         Margin="5"
+                         MinWidth="300px"
+                         Text="{Binding OutputPath, Mode=OneWay}" />
+                <Button Content="..."
+                        VerticalAlignment="Center"
+                        Style="{DynamicResource MaterialDesignToolButton}"
+                        Command="{Binding OutputFileCommand }" />
+            </StackPanel>
+
+            <Label Grid.Column="0" Grid.Row="3"
+                   VerticalAlignment="Center"
+                   Content="Snap-to-Route Processor" />
+
+            <ComboBox Grid.Column="1" Grid.Row="3"
+                      HorizontalAlignment="Left"
+                      VerticalAlignment="Center"
+                      Margin="5"
+                      ItemsSource="{Binding SnappingTypes, ValidatesOnNotifyDataErrors=True}"
+                      SelectedItem="{Binding SelectedSnappingType}" />
+
+        </Grid>
+
+    </DockPanel>
 
 </mah:MetroWindow>

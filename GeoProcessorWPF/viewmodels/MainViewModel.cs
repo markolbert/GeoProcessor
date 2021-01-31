@@ -61,7 +61,7 @@ namespace J4JSoftware.GeoProcessor
 
             InitSnappingTypes(userConfig);
             SelectedSnappingType = SnappingTypes!.Any() ? SnappingTypes.First() : ProcessorType.None;
-            Validate( "SnappingTypes" );
+            Validate();
 
             ProcessCommand = new RelayCommand( ProcessCommandHandlerAsync );
 
@@ -69,8 +69,6 @@ namespace J4JSoftware.GeoProcessor
             IsActive = true;
 
             ConfigurationIsValid = RouteSnappersExist();
-
-            UpdateMessages();
         }
 
         #region Messaging
@@ -103,7 +101,7 @@ namespace J4JSoftware.GeoProcessor
 
         private void OptionsWindowClosedHandler( MainViewModel recipient, OptionsWindowClosed owcMesg )
         {
-            UpdateMessages();
+            Validate();
             ConfigurationIsValid = !Messages.Any();
         }
 
@@ -140,21 +138,21 @@ namespace J4JSoftware.GeoProcessor
             }
         }
 
-        public ObservableCollection<string> Messages { get; } = new();
+        public ObservableCollection<string> Messages { get; private set; } = new();
 
-        private void UpdateMessages()
-        {
-            Messages.Clear();
+        //private void UpdateMessages()
+        //{
+        //    Messages.Clear();
 
-            if( string.IsNullOrEmpty(_appConfig.InputFile.FilePath  ))
-                Messages.Add("You need to specify a file to process (Process tab)"  );
+        //    if( string.IsNullOrEmpty(_appConfig.InputFile.FilePath  ))
+        //        Messages.Add("You need to specify a file to process (Process tab)"  );
 
-            if( string.IsNullOrEmpty(_appConfig.OutputFile.FilePath  ))
-                Messages.Add("You need to specify an output file (Process tab)"  );
+        //    if( string.IsNullOrEmpty(_appConfig.OutputFile.FilePath  ))
+        //        Messages.Add("You need to specify an output file (Process tab)"  );
 
-            if( !RouteSnappersExist() )
-                Messages.Add( "No processors are defined or you need to select one (Process tab)" );
-        }
+        //    if( !RouteSnappersExist() )
+        //        Messages.Add( "No processors are defined or you need to select one (Process tab)" );
+        //}
 
         #region Commands
 
@@ -309,13 +307,22 @@ namespace J4JSoftware.GeoProcessor
 
         #region error handling
 
-        public IEnumerable GetErrors( string? propertyName ) =>
-            _errors?
-                .Where( kvp => string.IsNullOrEmpty( propertyName )
-                               || kvp.Key.Equals( propertyName,
-                                   StringComparison.Ordinal ) )
-                .SelectMany( kvp => kvp.Value )
-            ?? Enumerable.Empty<string>();
+        // we always return an empty enumerable because we display the error
+        // messages in a different way (i.e., not as annotations)
+        public IEnumerable GetErrors( string? propertyName )
+        {
+            var propHasErrors = _errors?
+                                    .Any( kvp => string.IsNullOrEmpty( propertyName )
+                                                 || kvp.Key.Equals( propertyName, StringComparison.Ordinal ) )
+                                ?? false;
+
+            var retVal = new List<string>();
+
+            if( propHasErrors )
+                retVal.Add( string.Empty );
+
+            return retVal;
+        }
 
         public bool HasErrors => _errors?.Any() ?? false;
 
@@ -326,9 +333,11 @@ namespace J4JSoftware.GeoProcessor
                 .GroupBy( x => x.PropertyName, x => x.ErrorMessage )
                 .ToDictionary( x => x.Key, x => x.ToList() );
 
+            Messages = new ObservableCollection<string>( _errors.SelectMany( x => x.Value ) );
+
             ErrorsChanged?.Invoke( this, new DataErrorsChangedEventArgs( propName ) );
 
-            Messenger.Send( new FileConfigurationMessage( !_errors.Any() ), "primary" );
+            //Messenger.Send( new FileConfigurationMessage( !_errors.Any() ), "primary" );
         }
 
         #endregion

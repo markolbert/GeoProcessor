@@ -10,7 +10,7 @@ namespace J4JSoftware.GeoProcessor
         {
             RuleFor( x => x.InputPath )
                 .Must( File.Exists )
-                .WithMessage( ( fvm, x ) => $"File '{x}' does not exist" );
+                .WithMessage( ( fvm, x ) => $"Input file '{x}' does not exist" );
 
             RuleFor( x => x.OutputPath )
                 .NotEmpty()
@@ -22,7 +22,7 @@ namespace J4JSoftware.GeoProcessor
 
             RuleFor( x => x.SelectedSnappingType )
                 .Must( x => x != ProcessorType.None && x != ProcessorType.Distance )
-                .WithMessage( "You must select a snap-to-route engine" );
+                .WithMessage( "You must select a snap-to-route processor" );
         }
     }
 }
