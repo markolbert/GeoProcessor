@@ -25,7 +25,10 @@
                     Margin="5, 5, 10,10"
                     HorizontalAlignment="Right"
                     Content="Close"
-                    Command="{Binding CloseCommand}" />
+                    Command="{Binding CloseCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource
+                                                  Mode=FindAncestor,
+                                                  AncestorType=Window}}" />
 
             <Button DockPanel.Dock="Right"
                     Margin="5, 5, 10,10"

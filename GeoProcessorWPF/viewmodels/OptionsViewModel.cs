@@ -36,6 +36,7 @@ namespace J4JSoftware.GeoProcessor
 
             SaveCommand = new RelayCommand( SaveCommandHandlerAsync );
             ReloadCommand = new RelayCommand( ReloadCommandHandler );
+            CloseCommand = new RelayCommand<OptionsWindow>( CloseCommandHandler);
 
             // go live for messages
             IsActive = true;
@@ -117,13 +118,11 @@ namespace J4JSoftware.GeoProcessor
 
         public ICommand CloseCommand { get; }
 
-        private async Task CloseCommandAsync()
+        private void CloseCommandHandler( OptionsWindow optionWin )
         {
             if( SettingsChanged )
             {
-                var mainWin = Application.Current.MainWindow as MetroWindow;
-
-                var dlgResult = await mainWin!.ShowMessageAsync( "Unsaved Changes",
+                var dlgResult = optionWin.ShowModalMessageExternal( "Unsaved Changes",
                     "There are unsaved changes. Are you sure you want to close?",
                     MessageDialogStyle.AffirmativeAndNegative );
 

@@ -69,5 +69,6 @@ namespace J4JSoftware.GeoProcessor
 
         public ICommand SaveCommand { get; }
         public ICommand ReloadCommand { get; }
+        public ICommand CloseCommand { get; }
     }
 }

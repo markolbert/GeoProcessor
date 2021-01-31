@@ -9,5 +9,6 @@ namespace J4JSoftware.GeoProcessor
         bool SettingsChanged { get; }
         ICommand SaveCommand { get; }
         ICommand ReloadCommand { get; }
+        ICommand CloseCommand { get; }
     }
 }
