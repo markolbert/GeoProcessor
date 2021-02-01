@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace J4JSoftware.GeoProcessor
 {

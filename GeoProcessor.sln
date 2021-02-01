@@ -40,6 +40,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{62EB80C2-C53A-48CB-BC0D-67D4F40A5881}"
 	ProjectSection(SolutionItems) = preProject
 		docs\assets\tldr-console.png = docs\assets\tldr-console.png
+		docs\assets\win-aborted.png = docs\assets\win-aborted.png
 		docs\assets\win-completed.png = docs\assets\win-completed.png
 		docs\assets\win-existing-file.png = docs\assets\win-existing-file.png
 		docs\assets\win-good-to-go.png = docs\assets\win-good-to-go.png

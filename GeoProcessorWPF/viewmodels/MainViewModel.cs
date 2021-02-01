@@ -8,7 +8,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 using J4JSoftware.Logging;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
@@ -25,11 +24,12 @@ namespace J4JSoftware.GeoProcessor
         private readonly MainViewValidator _validator = new();
 
         private readonly IAppConfig _appConfig;
-        private readonly IProcessFileViewModel _procFileViewModel;
+        private readonly IProcessorViewModel _procFileViewModel;
         private readonly IJ4JLogger? _logger;
 
         private bool _configIsValid;
         private OptionsWindow? _optionsWin;
+        private ProcessWindow? _procWin;
         private ProcessorType _snapType;
 
         private string _inputPath = string.Empty;
@@ -41,7 +41,7 @@ namespace J4JSoftware.GeoProcessor
         public MainViewModel(
             IAppConfig appConfig,
             IUserConfig userConfig,
-            IProcessFileViewModel procFileViewModel,
+            IProcessorViewModel procFileViewModel,
             IJ4JLogger? logger )
         {
             _appConfig = appConfig;
@@ -83,9 +83,9 @@ namespace J4JSoftware.GeoProcessor
                 "primary",
                 ProcessorStateMessageHandler );
 
-            Messenger.Register<MainViewModel, OptionsWindowClosed, string>( this,
+            Messenger.Register<MainViewModel, CloseModalWindowMessage, string>( this,
                 "primary",
-                OptionsWindowClosedHandler );
+                CloseModalWindowMessageHandler );
         }
 
         protected override void OnDeactivated()
@@ -113,11 +113,20 @@ namespace J4JSoftware.GeoProcessor
             }
         }
 
-        private void OptionsWindowClosedHandler( MainViewModel recipient, OptionsWindowClosed owcMesg )
+        private void CloseModalWindowMessageHandler( MainViewModel recipient, CloseModalWindowMessage cmwMesg )
         {
-            _optionsWin?.Close();
+            switch( cmwMesg.Window )
+            {
+                case DialogWindow.Options:
+                    _optionsWin?.Close();
+                    Validate();
 
-            Validate();
+                    break;
+
+                case DialogWindow.Processor:
+                    _procWin?.Close();
+                    break;
+            }
         }
 
         #endregion
@@ -175,15 +184,11 @@ namespace J4JSoftware.GeoProcessor
                     return;
             }
 
-            // creating the process window will trigger a message as to whether
-            // or not processing can proceed. We start processing by responding
-            // to that message
-            var procWin = new ProcessWindow( _procFileViewModel )
-            {
-                Owner = Application.Current.MainWindow
-            };
+            _procWin = new ProcessWindow( _procFileViewModel );
 
-            procWin.ShowDialog();
+            // we receive a message from the dialog window when it closes,
+            // and take action at that point
+            _procWin.ShowDialog();
         }
 
         public ICommand EditOptionsCommand { get; }
@@ -357,7 +362,5 @@ namespace J4JSoftware.GeoProcessor
             
             await mainWin!.ShowMessageAsync( dlgTitle, message );
         }
-
-        private bool RouteSnappersExist() => _appConfig.Processors.Any( x => x.Key.SnapsToRoute() );
     }
 }

@@ -1,5 +1,5 @@
 ﻿using System.Windows.Media;
-using J4JSoftware.Logging;
+using J4JSoftware.WPFViewModel;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 
 namespace J4JSoftware.GeoProcessor

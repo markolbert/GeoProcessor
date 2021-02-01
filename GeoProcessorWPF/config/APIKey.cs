@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Text.Json.Serialization;
 using J4JSoftware.DependencyInjection;
-using Microsoft.Toolkit.Mvvm.ComponentModel;
 
 namespace J4JSoftware.GeoProcessor
 {

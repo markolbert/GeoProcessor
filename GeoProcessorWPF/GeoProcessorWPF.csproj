@@ -1,23 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0-windows</TargetFramework>
-    <UseWPF>true</UseWPF>
-    <RootNamespace>J4JSoftware.GeoProcessor</RootNamespace>
-    <Nullable>enable</Nullable>
-    <UserSecretsId>76f2e027-4d42-4daf-b830-d339bb3279a0</UserSecretsId>
+	<OutputType>WinExe</OutputType>
+	<TargetFramework>net5.0-windows</TargetFramework>
+	<UseWPF>true</UseWPF>
+	<RootNamespace>J4JSoftware.GeoProcessor</RootNamespace>
+	<Nullable>enable</Nullable>
+	<UserSecretsId>76f2e027-4d42-4daf-b830-d339bb3279a0</UserSecretsId>
+	<Authors>Mark A. Olbert</Authors>
+	<Company>Jump for Joy Software</Company>
+	<Product>J4JSoftware Windows GeoProcessor</Product>
+	<Description>a Windows app for processing GPX, KML and KMZ files, and snapping GPS tracks to roadways</Description>
+	<Copyright>© Mark A. Olbert all rights reserved</Copyright>
+	<RepositoryUrl>https://github.com/markolbert/GeoProcessor</RepositoryUrl>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<RepositoryType>git</RepositoryType>
+	<Version>0.8.0.0</Version>
+	<AssemblyVersion>0.8.0.0</AssemblyVersion>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="config\AppConfigDesignTime.cs" />
-    <Compile Remove="viewmodels\design-time\DesignTimeFileViewModel.cs" />
-    <Compile Remove="viewmodels\FileViewModel.cs" />
-    <Compile Remove="viewmodels\interfaces\IFileViewModel.cs" />
-    <Compile Remove="viewmodels\messages\StartRouteProcessing.cs" />
-    <Compile Remove="viewmodels\validators\ProcessFileViewModelValidator.cs" />
-    <Compile Remove="viewmodels\ViewModelLocator.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="9.4.0" />

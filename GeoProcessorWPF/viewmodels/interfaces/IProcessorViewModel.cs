@@ -1,20 +1,17 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Windows;
+using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace J4JSoftware.GeoProcessor
 {
     public interface IProcessorViewModel : INotifyPropertyChanged, INotifyPropertyChanging
     {
-        ObservableCollection<ProcessorType> ProcessorTypes { get; }
-        ProcessorType SelectedProcessorType { get; set; }
-        Visibility APIKeyVisible { get; }
-        string APIKey { get; set; }
-        string EncryptedAPIKey { get; }
-        int MaxDistanceMultiplier { get; set; }
-        Visibility RequestLimitVisibility { get; }
-        ObservableCollection<UnitTypes> UnitTypes { get; }
-        UnitTypes SelectedUnitType { get; set; }
-        double DistanceValue { get; set; }
+        ProcessorState ProcessorState { get; }
+        string Phase { get; set; }
+        int PointsProcessed { get; }
+        ObservableCollection<string> Messages { get; }
+        Task OnWindowLoadedAsync();
+        ICommand AbortCommand { get; }
     }
 }

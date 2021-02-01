@@ -6,12 +6,12 @@
              xmlns:local="clr-namespace:J4JSoftware.GeoProcessor"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d" 
-             d:DesignHeight="200" d:DesignWidth="450"
+             d:DesignHeight="200" d:DesignWidth="500"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
              TextElement.FontWeight="Normal"
              TextElement.FontSize="14"
              Background="{DynamicResource MaterialDesignPaper}" 
-             DataContext="{Binding ProcessorViewModel, Source={StaticResource ViewModelLocator}}">
+             DataContext="{Binding RouteEnginesViewModel, Source={StaticResource ViewModelLocator}}">
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -20,7 +20,6 @@
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -42,7 +41,7 @@
         <Label Grid.Column="0" Grid.Row="1"
                Content="API Key"
                VerticalAlignment="Center"
-               Visibility="{Binding APIKeyVisible}" Grid.ColumnSpan="2" />
+               Visibility="{Binding APIKeyVisible}" />
 
         <TextBox Grid.Column="1" Grid.Row="1"
                  VerticalAlignment ="Center"
@@ -54,7 +53,7 @@
         <Label Grid.Column="0" Grid.Row="2"
                Content="Encrypted API Key"
                VerticalAlignment="Top" 
-               Visibility="{Binding APIKeyVisible}" Grid.ColumnSpan="2" />
+               Visibility="{Binding APIKeyVisible}" />
 
         <TextBlock Grid.Column="1" Grid.Row="2"
                  VerticalAlignment ="Top"
@@ -68,7 +67,7 @@
         <Label Grid.Column="0" Grid.Row="3"
                Content="Maximum Distance Multiplier"
                VerticalAlignment="Center" 
-               Visibility="{Binding APIKeyVisible}" Grid.ColumnSpan="2" />
+               Visibility="{Binding APIKeyVisible}" />
 
         <mah:NumericUpDown Grid.Column="1" Grid.Row="3"
                            HorizontalAlignment="Left"
@@ -79,23 +78,10 @@
                            Value="{Binding Path=MaxDistanceMultiplier, Mode=TwoWay }"/>
 
         <Label Grid.Column="0" Grid.Row="4"
-               Content="Points per Request"
-               VerticalAlignment="Center" 
-               Visibility="{Binding RequestLimitVisibility}" Grid.ColumnSpan="2" />
-
-        <mah:NumericUpDown Grid.Column="1" Grid.Row="4"
-                           HorizontalAlignment="Left"
-                           Margin="5"
-                           Minimum="1"
-                           Maximum="100"
-                           Visibility="{Binding RequestLimitVisibility}"
-                           Value="{Binding Path=MaxPointsPerRequest, Mode=TwoWay }"/>
-
-        <Label Grid.Column="0" Grid.Row="5"
                Content="Maximum Separation"
                VerticalAlignment="Center" />
 
-        <StackPanel Grid.Column="1" Grid.Row="5"
+        <StackPanel Grid.Column="1" Grid.Row="4"
                     Orientation="Horizontal">
 
             <TextBox Margin="5"

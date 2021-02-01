@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using MahApps.Metro.Controls;
 
 namespace J4JSoftware.GeoProcessor
@@ -9,9 +8,9 @@ namespace J4JSoftware.GeoProcessor
     /// </summary>
     public partial class ProcessWindow : MetroWindow
     {
-        private IProcessFileViewModel _vm;
+        private IProcessorViewModel _vm;
 
-        public ProcessWindow( IProcessFileViewModel vm )
+        public ProcessWindow( IProcessorViewModel vm )
         {
             _vm = vm;
 

@@ -14,7 +14,7 @@
                  ShowCloseButton="False"
                  ShowMaxRestoreButton="False"
                  ShowMinButton="False"
-                 DataContext="{Binding ProcessFileViewModel, Source={StaticResource ViewModelLocator} }"
+                 DataContext="{Binding ProcessorViewModel, Source={StaticResource ViewModelLocator} }"
                  Loaded="ProcessWindow_OnLoaded"
                  ResizeMode="CanResizeWithGrip"
                  GlowBrush="{DynamicResource MahApps.Brushes.Accent}"

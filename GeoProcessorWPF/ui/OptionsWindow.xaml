@@ -13,6 +13,9 @@
         TextElement.FontSize="14"
         WindowTitleBrush="Teal"
         Background="{DynamicResource MaterialDesignPaper}"
+        ShowCloseButton="False"
+        ShowMaxRestoreButton="False"
+        ShowMinButton="False"
         Title="GeoProcessor" 
         Height="450" Width="800">
 

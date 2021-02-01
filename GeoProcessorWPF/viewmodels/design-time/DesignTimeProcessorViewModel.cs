@@ -1,84 +1,66 @@
-﻿using System;
+﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows;
-using J4JSoftware.Logging;
-using Microsoft.Toolkit.Mvvm.ComponentModel;
+using System.Threading.Tasks;
+using System.Windows.Input;
+// ReSharper disable CollectionNeverUpdated.Local
+// ReSharper disable UnassignedGetOnlyAutoProperty
+#pragma warning disable 1998
+#pragma warning disable 8618
+#pragma warning disable 649
 
 namespace J4JSoftware.GeoProcessor
 {
     public class DesignTimeProcessorViewModel : ObservableRecipient, IProcessorViewModel
     {
-        private Visibility _apiKeyVisibility = Visibility.Collapsed;
-        private Visibility _requestLimitVisibility = Visibility.Collapsed;
-        private ProcessorType _processorType = ProcessorType.None;
-        private string _apiKey = string.Empty;
-        private string _encyptedApiKey = string.Empty;
-        private int _maxDistMultiplier;
-        private UnitTypes _selectedUnitType;
-        private double _distanceValue;
+        private int _pointProcessed;
+        private string _phase = string.Empty;
+        private string _cmdButtonText = string.Empty;
 
         public DesignTimeProcessorViewModel()
         {
-            ProcessorTypes.Add( ProcessorType.Bing );
-            ProcessorTypes.Add( ProcessorType.Distance );
-            ProcessorTypes.Add( ProcessorType.Google );
+            for( var idx = 0; idx < 5; idx++ )
+            {
+                Messages.Add( $"Message #{idx + 1}" );
+            }
 
-            SelectedProcessorType = ProcessorType.Bing;
-            UnitTypes = new ObservableCollection<UnitTypes>( Enum.GetValues<UnitTypes>() );
-            SelectedUnitType = GeoProcessor.UnitTypes.mi;
+            CommandButtonText = "Start";
+            Phase = "Ready to begin...";
+            PointsProcessed = 55000;
         }
 
-        public ObservableCollection<ProcessorType> ProcessorTypes { get; } = new();
+        public ProcessorState ProcessorState { get; }
 
-        public ProcessorType SelectedProcessorType
+        public async Task OnWindowLoadedAsync()
         {
-            get => _processorType;
-            set => SetProperty( ref _processorType, value );
         }
 
-        public Visibility APIKeyVisible
+        public string Phase
         {
-            get => _apiKeyVisibility;
-            private set => SetProperty( ref _apiKeyVisibility, value );
+            get => _phase;
+            set => SetProperty( ref _phase, value );
         }
 
-        public string APIKey
+        public int PointsProcessed
         {
-            get => _apiKey;
-            set => SetProperty( ref _apiKey, value );
+            get => _pointProcessed;
+            private set => SetProperty( ref _pointProcessed, value );
         }
 
-        public string EncryptedAPIKey
+        public ObservableCollection<string> Messages { get; } = new();
+
+        public string CommandButtonText
         {
-            get => _encyptedApiKey;
-            private set => SetProperty( ref _encyptedApiKey, value );
+            get => _cmdButtonText;
+            private set => SetProperty( ref _cmdButtonText, value );
         }
 
-        public int MaxDistanceMultiplier
-        {
-            get => _maxDistMultiplier;
-            set => SetProperty( ref _maxDistMultiplier, value );
-        }
+        public ICommand WindowLoaded { get; }
+        public ICommand AbortCommand {get;}
 
-        public Visibility RequestLimitVisibility
+        public async Task ProcessAsync()
         {
-            get => _requestLimitVisibility;
-            private set => SetProperty( ref _requestLimitVisibility, value );
-        }
-
-        public ObservableCollection<UnitTypes> UnitTypes { get; }
-
-        public UnitTypes SelectedUnitType
-        {
-            get => _selectedUnitType;
-            set => SetProperty( ref _selectedUnitType, value );
-        }
-
-        public double DistanceValue
-        {
-            get => _distanceValue;
-            set => SetProperty( ref _distanceValue, value );
+            throw new NotImplementedException();
         }
     }
 }

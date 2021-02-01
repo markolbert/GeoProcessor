@@ -12,29 +12,33 @@ After you select a file the **Process File** button becomes enabled:
 
 <img src="assets/win-good-to-go.png" width="800px" />
 
+You can select the snap-to-route processor to use with the **Route Snapping 
+Processor** dropdown. Only processors which have a defined API key (or don't 
+require one) will be available as choices.
+
 If the output file exists you'll be asked to confirm you want to overwrite it:
 
 <img src="assets/win-existing-file.png" width="800px" />
 
-Assuming you do, or if it doesn't already exist, a new window will open:
+Assuming you do, or if it doesn't already exist, a new window will open tracking
+the processing. A count of points processed and various messages will appear:
 
-<img src="assets/win-ready-to-begin.png" width="800px" />
+<img src="assets/win-processing.png" width="600px" />
 
-Clicking the start button begins the conversion. During that process a count of points
-processed and various messages will apepar:
+Don't be surprised if the **Points Processed** doesn't match the number of points 
+written to the output file. That's normal, because the snap-to-route processor adds 
+additional points to make the final route "smooth" and match (mostly) actual roads.
 
-<img src="assets/win-processing.png" width="800px" />
-
-During processing you can abort the effort by clicking the **Abort** button. It may take a
+You can abort the effort by clicking the **Abort** button. It may take a
 second or two for the processing to shut down.
 
 If the process succeeds you'll see a screen like this:
 
 <img src="assets/win-completed.png" width="800px" />
 
-Don't be surprised if the **Points Processed** doesn't match the number of points written
-to the output file. That's normal, because the snap-to-route processor adds additional 
-points to make the final route "smooth" and match (mostly) actual roads.
+If you aborted the process you'll see this instead:
 
-Clicking **Close** will take you back to the main window where you can process another file
-if you wish.
+<img src="assets/win-aborted.png" width="800px" />
+
+Once processing is completed, successfully or not, you can select another file
+and process it.

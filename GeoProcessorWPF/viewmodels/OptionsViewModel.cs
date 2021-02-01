@@ -1,10 +1,6 @@
 ﻿using System.IO;
 using System.Text.Json;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
-using J4JSoftware.Logging;
-using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
@@ -15,7 +11,6 @@ namespace J4JSoftware.GeoProcessor
     {
         private readonly IAppConfig _appConfig;
         private readonly IUserConfig _userConfig;
-        private readonly IJ4JLogger? _logger;
 
         private CachedAppConfig _cachedAppConfig;
         private UserConfig _prevUserConfig;
@@ -24,15 +19,11 @@ namespace J4JSoftware.GeoProcessor
 
         public OptionsViewModel( 
             IAppConfig appConfig,
-            IUserConfig userConfig,
-            IJ4JLogger? logger 
+            IUserConfig userConfig
             )
         {
             _appConfig = appConfig;
             _userConfig = userConfig;
-
-            _logger = logger;
-            _logger?.SetLoggedType( GetType() );
 
             SaveCommand = new RelayCommand( SaveCommandHandlerAsync );
             ReloadCommand = new RelayCommand( ReloadCommandHandler );
@@ -130,10 +121,9 @@ namespace J4JSoftware.GeoProcessor
                     return;
             }
 
-            Messenger.Send( new OptionsWindowClosed(), "primary" );
+            Messenger.Send( new CloseModalWindowMessage( DialogWindow.Options ), "primary" );
         }
 
         #endregion
-
     }
 }

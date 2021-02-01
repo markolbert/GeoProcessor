@@ -1,27 +1,21 @@
 ﻿using System.Windows.Media;
 using J4JSoftware.Logging;
+using J4JSoftware.WPFViewModel;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 
 namespace J4JSoftware.GeoProcessor
 {
     public class RouteDisplayViewModel : ObservableRecipient, IRouteDisplayViewModel
     {
-        private readonly IJ4JLogger? _logger;
-
         private IAppConfig _appConfig;
         private int _routeWidth;
         private Color _routeColor;
         private Color _highlightColor;
         private bool _suppressChangeMessages = true;
 
-        public RouteDisplayViewModel(
-            IAppConfig appConfig,
-            IJ4JLogger? logger )
+        public RouteDisplayViewModel( IAppConfig appConfig )
         {
             _appConfig = appConfig;
-
-            _logger = logger;
-            _logger?.SetLoggedType( GetType() );
 
             RouteWidth = 4;
             RouteColor = _appConfig.RouteColor.ToMediaColor();

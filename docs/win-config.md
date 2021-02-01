@@ -3,15 +3,12 @@ When you launch the app you'll be created with the main window:
 
 <img src="assets/win-launch.png" width="800px" />
 
-By selecting tabs and entering values you can configure how files will be processed. You
-can also specify a file to be processed and where you want the processed file to be
-saved.
+You configure how files will be processed by clicking the **Options** button. If 
+you haven't configured any snap-to-route processors (e.g., Bing Maps or Google Maps)
+you'll have to do that on the **Route Engines** tab of the **Options** window.
 
-If you haven't configured any snap-to-route processors (e.g., Bing Maps or Google Maps)
-you'll have to do that on the **Route Engines** tab.
-
-You can adjust the color and width of the route line that will show up when the route is
-displayed in Google Earth on the **Options** tab:
+The first page of the **Options** window lets you adjust the color and width of 
+the route line that will show up when the route is displayed in Google Earth:
 
 <img src="assets/win-options.png" width="800px" />
 
@@ -31,10 +28,17 @@ the snap-to-route engine. That reduces the number of requests the snap-to-route 
 has to process, which is useful because both Bing and Google start charging you for the
 service if you exceed their free usage thresholds.
 
+*If you have unsaved changes, clicking **Close** will warn you:*
+
+<img src="assets/win-options-unsaved.png" width="800px" />
+
+*If you ignore the warning your changes will be in effect for the current session.*
+
 #### Saving a Configuration
-If you change the configuration that's on file the **Save Settings** button will become
-enabled:
+If you change the configuration that's on file the **Save** and **Reload** buttons 
+will become enabled:
 
 <img src="assets/win-options-changed.png" width="800px" />
 
-Clicking it saves your current settings to disk for later use.
+Clicking **Save** stores your current settings to disk for later use. Clicking
+**Reload** reverts the settings to whatever they were when you last saved them.

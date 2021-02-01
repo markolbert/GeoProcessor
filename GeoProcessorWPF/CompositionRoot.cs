@@ -50,10 +50,10 @@ namespace J4JSoftware.GeoProcessor
 
         public NetEventConfig NetEventChannelConfiguration { get; }
         public IMainViewModel MainViewModel => Host!.Services.GetRequiredService<IMainViewModel>();
-        public IProcessFileViewModel ProcessFileViewModel => Host!.Services.GetRequiredService<IProcessFileViewModel>();
+        public IProcessorViewModel ProcessorViewModel => Host!.Services.GetRequiredService<IProcessorViewModel>();
         public IOptionsViewModel OptionsViewModel => Host!.Services.GetRequiredService<IOptionsViewModel>();
         public IRouteDisplayViewModel RouteDisplayViewModel => Host!.Services.GetRequiredService<IRouteDisplayViewModel>();
-        public IProcessorViewModel ProcessorViewModel => Host!.Services.GetRequiredService<IProcessorViewModel>();
+        public IRouteEnginesViewModel RouteEnginesViewModel => Host!.Services.GetRequiredService<IRouteEnginesViewModel>();
 
         protected override void SetupConfigurationEnvironment( IConfigurationBuilder builder )
         {
@@ -81,13 +81,13 @@ namespace J4JSoftware.GeoProcessor
                 .DesignTime<DesignTimeRouteDisplayViewModel>()
                 .RunTime<RouteDisplayViewModel>();
 
+            builder.RegisterViewModelInterface<IRouteEnginesViewModel>()
+                .DesignTime<DesignTimeRouteEnginesViewModel>()
+                .RunTime<RouteEnginesViewModel>();
+
             builder.RegisterViewModelInterface<IProcessorViewModel>()
                 .DesignTime<DesignTimeProcessorViewModel>()
                 .RunTime<ProcessorViewModel>();
-
-            builder.RegisterViewModelInterface<IProcessFileViewModel>()
-                .DesignTime<DesignTimeProcessFileViewModel>()
-                .RunTime<ProcessFileViewModel>();
         }
 
         protected override void SetupDependencyInjection( HostBuilderContext hbc, ContainerBuilder builder )
