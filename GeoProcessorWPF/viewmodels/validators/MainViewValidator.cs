@@ -4,7 +4,7 @@ using FluentValidation;
 
 namespace J4JSoftware.GeoProcessor
 {
-    public class MainViewValidator : AbstractValidator<MainViewModel>
+    public class MainViewValidator : AbstractValidator<IMainViewModel>
     {
         public MainViewValidator()
         {
@@ -16,11 +16,11 @@ namespace J4JSoftware.GeoProcessor
                 .NotEmpty()
                 .WithMessage( "An output file must be specified" );
 
-            RuleFor( x => x.SnappingTypes )
+            RuleFor( x => x.SnapToRouteProcessors )
                 .Must( x => x.Any() )
                 .WithMessage( "No snap-to-route processors are defined" );
 
-            RuleFor( x => x.SelectedSnappingType )
+            RuleFor( x => x.SelectedSnapToRouteProcessor )
                 .Must( x => x != ProcessorType.None && x != ProcessorType.Distance )
                 .WithMessage( "You must select a snap-to-route processor" );
         }

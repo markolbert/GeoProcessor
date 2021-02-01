@@ -14,6 +14,7 @@
     <Compile Remove="viewmodels\design-time\DesignTimeFileViewModel.cs" />
     <Compile Remove="viewmodels\FileViewModel.cs" />
     <Compile Remove="viewmodels\interfaces\IFileViewModel.cs" />
+    <Compile Remove="viewmodels\messages\StartRouteProcessing.cs" />
     <Compile Remove="viewmodels\validators\ProcessFileViewModelValidator.cs" />
     <Compile Remove="viewmodels\ViewModelLocator.cs" />
   </ItemGroup>

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using J4JSoftware.Logging;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
@@ -24,12 +25,11 @@ namespace J4JSoftware.GeoProcessor
         private readonly MainViewValidator _validator = new();
 
         private readonly IAppConfig _appConfig;
-        private readonly IUserConfig _userConfig;
+        private readonly IProcessFileViewModel _procFileViewModel;
         private readonly IJ4JLogger? _logger;
 
         private bool _configIsValid;
         private OptionsWindow? _optionsWin;
-        private ProcessWindow? _procWin;
         private ProcessorType _snapType;
 
         private string _inputPath = string.Empty;
@@ -41,10 +41,11 @@ namespace J4JSoftware.GeoProcessor
         public MainViewModel(
             IAppConfig appConfig,
             IUserConfig userConfig,
+            IProcessFileViewModel procFileViewModel,
             IJ4JLogger? logger )
         {
             _appConfig = appConfig;
-            _userConfig = userConfig;
+            _procFileViewModel = procFileViewModel;
 
             _logger = logger;
             _logger?.SetLoggedType( GetType() );
@@ -60,8 +61,8 @@ namespace J4JSoftware.GeoProcessor
             OutputFileCommand = new RelayCommand( OutputFileDialog );
             EditOptionsCommand = new RelayCommand( EditOptionsCommandHandler );
 
-            InitSnappingTypes(userConfig);
-            SelectedSnappingType = SnappingTypes!.Any() ? SnappingTypes.First() : ProcessorType.None;
+            InitSnapToRouteProcessors(userConfig);
+            SelectedSnapToRouteProcessor = SnapToRouteProcessors!.Any() ? SnapToRouteProcessors.First() : ProcessorType.None;
             Validate();
 
             ProcessCommand = new RelayCommand( ProcessCommandHandlerAsync );
@@ -96,8 +97,20 @@ namespace J4JSoftware.GeoProcessor
 
         private void ProcessorStateMessageHandler( MainViewModel recipient, ProcessorStateMessage pcMesg )
         {
-            _procWin?.Close();
-            _procWin = null;
+            switch( pcMesg.ProcessorState )
+            {
+                case ProcessorState.Ready:
+                case ProcessorState.Running:
+                    return;
+
+                case ProcessorState.Aborted:
+                    DisplayMessageAsync( "Processing aborted", "User Abort" );
+                    break;
+
+                case ProcessorState.Finished:
+                    DisplayMessageAsync( $"Wrote file '{_appConfig.OutputFile.FilePath}'", "Processing Completed" );
+                    break;
+            }
         }
 
         private void OptionsWindowClosedHandler( MainViewModel recipient, OptionsWindowClosed owcMesg )
@@ -115,27 +128,29 @@ namespace J4JSoftware.GeoProcessor
             private set => SetProperty( ref _configIsValid, value );
         }
 
-        public ObservableCollection<ProcessorType> SnappingTypes { get; private set; }
+        public ObservableCollection<ProcessorType> SnapToRouteProcessors { get; private set; }
 
-        private void InitSnappingTypes( IUserConfig userConfig )
+        private void InitSnapToRouteProcessors( IUserConfig userConfig )
         {
-            SnappingTypes = new ObservableCollection<ProcessorType>( Enum.GetValues<ProcessorType>()
+            SnapToRouteProcessors = new ObservableCollection<ProcessorType>( Enum.GetValues<ProcessorType>()
                 .Where( x =>
                     x.SnapsToRoute()
                     && ( !x.RequiresAPIKey()
                          || userConfig.APIKeys.TryGetValue( x, out var apiKey ) &&
                          !string.IsNullOrEmpty( apiKey.Value ) ) ) );
 
-            OnPropertyChanged( "SnappingTypes" );
+            OnPropertyChanged( "SnapToRouteProcessors" );
         }
 
-        public ProcessorType SelectedSnappingType
+        public ProcessorType SelectedSnapToRouteProcessor
         {
             get => _snapType;
 
             set
             {
                 SetProperty( ref _snapType, value );
+                _appConfig.ProcessorType = value;
+
                 Validate();
             }
         }
@@ -163,7 +178,12 @@ namespace J4JSoftware.GeoProcessor
             // creating the process window will trigger a message as to whether
             // or not processing can proceed. We start processing by responding
             // to that message
-            var procWin = new ProcessWindow();
+            var procWin = new ProcessWindow( _procFileViewModel )
+            {
+                Owner = Application.Current.MainWindow
+            };
+
+            procWin.ShowDialog();
         }
 
         public ICommand EditOptionsCommand { get; }
@@ -322,12 +342,11 @@ namespace J4JSoftware.GeoProcessor
                 .ToDictionary( x => x.Key, x => x.ToList() );
 
             Messages = new ObservableCollection<string>( _errors.SelectMany( x => x.Value ) );
+            OnPropertyChanged( nameof(Messages) );
 
             ErrorsChanged?.Invoke( this, new DataErrorsChangedEventArgs( propName ) );
 
             ConfigurationIsValid = !Messages.Any();
-
-            //Messenger.Send( new FileConfigurationMessage( !_errors.Any() ), "primary" );
         }
 
         #endregion

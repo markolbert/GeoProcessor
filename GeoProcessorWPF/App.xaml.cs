@@ -10,13 +10,6 @@ namespace J4JSoftware.GeoProcessor
     /// </summary>
     public partial class App : Application
     {
-        //private readonly IHost _host;
-
-        public App()
-        {
-            //_host = CompositionRoot.Default.Host!;
-        }
-
         private async void Application_Startup( object sender, StartupEventArgs e )
         {
             var compRoot = TryFindResource( "ViewModelLocator" ) as CompositionRoot;

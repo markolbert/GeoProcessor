@@ -14,12 +14,14 @@
                  ShowCloseButton="False"
                  ShowMaxRestoreButton="False"
                  ShowMinButton="False"
+                 DataContext="{Binding ProcessFileViewModel, Source={StaticResource ViewModelLocator} }"
+                 Loaded="ProcessWindow_OnLoaded"
                  ResizeMode="CanResizeWithGrip"
                  GlowBrush="{DynamicResource MahApps.Brushes.Accent}"
                  Title="Process File" 
                  Height="250" Width="500">
 
-    <Grid DataContext="{Binding ProcessFileViewModel, Source={StaticResource ViewModelLocator} }">
+    <Grid>
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -29,27 +31,50 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Column="1" Grid.Row="4"
-                    Orientation="Horizontal"
-                    HorizontalAlignment="Right" >
+        <Label Grid.Column="0" Grid.Row="0"
+               Content="Phase" />
 
-            <Button Margin="5, 5, 10, 10" 
-                    HorizontalAlignment="Right"
-                    Content="{Binding CommandButtonText}" 
-                    Command="{Binding ProcessCommand}" />
+        <TextBlock Grid.Column="1" Grid.Row="0"
+                   Margin="5"
+                   VerticalAlignment="Center"
+                   Text="{Binding Phase}"/>
 
-            <Button Margin="5, 5, 10, 10" 
-                    HorizontalAlignment="Right"
-                    Content="Cancel" 
-                    Visibility="{Binding CancelVisibility}"
-                    Command="{Binding CancelCommand}" />
+        <Label Grid.Column="0" Grid.Row="1"
+               Content="Points Processed" />
 
-        </StackPanel>
+        <TextBlock Grid.Column="1" Grid.Row="1"
+                   Margin="5"
+                   VerticalAlignment="Center"
+                   Text="{Binding PointsProcessed, StringFormat=n0}"/>
+
+        <Label Grid.Column="0" Grid.Row="2"
+               Content="Messages" />
+
+        <ScrollViewer Grid.Column="1" Grid.Row="2"
+                      Margin="5">
+            <ItemsControl ItemsSource="{Binding Messages}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}"
+                                   TextWrapping="Wrap"
+                                   Margin="0,0,0,3"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <Button Grid.Column="1" Grid.Row="3" 
+                Margin="5, 5, 10, 10" 
+                HorizontalAlignment="Right"
+                Content="Abort" 
+                Command="{Binding AbortCommand}" 
+                CommandParameter="{Binding RelativeSource={RelativeSource
+                                                  Mode=FindAncestor,
+                                                  AncestorType=Window}}" />
     </Grid>
 
 </mah:MetroWindow>

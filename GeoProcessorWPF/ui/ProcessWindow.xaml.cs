@@ -1,4 +1,6 @@
-﻿using MahApps.Metro.Controls;
+﻿using System.Threading.Tasks;
+using System.Windows;
+using MahApps.Metro.Controls;
 
 namespace J4JSoftware.GeoProcessor
 {
@@ -7,9 +9,18 @@ namespace J4JSoftware.GeoProcessor
     /// </summary>
     public partial class ProcessWindow : MetroWindow
     {
-        public ProcessWindow()
+        private IProcessFileViewModel _vm;
+
+        public ProcessWindow( IProcessFileViewModel vm )
         {
+            _vm = vm;
+
             InitializeComponent();
+        }
+
+        private void ProcessWindow_OnLoaded( object sender, RoutedEventArgs e )
+        {
+            _vm.OnWindowLoadedAsync();
         }
     }
 }

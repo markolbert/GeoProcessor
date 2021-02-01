@@ -14,6 +14,10 @@ namespace J4JSoftware.GeoProcessor
         ObservableCollection<ExportType> ExportTypes { get; }
         ExportType SelectedExportType { get; set; }
 
+        // snap-to-route
+        ObservableCollection<ProcessorType> SnapToRouteProcessors { get; }
+        ProcessorType SelectedSnapToRouteProcessor { get; set; }
+
         // status
         bool ConfigurationIsValid { get; }
         ObservableCollection<string> Messages { get; }

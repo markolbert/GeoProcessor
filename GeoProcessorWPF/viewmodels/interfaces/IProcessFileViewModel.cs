@@ -12,7 +12,7 @@ namespace J4JSoftware.GeoProcessor
         string Phase { get; set; }
         int PointsProcessed { get; }
         ObservableCollection<string> Messages { get; }
+        Task OnWindowLoadedAsync();
         ICommand AbortCommand { get; }
-        Task ProcessAsync();
     }
 }
