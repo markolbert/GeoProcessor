@@ -25,5 +25,7 @@ namespace J4JSoftware.GeoProcessor
         // commands
         ICommand EditOptionsCommand { get; }
         ICommand ProcessCommand { get; }
+
+        void OpenHelp();
     }
 }

@@ -141,7 +141,10 @@
                    Margin="5,40,5,5" 
                    TextWrapping="Wrap" >
             Select the input file, the output type and the output file, and then click Process File.
-            For more information please check out the <Hyperlink NavigateUri="https://jumpforjoysoftware.com/GeoProcessor">online instructions</Hyperlink>
+            For more information please check out the 
+            <Hyperlink Click="Hyperlink_OnClick">
+                online instructions
+            </Hyperlink>
         </TextBlock>
 
         <StackPanel Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="5" 

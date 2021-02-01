@@ -12,7 +12,7 @@
 	  <Copyright>© Mark A. Olbert all rights reserved</Copyright>
 	  <PackageDescription>an Autofac module for simplifying use of the J4JSoftware GeoProcessor library</PackageDescription>
 	  <RepositoryUrl>https://github.com/markolbert/GeoProcessor</RepositoryUrl>
-	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
+	  <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
 	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	  <PackageIcon>Diego nuspec.png</PackageIcon>
 	  <RepositoryType>git</RepositoryType>

@@ -1,4 +1,5 @@
-﻿using MahApps.Metro.Controls;
+﻿using System.Windows;
+using MahApps.Metro.Controls;
 
 namespace J4JSoftware.GeoProcessor
 {
@@ -7,9 +8,18 @@ namespace J4JSoftware.GeoProcessor
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-        public MainWindow()
+        private readonly IMainViewModel _vm;
+
+        public MainWindow( IMainViewModel vm )
         {
+            _vm = vm;
+
             InitializeComponent();
+        }
+
+        private void Hyperlink_OnClick( object sender, RoutedEventArgs e )
+        {
+            _vm.OpenHelp();
         }
     }
 }

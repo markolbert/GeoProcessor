@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -200,6 +201,14 @@ namespace J4JSoftware.GeoProcessor
             // we receive a message from the dialog window when it closes,
             // and take action at that point
             _optionsWin.ShowDialog();
+        }
+
+        public void OpenHelp()
+        {
+            Process.Start( new ProcessStartInfo( "https://jumpforjoysoftware.com/geoprocessor/" )
+            {
+                UseShellExecute = true 
+            } );
         }
 
         #endregion

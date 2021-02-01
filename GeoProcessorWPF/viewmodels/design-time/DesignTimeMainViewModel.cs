@@ -82,6 +82,10 @@ namespace J4JSoftware.GeoProcessor
         public ICommand ProcessCommand { get; }
         public ICommand EditOptionsCommand { get; }
 
+        public void OpenHelp()
+        {
+        }
+
         #region error handling
 
         // we always return an empty enumerable because we display the error
