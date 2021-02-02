@@ -62,13 +62,13 @@ namespace J4JSoftware.GeoProcessor
             InputFileCommand = new RelayCommand( InputFileDialog );
             OutputFileCommand = new RelayCommand( OutputFileDialog );
             EditOptionsCommand = new RelayCommand( EditOptionsCommandHandler );
+            ProcessCommand = new RelayCommand( ProcessCommandHandlerAsync );
             AboutCommand = new AsyncRelayCommand( AboutCommandHandler );
+            HelpCommand = new RelayCommand( HelpCommandHandler );
 
             InitSnapToRouteProcessors(userConfig);
             SelectedSnapToRouteProcessor = SnapToRouteProcessors!.Any() ? SnapToRouteProcessors.First() : ProcessorType.None;
             Validate();
-
-            ProcessCommand = new RelayCommand( ProcessCommandHandlerAsync );
 
             // go live for messages
             IsActive = true;
@@ -212,7 +212,9 @@ namespace J4JSoftware.GeoProcessor
             await DisplayMessageAsync( "GeoProcessor v0.8\n\nCopyright 2021 Mark Olbert all rights reserved", "About" );
         }
 
-        public void OpenHelp()
+        public ICommand HelpCommand {get;}
+
+        private void HelpCommandHandler()
         {
             Process.Start( new ProcessStartInfo( "https://jumpforjoysoftware.com/geoprocessor/" )
             {

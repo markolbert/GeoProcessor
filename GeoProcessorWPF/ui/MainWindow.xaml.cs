@@ -8,18 +8,9 @@ namespace J4JSoftware.GeoProcessor
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-        private readonly IMainViewModel _vm;
-
-        public MainWindow( IMainViewModel vm )
+        public MainWindow()
         {
-            _vm = vm;
-
             InitializeComponent();
-        }
-
-        private void Hyperlink_OnClick( object sender, RoutedEventArgs e )
-        {
-            _vm.OpenHelp();
         }
     }
 }

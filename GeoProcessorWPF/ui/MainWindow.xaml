@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-        xmlns:md="clr-namespace:MaterialDesignThemes;assembly=MaterialDesignThemes.MahApps"
+        xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
         ResizeMode="CanResizeWithGrip"
         GlowBrush="{DynamicResource MahApps.Brushes.Accent}"
@@ -143,7 +143,7 @@
                    TextWrapping="Wrap" >
             Select the input file, the output type and the output file, and then click Process File.
             For more information please check out the 
-            <Hyperlink Click="Hyperlink_OnClick">
+            <Hyperlink Command="{Binding HelpCommand}">
                 online instructions
             </Hyperlink>
         </TextBlock>
