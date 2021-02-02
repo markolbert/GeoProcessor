@@ -31,10 +31,6 @@ namespace J4JSoftware.GeoProcessor
 
         public ProcessorState ProcessorState { get; }
 
-        public async Task OnWindowLoadedAsync()
-        {
-        }
-
         public string Phase
         {
             get => _phase;
@@ -57,10 +53,6 @@ namespace J4JSoftware.GeoProcessor
 
         public ICommand WindowLoaded { get; }
         public ICommand AbortCommand {get;}
-
-        public async Task ProcessAsync()
-        {
-            throw new NotImplementedException();
-        }
+        public ICommand WindowLoadedCommand { get; }
     }
 }

@@ -4,6 +4,7 @@
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                 xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
                  xmlns:local="clr-namespace:J4JSoftware.GeoProcessor"
                  mc:Ignorable="d"
                  TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -15,11 +16,18 @@
                  ShowMaxRestoreButton="False"
                  ShowMinButton="False"
                  DataContext="{Binding ProcessorViewModel, Source={StaticResource ViewModelLocator} }"
-                 Loaded="ProcessWindow_OnLoaded"
                  ResizeMode="CanResizeWithGrip"
                  GlowBrush="{DynamicResource MahApps.Brushes.Accent}"
                  Title="Process File" 
                  Height="250" Width="500">
+
+    <behaviors:Interaction.Triggers>
+        <behaviors:EventTrigger EventName="Loaded" 
+                                SourceObject="{Binding 
+            RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}">
+            <behaviors:InvokeCommandAction Command="{Binding WindowLoadedCommand}"/>
+        </behaviors:EventTrigger>
+    </behaviors:Interaction.Triggers>
 
     <Grid>
 

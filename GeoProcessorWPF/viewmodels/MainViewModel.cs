@@ -26,7 +26,6 @@ namespace J4JSoftware.GeoProcessor
         private readonly MainViewValidator _validator = new();
 
         private readonly IAppConfig _appConfig;
-        private readonly IProcessorViewModel _procFileViewModel;
         private readonly IJ4JLogger? _logger;
 
         private bool _configIsValid;
@@ -43,11 +42,9 @@ namespace J4JSoftware.GeoProcessor
         public MainViewModel(
             IAppConfig appConfig,
             IUserConfig userConfig,
-            IProcessorViewModel procFileViewModel,
             IJ4JLogger? logger )
         {
             _appConfig = appConfig;
-            _procFileViewModel = procFileViewModel;
 
             _logger = logger;
             _logger?.SetLoggedType( GetType() );
@@ -187,7 +184,7 @@ namespace J4JSoftware.GeoProcessor
                     return;
             }
 
-            _procWin = new ProcessWindow( _procFileViewModel );
+            _procWin = new ProcessWindow();
 
             // we receive a message from the dialog window when it closes,
             // and take action at that point

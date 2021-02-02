@@ -8,18 +8,9 @@ namespace J4JSoftware.GeoProcessor
     /// </summary>
     public partial class ProcessWindow : MetroWindow
     {
-        private readonly IProcessorViewModel _vm;
-
-        public ProcessWindow( IProcessorViewModel vm )
+        public ProcessWindow()
         {
-            _vm = vm;
-
             InitializeComponent();
-        }
-
-        private void ProcessWindow_OnLoaded( object sender, RoutedEventArgs e )
-        {
-            _vm.OnWindowLoadedAsync();
         }
     }
 }

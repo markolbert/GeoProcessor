@@ -49,6 +49,7 @@ namespace J4JSoftware.GeoProcessor
             _snapProcessors = snapProcessors;
 
             AbortCommand = new RelayCommand<ProcessWindow>( AbortCommandHandler );
+            WindowLoadedCommand = new AsyncRelayCommand( WindowLoadedCommandAsync );
         }
 
         #region event handlers
@@ -65,33 +66,33 @@ namespace J4JSoftware.GeoProcessor
             await Dispatcher.Yield();
         }
 
-        // event fires when window is loaded and ready to start processing
-        public async Task OnWindowLoadedAsync()
-        {
-            _appConfig.APIKey = _userConfig.GetAPIKey( _appConfig.ProcessorType );
+        //// event fires when window is loaded and ready to start processing
+        //public async Task OnWindowLoadedAsync()
+        //{
+        //    _appConfig.APIKey = _userConfig.GetAPIKey( _appConfig.ProcessorType );
 
-            if( string.IsNullOrEmpty( _appConfig.APIKey ) )
-            {
-                ProcessorState = ProcessorState.Aborted;
+        //    if( string.IsNullOrEmpty( _appConfig.APIKey ) )
+        //    {
+        //        ProcessorState = ProcessorState.Aborted;
 
-                _logger?.Error( "{0} API Key is undefined", _appConfig.ProcessorType );
+        //        _logger?.Error( "{0} API Key is undefined", _appConfig.ProcessorType );
 
-                Phase = "Processing not possible";
-                ProcessorState = ProcessorState.Aborted;
+        //        Phase = "Processing not possible";
+        //        ProcessorState = ProcessorState.Aborted;
 
-                return;
-            }
+        //        return;
+        //    }
             
-            ProcessorState = ProcessorState.Ready;
-            PointsProcessed = 0;
-            Messages.Clear();
-            OnPropertyChanged( nameof(Messages) );
+        //    ProcessorState = ProcessorState.Ready;
+        //    PointsProcessed = 0;
+        //    Messages.Clear();
+        //    OnPropertyChanged( nameof(Messages) );
             
-            await Dispatcher.Yield();
-            _cancellationSrc = new CancellationTokenSource();
+        //    await Dispatcher.Yield();
+        //    _cancellationSrc = new CancellationTokenSource();
 
-            await ProcessAsync( _cancellationSrc.Token );
-        }
+        //    await ProcessAsync( _cancellationSrc.Token );
+        //}
 
         #endregion
 
@@ -133,6 +134,35 @@ namespace J4JSoftware.GeoProcessor
             ProcessorState = ProcessorState.Aborted;
 
             Messenger.Send( new CloseModalWindowMessage( DialogWindow.Processor ), "primary" );
+        }
+
+        public ICommand WindowLoadedCommand { get; }
+
+        private async Task WindowLoadedCommandAsync()
+        {
+            _appConfig.APIKey = _userConfig.GetAPIKey( _appConfig.ProcessorType );
+
+            if( string.IsNullOrEmpty( _appConfig.APIKey ) )
+            {
+                ProcessorState = ProcessorState.Aborted;
+
+                _logger?.Error( "{0} API Key is undefined", _appConfig.ProcessorType );
+
+                Phase = "Processing not possible";
+                ProcessorState = ProcessorState.Aborted;
+
+                return;
+            }
+            
+            ProcessorState = ProcessorState.Ready;
+            PointsProcessed = 0;
+            Messages.Clear();
+            OnPropertyChanged( nameof(Messages) );
+            
+            await Dispatcher.Yield();
+            _cancellationSrc = new CancellationTokenSource();
+
+            await ProcessAsync( _cancellationSrc.Token );
         }
 
         public async Task ProcessAsync( CancellationToken cancellationToken )
