@@ -81,6 +81,7 @@ namespace J4JSoftware.GeoProcessor
 
         public ICommand ProcessCommand { get; }
         public ICommand EditOptionsCommand { get; }
+        public ICommand AboutCommand { get; }
 
         public void OpenHelp()
         {

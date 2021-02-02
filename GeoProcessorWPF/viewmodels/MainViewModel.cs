@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using J4JSoftware.Logging;
@@ -61,6 +62,7 @@ namespace J4JSoftware.GeoProcessor
             InputFileCommand = new RelayCommand( InputFileDialog );
             OutputFileCommand = new RelayCommand( OutputFileDialog );
             EditOptionsCommand = new RelayCommand( EditOptionsCommandHandler );
+            AboutCommand = new AsyncRelayCommand( AboutCommandHandler );
 
             InitSnapToRouteProcessors(userConfig);
             SelectedSnapToRouteProcessor = SnapToRouteProcessors!.Any() ? SnapToRouteProcessors.First() : ProcessorType.None;
@@ -201,6 +203,13 @@ namespace J4JSoftware.GeoProcessor
             // we receive a message from the dialog window when it closes,
             // and take action at that point
             _optionsWin.ShowDialog();
+        }
+
+        public ICommand AboutCommand { get; }
+
+        private async Task AboutCommandHandler()
+        {
+            await DisplayMessageAsync( "GeoProcessor v0.8\n\nCopyright 2021 Mark Olbert all rights reserved", "About" );
         }
 
         public void OpenHelp()
@@ -365,7 +374,7 @@ namespace J4JSoftware.GeoProcessor
 
         #endregion
 
-        private async void DisplayMessageAsync( string message, string dlgTitle = "GeoProcessor" )
+        private async Task DisplayMessageAsync( string message, string dlgTitle = "GeoProcessor" )
         {
             var mainWin = Application.Current.MainWindow as MetroWindow;
             

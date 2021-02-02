@@ -97,9 +97,6 @@ Source: "C:\Programming\GeoProcessor\GeoProcessorWPF\bin\Release\net5.0-windows\
 Source: "C:\Programming\GeoProcessor\GeoProcessorWPF\bin\Release\net5.0-windows\publish\Microsoft.Extensions.Options.ConfigurationExtensions.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Programming\GeoProcessor\GeoProcessorWPF\bin\Release\net5.0-windows\publish\Microsoft.Extensions.Options.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Programming\GeoProcessor\GeoProcessorWPF\bin\Release\net5.0-windows\publish\Microsoft.Extensions.Primitives.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Programming\GeoProcessor\GeoProcessorWPF\bin\Release\net5.0-windows\publish\Microsoft.IdentityModel.JsonWebTokens.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Programming\GeoProcessor\GeoProcessorWPF\bin\Release\net5.0-windows\publish\Microsoft.IdentityModel.Logging.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Programming\GeoProcessor\GeoProcessorWPF\bin\Release\net5.0-windows\publish\Microsoft.IdentityModel.Tokens.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Programming\GeoProcessor\GeoProcessorWPF\bin\Release\net5.0-windows\publish\Microsoft.Toolkit.Mvvm.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Programming\GeoProcessor\GeoProcessorWPF\bin\Release\net5.0-windows\publish\Microsoft.Xaml.Behaviors.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Programming\GeoProcessor\GeoProcessorWPF\bin\Release\net5.0-windows\publish\Newtonsoft.Json.dll"; DestDir: "{app}"; Flags: ignoreversion
@@ -110,15 +107,13 @@ Source: "C:\Programming\GeoProcessor\GeoProcessorWPF\bin\Release\net5.0-windows\
 Source: "C:\Programming\GeoProcessor\GeoProcessorWPF\bin\Release\net5.0-windows\publish\Serilog.Sinks.File.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Programming\GeoProcessor\GeoProcessorWPF\bin\Release\net5.0-windows\publish\Serilog.Sinks.TextWriter.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Programming\GeoProcessor\GeoProcessorWPF\bin\Release\net5.0-windows\publish\Superpower.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Programming\GeoProcessor\GeoProcessorWPF\bin\Release\net5.0-windows\publish\System.IdentityModel.Tokens.Jwt.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Programming\GeoProcessor\GeoProcessorWPF\bin\Release\net5.0-windows\publish\System.Text.Json.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Programming\GeoProcessor\GeoProcessorWPF\bin\Release\net5.0-windows\publish\Twilio.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Programming\GeoProcessor\GeoProcessorWPF\bin\Release\net5.0-windows\publish\de\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{autoprograms}\{#MyAppName}"; Filename: "C:\Programming\Media\JumpForJoy\Diego.ico"
-Name: "{autodesktop}\{#MyAppName}"; Filename: "C:\Programming\Media\JumpForJoy\Diego.ico"; Tasks: desktopicon
+Name: "{autoprograms}\{#MyAppName}"; Filename: "C:\Programming\GeoProcessor\GeoProcessorWPF\GeoProcessor.ico"
+Name: "{autodesktop}\{#MyAppName}"; Filename: "C:\Programming\GeoProcessor\GeoProcessorWPF\GeoProcessor.ico"; Tasks: desktopicon
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
