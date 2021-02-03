@@ -4,6 +4,7 @@
 #define MyAppName "GeoProcessor"
 #define MyAppVersion "0.8"
 #define MyAppPublisher "Jump for Joy Software"
+#define MyAppFolder "Jump4JoySoftware"
 #define MyAppURL "https://jumpforjoysoftware.com/geoprocessor/"
 #define MyAppExeName "GeoProcessorWPF.exe"
 
@@ -14,11 +15,11 @@ AppId={{CA8C2C11-3632-4845-AF15-1F2A71FEAA65}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
-AppPublisher={#MyAppPublisher}
+AppPublisher={#MyAppPublisher}       
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={autopf}\{#MyAppName}
+DefaultDirName={autopf}\{#MyAppFolder}\{#MyAppName}
 DisableProgramGroupPage=yes
 LicenseFile=C:\Programming\GeoProcessor\GeoProcessorWPF\bin\Release\net5.0-windows\publish\license.txt
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
@@ -112,8 +113,8 @@ Source: "C:\Programming\GeoProcessor\GeoProcessorWPF\bin\Release\net5.0-windows\
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{autoprograms}\{#MyAppName}"; Filename: "C:\Programming\GeoProcessor\GeoProcessorWPF\GeoProcessor.ico"
-Name: "{autodesktop}\{#MyAppName}"; Filename: "C:\Programming\GeoProcessor\GeoProcessorWPF\GeoProcessor.ico"; Tasks: desktopicon
+Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\GeoProcessorWPF.exe"
+Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\GeoProcessorWPF.exe"; Tasks: desktopicon
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent

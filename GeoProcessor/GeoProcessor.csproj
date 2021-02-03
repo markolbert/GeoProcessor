@@ -12,19 +12,14 @@
 	  <Copyright>© Mark A. Olbert all rights reserved</Copyright>
 	  <PackageDescription>a library for processing GPX, KML and KMZ files, and snapping GPS tracks to roadways</PackageDescription>
 	  <RepositoryUrl>https://github.com/markolbert/GeoProcessor</RepositoryUrl>
-	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
+	  <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
 	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	  <PackageIcon>Diego nuspec.png</PackageIcon>
 	  <RepositoryType>git</RepositoryType>
-	  <Version>1.0.0.0</Version>
-	  <AssemblyVersion>1.0.0.0</AssemblyVersion>
-	  <PackageReleaseNotes>minor updates</PackageReleaseNotes>
+	  <Version>1.1.0.0</Version>
+	  <AssemblyVersion>1.1.0.0</AssemblyVersion>
+	  <PackageReleaseNotes>updates to support GeoProcessor WPF application</PackageReleaseNotes>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="support\DataProtection.cs" />
-    <Compile Remove="support\IDataProtection.cs" />
-  </ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="BingMapsRESTToolkit" Version="1.1.4" />

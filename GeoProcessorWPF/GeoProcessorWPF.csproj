@@ -13,10 +13,11 @@
 	<Description>a Windows app for processing GPX, KML and KMZ files, and snapping GPS tracks to roadways</Description>
 	<Copyright>© Mark A. Olbert all rights reserved</Copyright>
 	<RepositoryUrl>https://github.com/markolbert/GeoProcessor</RepositoryUrl>
-	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	  <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
 	<RepositoryType>git</RepositoryType>
 	<Version>0.8.0.0</Version>
 	<AssemblyVersion>0.8.0.0</AssemblyVersion>
+	<ApplicationIcon>GeoProcessor.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>

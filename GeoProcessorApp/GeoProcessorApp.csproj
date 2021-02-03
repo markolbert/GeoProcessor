@@ -11,7 +11,7 @@
     <Company>Jump for Joy Software</Company>
     <Product>GeoProcessor application</Product>
     <Description>processes GPX, KML and KMX files (optionally converting them) using Microsoft Bing or Google Maps route-snapping algorithms to produce driving routes that can be displayed in mapping programs.</Description>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+	  <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
 	  <PackageIcon>Diego nuspec.png</PackageIcon>
     <Copyright>2021 Mark A. Olbert</Copyright>
     <PackageReleaseNotes>initial public release</PackageReleaseNotes>
