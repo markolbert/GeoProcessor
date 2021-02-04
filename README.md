@@ -12,7 +12,7 @@ details see the [license file](LICENSE.MD).
 - The console app should compile and run anywhere Net5 is supported...but 
 I've only tested it on Windows 10.
 
-<img src="docs/assets/tldr-console.png" width="100%" align="middle" />
+<img src="docs/assets/tldr-console.png" width="600" align="middle" />
 
 Configuration values can be specified in configuration files or, in some
 cases, from the command line. Anything that's required and missing from
@@ -22,8 +22,10 @@ force the app to confirm configuration values through the console).
 - The Windows desktop app should run on any Windows system with Net5 installed...
 but I've only tested it on Windows 10.
 
-- You will need a Bing or Google API key for the library and program to
-work.
+<img src="docs/assets/win-launch.png" width="600" align="middle" />
+
+- **You will need a Bing or Google API key for the library and programs to
+work.**
 
 ### Table of Contents
 

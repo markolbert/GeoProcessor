@@ -66,34 +66,6 @@ namespace J4JSoftware.GeoProcessor
             await Dispatcher.Yield();
         }
 
-        //// event fires when window is loaded and ready to start processing
-        //public async Task OnWindowLoadedAsync()
-        //{
-        //    _appConfig.APIKey = _userConfig.GetAPIKey( _appConfig.ProcessorType );
-
-        //    if( string.IsNullOrEmpty( _appConfig.APIKey ) )
-        //    {
-        //        ProcessorState = ProcessorState.Aborted;
-
-        //        _logger?.Error( "{0} API Key is undefined", _appConfig.ProcessorType );
-
-        //        Phase = "Processing not possible";
-        //        ProcessorState = ProcessorState.Aborted;
-
-        //        return;
-        //    }
-            
-        //    ProcessorState = ProcessorState.Ready;
-        //    PointsProcessed = 0;
-        //    Messages.Clear();
-        //    OnPropertyChanged( nameof(Messages) );
-            
-        //    await Dispatcher.Yield();
-        //    _cancellationSrc = new CancellationTokenSource();
-
-        //    await ProcessAsync( _cancellationSrc.Token );
-        //}
-
         #endregion
 
         public ProcessorState ProcessorState
@@ -149,7 +121,6 @@ namespace J4JSoftware.GeoProcessor
                 _logger?.Error( "{0} API Key is undefined", _appConfig.ProcessorType );
 
                 Phase = "Processing not possible";
-                ProcessorState = ProcessorState.Aborted;
 
                 return;
             }
