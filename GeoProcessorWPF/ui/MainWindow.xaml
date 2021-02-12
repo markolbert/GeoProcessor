@@ -1,30 +1,29 @@
 ﻿<mah:MetroWindow x:Class="J4JSoftware.GeoProcessor.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-        xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
-        mc:Ignorable="d"
-        ResizeMode="CanResizeWithGrip"
-        GlowBrush="{DynamicResource MahApps.Brushes.Accent}"
-        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-        TextElement.FontWeight="Normal"
-        TextElement.FontSize="14"
-        WindowTitleBrush="Teal"
-        Background="{DynamicResource MaterialDesignPaper}"
-        DataContext="{Binding MainViewModel, Source={StaticResource ViewModelLocator}}"
-        Title="GeoProcessor" 
-        Height="380" Width="630">
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                 mc:Ignorable="d"
+                 ResizeMode="CanResizeWithGrip"
+                 GlowBrush="{DynamicResource MahApps.Brushes.Accent}"
+                 TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+                 TextElement.FontWeight="Normal"
+                 TextElement.FontSize="14"
+                 WindowTitleBrush="Teal"
+                 Background="{DynamicResource MaterialDesignPaper}"
+                 DataContext="{Binding MainViewModel, Source={StaticResource ViewModelLocator}}"
+                 Title="GeoProcessor"
+                 Height="380" Width="630">
 
     <Window.Resources>
     </Window.Resources>
 
     <Grid Height="348" VerticalAlignment="Top">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="0.6*" MinWidth="250" />
-            <ColumnDefinition Width="0.4*"/>
+            <ColumnDefinition Width="0.4*" />
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
@@ -33,18 +32,18 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <ScrollViewer Grid.Column="2" Grid.Row="0" Grid.RowSpan="4"
                       Margin="5">
-            <ItemsControl ItemsSource="{Binding Messages}" >
+            <ItemsControl ItemsSource="{Binding Messages}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Foreground="Red"
                                    Margin="0,0,0,5"
                                    TextWrapping="Wrap"
-                                   Text="{Binding }"/>
+                                   Text="{Binding }" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -55,12 +54,12 @@
                Content="Input File" />
 
         <StackPanel Grid.Column="1" Grid.Row="0"
-                    Orientation="Horizontal" >
+                    Orientation="Horizontal">
 
             <TextBox IsReadOnly="True"
                      Margin="5"
                      MinWidth="100"
-                     Text="{Binding InputPath, Mode=OneWay}" >
+                     Text="{Binding InputPath, Mode=OneWay}">
                 <Validation.ErrorTemplate>
                     <ControlTemplate>
                         <Border BorderBrush="Red"
@@ -88,7 +87,7 @@
                   VerticalAlignment="Center"
                   IsEditable="False"
                   ItemsSource="{Binding ExportTypes}"
-                  SelectedItem="{Binding SelectedExportType}"/>
+                  SelectedItem="{Binding SelectedExportType}" />
 
         <Label Grid.Column="0" Grid.Row="2"
                VerticalAlignment="Center"
@@ -99,7 +98,7 @@
             <TextBox IsReadOnly="True"
                      Margin="5"
                      MinWidth="100"
-                     Text="{Binding OutputPath, Mode=OneWay}" >
+                     Text="{Binding OutputPath, Mode=OneWay}">
                 <Validation.ErrorTemplate>
                     <ControlTemplate>
                         <Border BorderBrush="Red"
@@ -126,7 +125,7 @@
                   VerticalAlignment="Center"
                   Margin="5"
                   ItemsSource="{Binding SnapToRouteProcessors, ValidatesOnNotifyDataErrors=True}"
-                  SelectedItem="{Binding SelectedSnapToRouteProcessor}" >
+                  SelectedItem="{Binding SelectedSnapToRouteProcessor}">
             <Validation.ErrorTemplate>
                 <ControlTemplate>
                     <Border BorderBrush="Red"
@@ -138,27 +137,27 @@
 
         </ComboBox>
 
-        <TextBlock Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="4" 
-                   Margin="5,40,5,5" 
-                   TextWrapping="Wrap" >
+        <TextBlock Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="4"
+                   Margin="5,40,5,5"
+                   TextWrapping="Wrap">
             Select the input file, the output type and the output file, and then click Process File.
-            For more information please check out the 
+            For more information please check out the
             <Hyperlink Command="{Binding HelpCommand}">
                 online instructions
             </Hyperlink>
         </TextBlock>
 
-        <DockPanel Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="5" 
-                    VerticalAlignment="Bottom" >
+        <DockPanel Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="5"
+                   VerticalAlignment="Bottom">
 
-            <Button DockPanel.Dock="Right" 
+            <Button DockPanel.Dock="Right"
                     Margin="5, 5, 10,10"
                     HorizontalAlignment="Right"
                     Content="Process File"
                     IsEnabled="{Binding ConfigurationIsValid}"
                     Command="{Binding ProcessCommand}" />
 
-            <Button DockPanel.Dock="Right" 
+            <Button DockPanel.Dock="Right"
                     Margin="5, 5, 5,10"
                     HorizontalAlignment="Right"
                     Content="Options"
@@ -172,7 +171,7 @@
                 <Button.Template>
                     <ControlTemplate TargetType="{x:Type Button}">
                         <Label Content="About"
-                               Foreground="Teal"/>
+                               Foreground="Teal" />
                     </ControlTemplate>
                 </Button.Template>
             </Button>

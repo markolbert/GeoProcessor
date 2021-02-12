@@ -1,4 +1,23 @@
-﻿using System;
+﻿#region license
+
+// Copyright 2021 Mark A. Olbert
+// 
+// This library or program 'GeoProcessorWPF' is free software: you can redistribute it
+// and/or modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation, either version 3 of the License,
+// or (at your option) any later version.
+// 
+// This library or program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License along with
+// this library or program.  If not, see <https://www.gnu.org/licenses/>.
+
+#endregion
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,23 +40,21 @@ namespace J4JSoftware.GeoProcessor
 {
     public class MainViewModel : ObservableRecipient, IMainViewModel
     {
-        public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
-
-        private readonly MainViewValidator _validator = new();
-
         private readonly IAppConfig _appConfig;
         private readonly IJ4JLogger? _logger;
 
-        private bool _configIsValid;
-        private OptionsWindow? _optionsWin;
-        private ProcessWindow? _procWin;
-        private ProcessorType _snapType;
+        private readonly MainViewValidator _validator = new();
 
-        private string _inputPath = string.Empty;
-        private ExportType _exportType = ExportType.Unknown;
-        private string _outputPath = string.Empty;
+        private bool _configIsValid;
 
         private Dictionary<string, List<string>>? _errors;
+        private ExportType _exportType = ExportType.Unknown;
+
+        private string _inputPath = string.Empty;
+        private OptionsWindow? _optionsWin;
+        private string _outputPath = string.Empty;
+        private ProcessWindow? _procWin;
+        private ProcessorType _snapType;
 
         public MainViewModel(
             IAppConfig appConfig,
@@ -63,8 +80,9 @@ namespace J4JSoftware.GeoProcessor
             AboutCommand = new AsyncRelayCommand( AboutCommandHandler );
             HelpCommand = new RelayCommand( HelpCommandHandler );
 
-            InitSnapToRouteProcessors(userConfig);
-            SelectedSnapToRouteProcessor = SnapToRouteProcessors!.Any() ? SnapToRouteProcessors.First() : ProcessorType.None;
+            InitSnapToRouteProcessors( userConfig );
+            SelectedSnapToRouteProcessor =
+                SnapToRouteProcessors!.Any() ? SnapToRouteProcessors.First() : ProcessorType.None;
             Validate();
 
             // go live for messages
@@ -73,13 +91,57 @@ namespace J4JSoftware.GeoProcessor
             Validate();
         }
 
+        public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
+
+        public bool ConfigurationIsValid
+        {
+            get => _configIsValid;
+            private set => SetProperty( ref _configIsValid, value );
+        }
+
+        public ObservableCollection<ProcessorType> SnapToRouteProcessors { get; private set; }
+
+        public ProcessorType SelectedSnapToRouteProcessor
+        {
+            get => _snapType;
+
+            set
+            {
+                SetProperty( ref _snapType, value );
+                _appConfig.ProcessorType = value;
+
+                Validate();
+            }
+        }
+
+        public ObservableCollection<string> Messages { get; private set; } = new();
+
+        private void InitSnapToRouteProcessors( IUserConfig userConfig )
+        {
+            SnapToRouteProcessors = new ObservableCollection<ProcessorType>( Enum.GetValues<ProcessorType>()
+                .Where( x =>
+                    x.SnapsToRoute()
+                    && ( !x.RequiresAPIKey()
+                         || userConfig.APIKeys.TryGetValue( x, out var apiKey ) &&
+                         !string.IsNullOrEmpty( apiKey.Value ) ) ) );
+
+            OnPropertyChanged( "SnapToRouteProcessors" );
+        }
+
+        private async Task DisplayMessageAsync( string message, string dlgTitle = "GeoProcessor" )
+        {
+            var mainWin = Application.Current.MainWindow as MetroWindow;
+
+            await mainWin!.ShowMessageAsync( dlgTitle, message );
+        }
+
         #region Messaging
 
         protected override void OnActivated()
         {
             base.OnActivated();
 
-            Messenger.Register<MainViewModel, ProcessorStateMessage, string>( this, 
+            Messenger.Register<MainViewModel, ProcessorStateMessage, string>( this,
                 "primary",
                 ProcessorStateMessageHandler );
 
@@ -92,7 +154,7 @@ namespace J4JSoftware.GeoProcessor
         {
             base.OnDeactivated();
 
-            Messenger.UnregisterAll(this);
+            Messenger.UnregisterAll( this );
         }
 
         private void ProcessorStateMessageHandler( MainViewModel recipient, ProcessorStateMessage pcMesg )
@@ -131,41 +193,6 @@ namespace J4JSoftware.GeoProcessor
 
         #endregion
 
-        public bool ConfigurationIsValid
-        {
-            get => _configIsValid;
-            private set => SetProperty( ref _configIsValid, value );
-        }
-
-        public ObservableCollection<ProcessorType> SnapToRouteProcessors { get; private set; }
-
-        private void InitSnapToRouteProcessors( IUserConfig userConfig )
-        {
-            SnapToRouteProcessors = new ObservableCollection<ProcessorType>( Enum.GetValues<ProcessorType>()
-                .Where( x =>
-                    x.SnapsToRoute()
-                    && ( !x.RequiresAPIKey()
-                         || userConfig.APIKeys.TryGetValue( x, out var apiKey ) &&
-                         !string.IsNullOrEmpty( apiKey.Value ) ) ) );
-
-            OnPropertyChanged( "SnapToRouteProcessors" );
-        }
-
-        public ProcessorType SelectedSnapToRouteProcessor
-        {
-            get => _snapType;
-
-            set
-            {
-                SetProperty( ref _snapType, value );
-                _appConfig.ProcessorType = value;
-
-                Validate();
-            }
-        }
-
-        public ObservableCollection<string> Messages { get; private set; } = new();
-
         #region Commands
 
         public ICommand ProcessCommand { get; }
@@ -177,7 +204,7 @@ namespace J4JSoftware.GeoProcessor
                 var mainWin = Application.Current.MainWindow as MetroWindow;
 
                 var result = await mainWin!.ShowMessageAsync( "Output File Exists",
-                    "The output file exists. Do you want to overwrite it?", 
+                    "The output file exists. Do you want to overwrite it?",
                     MessageDialogStyle.AffirmativeAndNegative );
 
                 if( result == MessageDialogResult.Negative )
@@ -209,13 +236,13 @@ namespace J4JSoftware.GeoProcessor
             await DisplayMessageAsync( "GeoProcessor v0.8\n\nCopyright 2021 Mark Olbert all rights reserved", "About" );
         }
 
-        public ICommand HelpCommand {get;}
+        public ICommand HelpCommand { get; }
 
         private void HelpCommandHandler()
         {
             Process.Start( new ProcessStartInfo( "https://jumpforjoysoftware.com/geoprocessor/" )
             {
-                UseShellExecute = true 
+                UseShellExecute = true
             } );
         }
 
@@ -232,7 +259,8 @@ namespace J4JSoftware.GeoProcessor
                 AddExtension = true,
                 CheckFileExists = true,
                 CheckPathExists = true,
-                Filter = "GPS Exchange (*.gpx)|*.gpx|Keyhole Markup Language (*.kml)|*.kml|Keyhole Markup Language (compressed) (*.kmz)|*.kmz",
+                Filter =
+                    "GPS Exchange (*.gpx)|*.gpx|Keyhole Markup Language (*.kml)|*.kml|Keyhole Markup Language (compressed) (*.kmz)|*.kmz",
                 Title = "Select the file to process"
             };
 
@@ -292,7 +320,7 @@ namespace J4JSoftware.GeoProcessor
                     _logger?.Error( mesg );
 
                     SetProperty( ref _outputPath, _appConfig.OutputFile.FilePath );
-                    
+
                     return;
                 }
 
@@ -356,7 +384,7 @@ namespace J4JSoftware.GeoProcessor
 
         public bool HasErrors => _errors?.Any() ?? false;
 
-        private void Validate( [CallerMemberName] string propName = "" )
+        private void Validate( [ CallerMemberName ] string propName = "" )
         {
             _errors = _validator.Validate( this )
                 .Errors
@@ -372,12 +400,5 @@ namespace J4JSoftware.GeoProcessor
         }
 
         #endregion
-
-        private async Task DisplayMessageAsync( string message, string dlgTitle = "GeoProcessor" )
-        {
-            var mainWin = Application.Current.MainWindow as MetroWindow;
-            
-            await mainWin!.ShowMessageAsync( dlgTitle, message );
-        }
     }
 }

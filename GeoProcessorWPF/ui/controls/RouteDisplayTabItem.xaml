@@ -1,23 +1,22 @@
 ﻿<UserControl x:Class="J4JSoftware.GeoProcessor.RouteDisplayTabItem"
-                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-                     xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-                     xmlns:local="clr-namespace:J4JSoftware.GeoProcessor"
-                     mc:Ignorable="d" 
-                     d:DesignHeight="200" d:DesignWidth="450"
-                     TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-                     TextElement.FontWeight="Normal"
-                     TextElement.FontSize="14"
-                     Background="{DynamicResource MaterialDesignPaper}" 
-                     DataContext="{Binding RouteDisplayViewModel, Source={StaticResource ViewModelLocator}}">
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="200" d:DesignWidth="450"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             TextElement.FontWeight="Normal"
+             TextElement.FontSize="14"
+             Background="{DynamicResource MaterialDesignPaper}"
+             DataContext="{Binding RouteDisplayViewModel, Source={StaticResource ViewModelLocator}}">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
@@ -27,16 +26,20 @@
         </Grid.RowDefinitions>
 
         <Label Grid.Column="0"
-               VerticalAlignment="Center" Grid.ColumnSpan="3">Route Width, pixels</Label>
+               VerticalAlignment="Center" Grid.ColumnSpan="3">
+            Route Width, pixels
+        </Label>
         <mah:NumericUpDown Grid.Column="3" Grid.Row="0"
-                            HorizontalAlignment="Left"
-                            Margin="5,5,0,5"
-                            Minimum="1"
-                            Maximum="20"
-                            Value="{Binding Path=RouteWidth, Mode=TwoWay }"/>
+                           HorizontalAlignment="Left"
+                           Margin="5,5,0,5"
+                           Minimum="1"
+                           Maximum="20"
+                           Value="{Binding Path=RouteWidth, Mode=TwoWay }" />
 
         <Label Grid.Column="0" Grid.Row="1"
-               VerticalAlignment="Center" Grid.ColumnSpan="3" >Route Color</Label>
+               VerticalAlignment="Center" Grid.ColumnSpan="3">
+            Route Color
+        </Label>
         <mah:ColorPicker Grid.Column="3" Grid.Row="1"
                          HorizontalAlignment="Left"
                          Margin="5,5,0,5"
@@ -44,7 +47,9 @@
                          SelectedColor="{Binding Path= RouteColor, Mode=TwoWay}" />
 
         <Label Grid.Column="0" Grid.Row="2"
-               VerticalAlignment="Center" Grid.ColumnSpan="3" >Route Highlight Color</Label>
+               VerticalAlignment="Center" Grid.ColumnSpan="3">
+            Route Highlight Color
+        </Label>
         <mah:ColorPicker Grid.Column="3" Grid.Row="2"
                          HorizontalAlignment="Left"
                          Margin="5,5,0,5"

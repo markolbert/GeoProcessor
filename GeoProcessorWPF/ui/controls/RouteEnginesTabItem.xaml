@@ -1,30 +1,29 @@
 ﻿<UserControl x:Class="J4JSoftware.GeoProcessor.RouteEnginesTabItem"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:J4JSoftware.GeoProcessor"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:DesignHeight="200" d:DesignWidth="500"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
              TextElement.FontWeight="Normal"
              TextElement.FontSize="14"
-             Background="{DynamicResource MaterialDesignPaper}" 
+             Background="{DynamicResource MaterialDesignPaper}"
              DataContext="{Binding RouteEnginesViewModel, Source={StaticResource ViewModelLocator}}">
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <Label Grid.Column="0" Grid.Row="0"
@@ -33,10 +32,10 @@
 
         <ComboBox Grid.Column="1" Grid.Row="0"
                   HorizontalAlignment="Left"
-                  Margin="5" 
+                  Margin="5"
                   IsEditable="False"
                   ItemsSource="{Binding ProcessorTypes}"
-                  SelectedItem="{Binding SelectedProcessorType}"/>
+                  SelectedItem="{Binding SelectedProcessorType}" />
 
         <Label Grid.Column="0" Grid.Row="1"
                Content="API Key"
@@ -44,29 +43,29 @@
                Visibility="{Binding APIKeyVisible}" />
 
         <TextBox Grid.Column="1" Grid.Row="1"
-                 VerticalAlignment ="Center"
+                 VerticalAlignment="Center"
                  Margin="5"
                  MinWidth="200"
                  Text="{Binding APIKey}"
-                 Visibility="{Binding APIKeyVisible}"/>
+                 Visibility="{Binding APIKeyVisible}" />
 
         <Label Grid.Column="0" Grid.Row="2"
                Content="Encrypted API Key"
-               VerticalAlignment="Top" 
+               VerticalAlignment="Top"
                Visibility="{Binding APIKeyVisible}" />
 
         <TextBlock Grid.Column="1" Grid.Row="2"
-                 VerticalAlignment ="Top"
-                 Margin="5" 
-                 MinWidth="200"
-                 Background="PaleTurquoise"
-                 TextWrapping="Wrap"
-                 Text="{Binding EncryptedAPIKey, Mode=OneWay }"
-                 Visibility="{Binding APIKeyVisible}"/>
+                   VerticalAlignment="Top"
+                   Margin="5"
+                   MinWidth="200"
+                   Background="PaleTurquoise"
+                   TextWrapping="Wrap"
+                   Text="{Binding EncryptedAPIKey, Mode=OneWay }"
+                   Visibility="{Binding APIKeyVisible}" />
 
         <Label Grid.Column="0" Grid.Row="3"
                Content="Maximum Distance Multiplier"
-               VerticalAlignment="Center" 
+               VerticalAlignment="Center"
                Visibility="{Binding APIKeyVisible}" />
 
         <mah:NumericUpDown Grid.Column="1" Grid.Row="3"
@@ -75,7 +74,7 @@
                            Minimum="1"
                            Maximum="20"
                            Visibility="{Binding APIKeyVisible}"
-                           Value="{Binding Path=MaxDistanceMultiplier, Mode=TwoWay }"/>
+                           Value="{Binding Path=MaxDistanceMultiplier, Mode=TwoWay }" />
 
         <Label Grid.Column="0" Grid.Row="4"
                Content="Maximum Separation"
@@ -86,8 +85,8 @@
 
             <TextBox Margin="5"
                      VerticalAlignment="Center"
-                     Width="75" 
-                     Text="{Binding DistanceValue, Mode=TwoWay, Converter={StaticResource textToDouble}}"/>
+                     Width="75"
+                     Text="{Binding DistanceValue, Mode=TwoWay, Converter={StaticResource textToDouble}}" />
 
             <ComboBox Margin="0, 5"
                       VerticalAlignment="Center"

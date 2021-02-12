@@ -1,4 +1,23 @@
-﻿using System;
+﻿#region license
+
+// Copyright 2021 Mark A. Olbert
+// 
+// This library or program 'GeoProcessorWPF' is free software: you can redistribute it
+// and/or modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation, either version 3 of the License,
+// or (at your option) any later version.
+// 
+// This library or program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License along with
+// this library or program.  If not, see <https://www.gnu.org/licenses/>.
+
+#endregion
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,16 +33,14 @@ namespace J4JSoftware.GeoProcessor
 {
     public class DesignTimeMainViewModel : ObservableRecipient, IMainViewModel
     {
-        public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
-
         private readonly MainViewValidator _validator = new();
 
-        private IAppConfig _appConfig;
+        private readonly IAppConfig _appConfig;
         private bool _configIsValid;
-        private bool _settingsChanged;
-        private ExportType _exportType = ExportType.Unknown;
 
         private Dictionary<string, List<string>>? _errors;
+        private ExportType _exportType = ExportType.Unknown;
+        private bool _settingsChanged;
 
         public DesignTimeMainViewModel( IAppConfig appConfig )
         {
@@ -31,17 +48,22 @@ namespace J4JSoftware.GeoProcessor
 
             ExportTypes = new ObservableCollection<ExportType>( Enum.GetValues<ExportType>()
                 .Where( x => x != ExportType.Unknown ) );
-            
+
             SelectedExportType = _appConfig.ExportType;
             ConfigurationIsValid = true;
 
             Validate();
 
-            for( var idx = 0; idx < 10; idx++ )
-            {
-                Messages.Add( $"Message #{idx + 1}" );
-            }
+            for( var idx = 0; idx < 10; idx++ ) Messages.Add( $"Message #{idx + 1}" );
         }
+
+        public bool SettingsChanged
+        {
+            get => _settingsChanged;
+            private set => SetProperty( ref _settingsChanged, value );
+        }
+
+        public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
         public ICommand InputFileCommand { get; }
         public string InputPath => "...some input file...";
@@ -73,12 +95,6 @@ namespace J4JSoftware.GeoProcessor
 
         public ObservableCollection<string> Messages { get; } = new();
 
-        public bool SettingsChanged
-        {
-            get => _settingsChanged;
-            private set => SetProperty( ref _settingsChanged, value );
-        }
-
         public ICommand ProcessCommand { get; }
         public ICommand EditOptionsCommand { get; }
         public ICommand AboutCommand { get; }
@@ -105,7 +121,7 @@ namespace J4JSoftware.GeoProcessor
 
         public bool HasErrors => _errors?.Any() ?? false;
 
-        private void Validate( [CallerMemberName] string propName = "" )
+        private void Validate( [ CallerMemberName ] string propName = "" )
         {
             _errors = _validator.Validate( this )
                 .Errors

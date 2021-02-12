@@ -1,4 +1,23 @@
-﻿using System.IO;
+﻿#region license
+
+// Copyright 2021 Mark A. Olbert
+// 
+// This library or program 'GeoProcessorWPF' is free software: you can redistribute it
+// and/or modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation, either version 3 of the License,
+// or (at your option) any later version.
+// 
+// This library or program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License along with
+// this library or program.  If not, see <https://www.gnu.org/licenses/>.
+
+#endregion
+
+using System.IO;
 using System.Text.Json;
 using System.Windows.Input;
 using MahApps.Metro.Controls.Dialogs;
@@ -17,17 +36,17 @@ namespace J4JSoftware.GeoProcessor
 
         private bool _settingsChanged;
 
-        public OptionsViewModel( 
+        public OptionsViewModel(
             IAppConfig appConfig,
             IUserConfig userConfig
-            )
+        )
         {
             _appConfig = appConfig;
             _userConfig = userConfig;
 
             SaveCommand = new RelayCommand( SaveCommandHandlerAsync );
             ReloadCommand = new RelayCommand( ReloadCommandHandler );
-            CloseCommand = new RelayCommand<OptionsWindow>( CloseCommandHandler);
+            CloseCommand = new RelayCommand<OptionsWindow>( CloseCommandHandler );
 
             // go live for messages
             IsActive = true;
@@ -39,13 +58,19 @@ namespace J4JSoftware.GeoProcessor
             SettingsChanged = false;
         }
 
+        public bool SettingsChanged
+        {
+            get => _settingsChanged;
+            private set => SetProperty( ref _settingsChanged, value );
+        }
+
         #region Messaging
 
         protected override void OnActivated()
         {
             base.OnActivated();
 
-            Messenger.Register<OptionsViewModel, SettingsChangedMessage, string>( this, 
+            Messenger.Register<OptionsViewModel, SettingsChangedMessage, string>( this,
                 "primary",
                 SettingsChangedMessageHandler );
         }
@@ -63,12 +88,6 @@ namespace J4JSoftware.GeoProcessor
         }
 
         #endregion
-
-        public bool SettingsChanged
-        {
-            get => _settingsChanged;
-            private set => SetProperty( ref _settingsChanged, value );
-        }
 
         #region Commands
 

@@ -270,7 +270,7 @@
                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                 </Grid>
             </Border>
-            <TextBlock Grid.Row="1" x:Name="ErrorTextBlock" Text="You have to provide a value here" Margin="3 12 3 0" 
+            <TextBlock Grid.Row="1" x:Name="ErrorTextBlock" Text="You have to provide a value here" Margin="3 12 3 0"
                        Visibility="Collapsed" Foreground="Red" />
         </Grid>
         <ControlTemplate.Triggers>

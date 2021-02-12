@@ -1,4 +1,23 @@
-﻿using System;
+﻿#region license
+
+// Copyright 2021 Mark A. Olbert
+// 
+// This library or program 'GeoProcessorWPF' is free software: you can redistribute it
+// and/or modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation, either version 3 of the License,
+// or (at your option) any later version.
+// 
+// This library or program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License along with
+// this library or program.  If not, see <https://www.gnu.org/licenses/>.
+
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -16,17 +35,17 @@ namespace J4JSoftware.GeoProcessor
     public class ProcessorViewModel : ObservableRecipient, IProcessorViewModel
     {
         private readonly IAppConfig _appConfig;
-        private readonly IUserConfig _userConfig;
-        private readonly IIndex<ImportType, IImporter> _importers;
         private readonly IIndex<ExportType, IExporter> _exporters;
-        private readonly IIndex<ProcessorType, IRouteProcessor> _snapProcessors;
+        private readonly IIndex<ImportType, IImporter> _importers;
 
         private readonly IJ4JLogger? _logger;
-        
-        private ProcessorState _procState;
-        private int _pointProcessed;
-        private string _phase = string.Empty;
+        private readonly IIndex<ProcessorType, IRouteProcessor> _snapProcessors;
+        private readonly IUserConfig _userConfig;
         private CancellationTokenSource? _cancellationSrc;
+        private string _phase = string.Empty;
+        private int _pointProcessed;
+
+        private ProcessorState _procState;
 
         public ProcessorViewModel(
             IAppConfig appConfig,
@@ -51,22 +70,6 @@ namespace J4JSoftware.GeoProcessor
             AbortCommand = new RelayCommand<ProcessWindow>( AbortCommandHandler );
             WindowLoadedCommand = new AsyncRelayCommand( WindowLoadedCommandAsync );
         }
-
-        #region event handlers
-        
-        private async void DisplayPointsProcessedAsync( object? sender, int points )
-        {
-            PointsProcessed += points;
-            await Dispatcher.Yield();
-        }
-
-        private async void DisplayLogEventAsync( object? sender, NetEventArgs e )
-        {
-            Messages.Add( e.LogMessage );
-            await Dispatcher.Yield();
-        }
-
-        #endregion
 
         public ProcessorState ProcessorState
         {
@@ -94,6 +97,22 @@ namespace J4JSoftware.GeoProcessor
         }
 
         public ObservableCollection<string> Messages { get; } = new();
+
+        #region event handlers
+
+        private async void DisplayPointsProcessedAsync( object? sender, int points )
+        {
+            PointsProcessed += points;
+            await Dispatcher.Yield();
+        }
+
+        private async void DisplayLogEventAsync( object? sender, NetEventArgs e )
+        {
+            Messages.Add( e.LogMessage );
+            await Dispatcher.Yield();
+        }
+
+        #endregion
 
         #region Commands
 
@@ -124,12 +143,12 @@ namespace J4JSoftware.GeoProcessor
 
                 return;
             }
-            
+
             ProcessorState = ProcessorState.Ready;
             PointsProcessed = 0;
             Messages.Clear();
             OnPropertyChanged( nameof(Messages) );
-            
+
             await Dispatcher.Yield();
             _cancellationSrc = new CancellationTokenSource();
 
@@ -154,7 +173,6 @@ namespace J4JSoftware.GeoProcessor
 
             // if the import based on the extension failed, try all our importers
             if( pointSets == null )
-            {
                 foreach( var fType in Enum.GetValues<ImportType>()
                     .Where( ft => ft != _appConfig.InputFile.Type && ft != ImportType.Unknown ) )
                 {
@@ -166,12 +184,11 @@ namespace J4JSoftware.GeoProcessor
 
                     pointSets = await LoadFileAsync( fType, cancellationToken );
 
-                    if( pointSets == null ) 
+                    if( pointSets == null )
                         continue;
 
                     break;
                 }
-            }
 
             if( pointSets == null )
             {
@@ -184,10 +201,10 @@ namespace J4JSoftware.GeoProcessor
                 if( cancellationToken.IsCancellationRequested )
                     return;
 
-                if( await ProcessPointSet( pointSets[idx], cancellationToken ) )
+                if( await ProcessPointSet( pointSets[ idx ], cancellationToken ) )
                     continue;
 
-                _logger?.Error<string, int>("Failed to process KMLDocument '{0}' ({1})", pointSets[idx].RouteName, idx);
+                _logger?.Error( "Failed to process KMLDocument '{0}' ({1})", pointSets[ idx ].RouteName, idx );
                 return;
             }
 
@@ -231,12 +248,12 @@ namespace J4JSoftware.GeoProcessor
 
             var prevPts = pointSet.Points.Count;
 
-            if (!await RunRouteProcessor(pointSet, _snapProcessors[ ProcessorType.Distance ], cancellationToken))
+            if( !await RunRouteProcessor( pointSet, _snapProcessors[ ProcessorType.Distance ], cancellationToken ) )
                 return false;
 
-            _logger?.Information("Reduced points from {0:n0} to {1:n0} by coalescing nearby points",
+            _logger?.Information( "Reduced points from {0:n0} to {1:n0} by coalescing nearby points",
                 prevPts,
-                pointSet.Points.Count);
+                pointSet.Points.Count );
 
             if( cancellationToken.IsCancellationRequested )
                 return false;
@@ -246,28 +263,29 @@ namespace J4JSoftware.GeoProcessor
 
             prevPts = pointSet.Points.Count;
 
-            if (!await RunRouteProcessor(pointSet, _snapProcessors[ _appConfig.ProcessorType ], cancellationToken))
+            if( !await RunRouteProcessor( pointSet, _snapProcessors[ _appConfig.ProcessorType ], cancellationToken ) )
                 return false;
 
-            _logger?.Information("Snapping to route changed point count from {0:n0} to {1:n0}",
+            _logger?.Information( "Snapping to route changed point count from {0:n0} to {1:n0}",
                 prevPts,
-                pointSet.Points.Count);
+                pointSet.Points.Count );
 
             return true;
         }
 
-        private async Task<bool> RunRouteProcessor( PointSet pointSet, IRouteProcessor processor, CancellationToken cancellationToken)
+        private async Task<bool> RunRouteProcessor( PointSet pointSet, IRouteProcessor processor,
+            CancellationToken cancellationToken )
         {
             PointsProcessed = 0;
             processor.PointsProcessed += DisplayPointsProcessedAsync;
 
-            var routePts = await processor.ProcessAsync(pointSet.Points, cancellationToken);
+            var routePts = await processor.ProcessAsync( pointSet.Points, cancellationToken );
 
             processor.PointsProcessed -= DisplayPointsProcessedAsync;
 
-            if (routePts == null)
+            if( routePts == null )
             {
-                _logger?.Error("Route processor '{0}' failed", processor.GetType());
+                _logger?.Error( "Route processor '{0}' failed", processor.GetType() );
                 return false;
             }
 

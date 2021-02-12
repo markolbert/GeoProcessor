@@ -1,31 +1,42 @@
-﻿using System;
+﻿#region license
+
+// Copyright 2021 Mark A. Olbert
+// 
+// This library or program 'GeoProcessorWPF' is free software: you can redistribute it
+// and/or modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation, either version 3 of the License,
+// or (at your option) any later version.
+// 
+// This library or program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License along with
+// this library or program.  If not, see <https://www.gnu.org/licenses/>.
+
+#endregion
+
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using J4JSoftware.Logging;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 
 namespace J4JSoftware.GeoProcessor
 {
     public class RouteEnginesViewModel : ObservableRecipient, IRouteEnginesViewModel
     {
-        private enum PropertySettingState
-        {
-            Initial,
-            ProcessorTypeChange,
-            Normal
-        }
-
         private readonly IAppConfig _appConfig;
         private readonly IUserConfig _userConfig;
+        private string _apiKey = string.Empty;
 
         private Visibility _apiKeyVisibility = Visibility.Collapsed;
-        private ProcessorType _processorType = ProcessorType.None;
-        private string _apiKey = string.Empty;
+        private double _distanceValue;
         private string _encyptedApiKey = string.Empty;
         private int _maxDistMultiplier;
+        private ProcessorType _processorType = ProcessorType.None;
         private UnitTypes _selectedUnitType;
-        private double _distanceValue;
         private PropertySettingState _setState;
 
         public RouteEnginesViewModel(
@@ -106,8 +117,8 @@ namespace J4JSoftware.GeoProcessor
                 SetProperty( ref _apiKey, value );
                 OnSettingsChanged();
 
-                if( _setState != PropertySettingState.Normal 
-                    || !_userConfig.APIKeys.TryGetValue( SelectedProcessorType, out var temp ) ) 
+                if( _setState != PropertySettingState.Normal
+                    || !_userConfig.APIKeys.TryGetValue( SelectedProcessorType, out var temp ) )
                     return;
 
                 temp.Value = value;
@@ -118,7 +129,7 @@ namespace J4JSoftware.GeoProcessor
         public string EncryptedAPIKey
         {
             get => _encyptedApiKey;
-            private set => SetProperty(ref _encyptedApiKey, value  );
+            private set => SetProperty( ref _encyptedApiKey, value );
         }
 
         public int MaxDistanceMultiplier
@@ -130,8 +141,8 @@ namespace J4JSoftware.GeoProcessor
                 SetProperty( ref _maxDistMultiplier, value );
                 OnSettingsChanged();
 
-                if( _setState != PropertySettingState.Normal 
-                    || !_appConfig.Processors.TryGetValue( SelectedProcessorType, out var temp ) ) 
+                if( _setState != PropertySettingState.Normal
+                    || !_appConfig.Processors.TryGetValue( SelectedProcessorType, out var temp ) )
                     return;
 
                 temp.MaxDistanceMultiplier = value;
@@ -149,8 +160,8 @@ namespace J4JSoftware.GeoProcessor
                 SetProperty( ref _selectedUnitType, value );
                 OnSettingsChanged();
 
-                if( _setState != PropertySettingState.Normal 
-                    || !_appConfig.Processors.TryGetValue( SelectedProcessorType, out var temp ) ) 
+                if( _setState != PropertySettingState.Normal
+                    || !_appConfig.Processors.TryGetValue( SelectedProcessorType, out var temp ) )
                     return;
 
                 temp.MaxSeparation.ChangeUnitType( value );
@@ -169,8 +180,8 @@ namespace J4JSoftware.GeoProcessor
                 SetProperty( ref _distanceValue, value );
                 OnSettingsChanged();
 
-                if( _setState != PropertySettingState.Normal 
-                    || !_appConfig.Processors.TryGetValue( SelectedProcessorType, out var temp ) ) 
+                if( _setState != PropertySettingState.Normal
+                    || !_appConfig.Processors.TryGetValue( SelectedProcessorType, out var temp ) )
                     return;
 
                 temp.MaxSeparation.ChangeOriginalValue( value );
@@ -180,7 +191,14 @@ namespace J4JSoftware.GeoProcessor
         private void OnSettingsChanged()
         {
             if( _setState == PropertySettingState.Normal )
-                Messenger.Send( new SettingsChangedMessage(SettingsPage.Processors), "primary" );
+                Messenger.Send( new SettingsChangedMessage( SettingsPage.Processors ), "primary" );
+        }
+
+        private enum PropertySettingState
+        {
+            Initial,
+            ProcessorTypeChange,
+            Normal
         }
     }
 }

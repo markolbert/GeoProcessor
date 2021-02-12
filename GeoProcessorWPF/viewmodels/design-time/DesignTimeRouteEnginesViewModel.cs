@@ -1,4 +1,23 @@
-﻿using System;
+﻿#region license
+
+// Copyright 2021 Mark A. Olbert
+// 
+// This library or program 'GeoProcessorWPF' is free software: you can redistribute it
+// and/or modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation, either version 3 of the License,
+// or (at your option) any later version.
+// 
+// This library or program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License along with
+// this library or program.  If not, see <https://www.gnu.org/licenses/>.
+
+#endregion
+
+using System;
 using System.Collections.ObjectModel;
 using System.Windows;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
@@ -7,13 +26,13 @@ namespace J4JSoftware.GeoProcessor
 {
     public class DesignTimeRouteEnginesViewModel : ObservableRecipient, IRouteEnginesViewModel
     {
-        private Visibility _apiKeyVisibility = Visibility.Collapsed;
-        private ProcessorType _processorType = ProcessorType.None;
         private string _apiKey = string.Empty;
+        private Visibility _apiKeyVisibility = Visibility.Collapsed;
+        private double _distanceValue;
         private string _encyptedApiKey = string.Empty;
         private int _maxDistMultiplier;
+        private ProcessorType _processorType = ProcessorType.None;
         private UnitTypes _selectedUnitType;
-        private double _distanceValue;
 
         public DesignTimeRouteEnginesViewModel()
         {
@@ -28,7 +47,7 @@ namespace J4JSoftware.GeoProcessor
             EncryptedAPIKey = "...should be encrypted...";
 
             MaxDistanceMultiplier = 3;
-            
+
             UnitTypes = new ObservableCollection<UnitTypes>( Enum.GetValues<UnitTypes>() );
             SelectedUnitType = GeoProcessor.UnitTypes.mi;
             DistanceValue = 2.0;
