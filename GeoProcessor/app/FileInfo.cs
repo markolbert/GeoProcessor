@@ -1,4 +1,23 @@
-﻿using System;
+﻿#region license
+
+// Copyright 2021 Mark A. Olbert
+// 
+// This library or program 'GeoProcessor' is free software: you can redistribute it
+// and/or modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation, either version 3 of the License,
+// or (at your option) any later version.
+// 
+// This library or program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License along with
+// this library or program.  If not, see <https://www.gnu.org/licenses/>.
+
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -7,23 +26,24 @@ using System.IO;
 namespace J4JSoftware.GeoProcessor
 {
     public abstract class FileInfo<T>
-        where T:Enum
+        where T : Enum
     {
-        protected FileInfo()
-        {
-        }
-
         public string FilePath
         {
             get => GetPath();
 
             set
             {
-                DirectoryPath = Path.GetDirectoryName(value) ?? string.Empty;
-                FileNameWithoutExtension = Path.GetFileNameWithoutExtension(value);
+                DirectoryPath = Path.GetDirectoryName( value ) ?? string.Empty;
+                FileNameWithoutExtension = Path.GetFileNameWithoutExtension( value );
                 Type = GetTypeFromExtension( Path.GetExtension( value ) );
             }
         }
+
+        public string DirectoryPath { get; protected set; }
+        public string FileNameWithoutExtension { get; set; }
+        public T Type { get; set; }
+        public string FileExtension => GetExtensionFromType( Type );
 
         public string GetPath( int fileNum = 0 )
         {
@@ -41,11 +61,6 @@ namespace J4JSoftware.GeoProcessor
 
             return parts.Count == 0 ? string.Empty : Path.Combine( parts.ToArray() );
         }
-
-        public string DirectoryPath { get; protected set; }
-        public string FileNameWithoutExtension { get; set; }
-        public T Type { get; set; }
-        public string FileExtension => GetExtensionFromType( Type );
 
         protected abstract T GetTypeFromExtension( string? ext );
         protected abstract string GetExtensionFromType( T type );

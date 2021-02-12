@@ -1,4 +1,22 @@
-﻿using System;
+﻿#region license
+
+// Copyright 2021 Mark A. Olbert
+// 
+// This library or program 'GeoProcessorApp' is free software: you can redistribute it
+// and/or modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation, either version 3 of the License,
+// or (at your option) any later version.
+// 
+// This library or program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License along with
+// this library or program.  If not, see <https://www.gnu.org/licenses/>.
+
+#endregion
+
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -64,7 +82,7 @@ namespace J4JSoftware.GeoProcessor
 
             if( !secureProcessors.Any() )
             {
-                _logger.Error("No processors are defined");
+                _logger.Error( "No processors are defined" );
                 _lifetime.StopApplication();
 
                 return;
@@ -73,14 +91,14 @@ namespace J4JSoftware.GeoProcessor
 
             Colors.WriteLine( "Select the ", "processor ".Yellow(), " whose API key you want to encrypt and store:\n" );
 
-            var procType = Prompters.GetEnum<ProcessorType>( _config.ProcessorType,
-                    _config.ProcessorType switch
-                    {
-                        ProcessorType.Distance => ProcessorType.Google,
-                        ProcessorType.None => ProcessorType.Google,
-                        _ => _config.ProcessorType
-                    },
-                    secureProcessors );
+            var procType = Prompters.GetEnum( _config.ProcessorType,
+                _config.ProcessorType switch
+                {
+                    ProcessorType.Distance => ProcessorType.Google,
+                    ProcessorType.None => ProcessorType.Google,
+                    _ => _config.ProcessorType
+                },
+                secureProcessors );
 
             var apiKey = Prompters.GetSingleValue( _config.APIKey, $"the {procType} API key", _config.APIKey );
 
@@ -104,12 +122,12 @@ namespace J4JSoftware.GeoProcessor
 
             var jsonOptions = new JsonSerializerOptions { WriteIndented = true };
             jsonOptions.Converters.Add( new JsonStringEnumConverter() );
-            jsonOptions.Converters.Add(new APIKeysConverter());
+            jsonOptions.Converters.Add( new APIKeysConverter() );
 
-            var serialized = JsonSerializer.Serialize( tempConfig, jsonOptions);
+            var serialized = JsonSerializer.Serialize( tempConfig, jsonOptions );
 
-            await File.WriteAllTextAsync( 
-                Path.Combine( Program.AppUserFolder, Program.UserConfigFile ), 
+            await File.WriteAllTextAsync(
+                Path.Combine( Program.AppUserFolder, Program.UserConfigFile ),
                 serialized,
                 cancellationToken );
 

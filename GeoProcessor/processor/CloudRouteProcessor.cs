@@ -1,4 +1,23 @@
-﻿using System;
+﻿#region license
+
+// Copyright 2021 Mark A. Olbert
+// 
+// This library or program 'GeoProcessor' is free software: you can redistribute it
+// and/or modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation, either version 3 of the License,
+// or (at your option) any later version.
+// 
+// This library or program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License along with
+// this library or program.  If not, see <https://www.gnu.org/licenses/>.
+
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -9,19 +28,20 @@ namespace J4JSoftware.GeoProcessor
 {
     public class CloudRouteProcessor : RouteProcessor
     {
-        protected CloudRouteProcessor( 
-            IImportConfig config, 
+        protected CloudRouteProcessor(
+            IImportConfig config,
             ProcessorType processorType,
-            IJ4JLogger? logger ) 
+            IJ4JLogger? logger )
             : base( config, processorType, logger )
         {
             APIKey = config.APIKey;
         }
+
         protected string APIKey { get; }
 
         public override async Task<LinkedList<Coordinate>?> ProcessAsync(
             LinkedList<Coordinate> nodes,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken )
         {
             if( string.IsNullOrEmpty( APIKey ) )
             {
@@ -31,21 +51,21 @@ namespace J4JSoftware.GeoProcessor
 
             var retVal = new LinkedList<Coordinate>();
 
-            var chunks = ChunkPoints(InterpolatePoints(nodes));
+            var chunks = ChunkPoints( InterpolatePoints( nodes ) );
 
             var ptsSinceLastReport = 0;
 
-            foreach (var coordinates in chunks)
+            foreach( var coordinates in chunks )
             {
                 if( cancellationToken.IsCancellationRequested )
                     return null;
 
-                if (!await ProcessChunkAsync(coordinates, retVal!, cancellationToken))
+                if( !await ProcessChunkAsync( coordinates, retVal!, cancellationToken ) )
                     return null;
 
                 ptsSinceLastReport += coordinates.Count;
 
-                if( ptsSinceLastReport < ReportingInterval ) 
+                if( ptsSinceLastReport < ReportingInterval )
                     continue;
 
                 OnReportingInterval( ptsSinceLastReport );
@@ -58,39 +78,39 @@ namespace J4JSoftware.GeoProcessor
         protected virtual async Task<bool> ProcessChunkAsync(
             List<Coordinate> coordinates,
             LinkedList<Coordinate> outputNodes,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken )
         {
-            var snappedPts = await ExecuteRequestAsync(coordinates, cancellationToken);
+            var snappedPts = await ExecuteRequestAsync( coordinates, cancellationToken );
 
-            if (snappedPts == null)
+            if( snappedPts == null )
                 return false;
 
-            UpdateOutputList(snappedPts!, outputNodes);
+            UpdateOutputList( snappedPts!, outputNodes );
 
             return true;
         }
 
-        private List<Coordinate> InterpolatePoints(LinkedList<Coordinate> nodes)
+        private List<Coordinate> InterpolatePoints( LinkedList<Coordinate> nodes )
         {
             var retVal = new List<Coordinate>();
 
             Coordinate? prevPt = null;
 
-            foreach (var curPt in nodes)
+            foreach( var curPt in nodes )
             {
-                if (prevPt == null)
+                if( prevPt == null )
                 {
-                    retVal.Add(curPt);
+                    retVal.Add( curPt );
                     prevPt = curPt;
 
                     continue;
                 }
 
-                var distance = GeoExtensions.GetDistance(prevPt, curPt);
+                var distance = GeoExtensions.GetDistance( prevPt, curPt );
 
-                if (distance <= Configuration.MaxSeparation)
+                if( distance <= Configuration.MaxSeparation )
                 {
-                    retVal.Add(curPt);
+                    retVal.Add( curPt );
                     prevPt = curPt;
 
                     continue;
@@ -98,17 +118,18 @@ namespace J4JSoftware.GeoProcessor
 
                 // interpolate
                 var numPtsNeeded = Convert.ToInt32(
-                    Math.Ceiling(distance.GetValue(Configuration.MaxSeparation.Unit) / Configuration.MaxSeparation.OriginalValue));
+                    Math.Ceiling( distance.GetValue( Configuration.MaxSeparation.Unit ) /
+                                  Configuration.MaxSeparation.OriginalValue ) );
 
-                var deltaLat = (curPt.Latitude - prevPt.Latitude) / numPtsNeeded;
-                var deltaLong = (curPt.Longitude - prevPt.Longitude) / numPtsNeeded;
+                var deltaLat = ( curPt.Latitude - prevPt.Latitude ) / numPtsNeeded;
+                var deltaLong = ( curPt.Longitude - prevPt.Longitude ) / numPtsNeeded;
 
-                for (var idx = 0; idx < numPtsNeeded; idx++)
-                    retVal.Add(new Coordinate
+                for( var idx = 0; idx < numPtsNeeded; idx++ )
+                    retVal.Add( new Coordinate
                     {
-                        Latitude = prevPt.Latitude + (idx + 1) * deltaLat,
-                        Longitude = prevPt.Longitude + (idx + 1) * deltaLong
-                    });
+                        Latitude = prevPt.Latitude + ( idx + 1 ) * deltaLat,
+                        Longitude = prevPt.Longitude + ( idx + 1 ) * deltaLong
+                    } );
 
                 prevPt = curPt;
             }
@@ -116,19 +137,19 @@ namespace J4JSoftware.GeoProcessor
             return retVal;
         }
 
-        private List<List<Coordinate>> ChunkPoints(List<Coordinate> points)
+        private List<List<Coordinate>> ChunkPoints( List<Coordinate> points )
         {
             var retVal = new List<List<Coordinate>>();
 
             var ptsChunked = 0;
 
-            while (ptsChunked < points.Count - 1)
+            while( ptsChunked < points.Count - 1 )
             {
-                var coordinates = points.Skip(ptsChunked)
-                    .Take(ProcessorType.MaxPointsPerRequest())
+                var coordinates = points.Skip( ptsChunked )
+                    .Take( ProcessorType.MaxPointsPerRequest() )
                     .ToList();
 
-                retVal.Add(coordinates);
+                retVal.Add( coordinates );
 
                 ptsChunked += coordinates.Count;
             }

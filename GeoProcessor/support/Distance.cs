@@ -1,4 +1,23 @@
-﻿using System;
+﻿#region license
+
+// Copyright 2021 Mark A. Olbert
+// 
+// This library or program 'GeoProcessor' is free software: you can redistribute it
+// and/or modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation, either version 3 of the License,
+// or (at your option) any later version.
+// 
+// This library or program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License along with
+// this library or program.  If not, see <https://www.gnu.org/licenses/>.
+
+#endregion
+
+using System;
 using System.ComponentModel;
 
 namespace J4JSoftware.GeoProcessor
@@ -12,12 +31,23 @@ namespace J4JSoftware.GeoProcessor
         }
 
         public UnitTypes Unit { get; private set; }
-        public void ChangeUnitType( UnitTypes unitType ) => Unit = unitType;
 
         public double OriginalValue { get; private set; }
-        public void ChangeOriginalValue( double value ) => OriginalValue = value;
 
-        public override string ToString() => $"{OriginalValue} {Unit}";
+        public void ChangeUnitType( UnitTypes unitType )
+        {
+            Unit = unitType;
+        }
+
+        public void ChangeOriginalValue( double value )
+        {
+            OriginalValue = value;
+        }
+
+        public override string ToString()
+        {
+            return $"{OriginalValue} {Unit}";
+        }
 
         public double GetValue( UnitTypes outUnit )
         {
@@ -92,27 +122,27 @@ namespace J4JSoftware.GeoProcessor
 
         public static Distance operator *( Distance x, double multiplier )
         {
-            return new Distance( x.Unit, x.OriginalValue * multiplier );
+            return new( x.Unit, x.OriginalValue * multiplier );
         }
 
         public static Distance operator *( double multiplier, Distance x )
         {
-            return new Distance( x.Unit, x.OriginalValue * multiplier );
+            return new( x.Unit, x.OriginalValue * multiplier );
         }
 
         public static Distance operator /( Distance x, double divisor )
         {
-            return new Distance( x.Unit, x.OriginalValue / divisor );
+            return new( x.Unit, x.OriginalValue / divisor );
         }
 
         public static Distance operator +( Distance a, Distance b )
         {
-            return new Distance( a.Unit, a.OriginalValue + b.GetValue( a.Unit ) );
+            return new( a.Unit, a.OriginalValue + b.GetValue( a.Unit ) );
         }
 
         public static Distance operator -( Distance a, Distance b )
         {
-            return new Distance( a.Unit, a.OriginalValue - b.GetValue( a.Unit ) );
+            return new( a.Unit, a.OriginalValue - b.GetValue( a.Unit ) );
         }
 
         public override int GetHashCode()

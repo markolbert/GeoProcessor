@@ -1,4 +1,23 @@
-﻿using System;
+﻿#region license
+
+// Copyright 2021 Mark A. Olbert
+// 
+// This library or program 'GeoProcessor' is free software: you can redistribute it
+// and/or modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation, either version 3 of the License,
+// or (at your option) any later version.
+// 
+// This library or program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License along with
+// this library or program.  If not, see <https://www.gnu.org/licenses/>.
+
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,7 +28,7 @@ using J4JSoftware.Logging;
 
 namespace J4JSoftware.GeoProcessor
 {
-    [Importer(ImportType.GPX)]
+    [ Importer( ImportType.GPX ) ]
     public class GPXImporter : FileHandler, IImporter
     {
         private const string TrackName = "trk";
@@ -27,8 +46,8 @@ namespace J4JSoftware.GeoProcessor
 
         public ImportType Type { get; }
 
-        public async Task<List<PointSet>?> ImportAsync( 
-            string filePath, 
+        public async Task<List<PointSet>?> ImportAsync(
+            string filePath,
             CancellationToken cancellationToken )
         {
             if( !File.Exists( filePath ) )
@@ -53,7 +72,7 @@ namespace J4JSoftware.GeoProcessor
             var retVal = new List<PointSet>();
             var segNum = 0;
 
-            foreach ( var track in xDoc.Descendants()
+            foreach( var track in xDoc.Descendants()
                 .Where( x => x.Name.LocalName.Equals( TrackName, StringComparison.OrdinalIgnoreCase ) ) )
             {
                 var trkName =
@@ -103,17 +122,17 @@ namespace J4JSoftware.GeoProcessor
         {
             result = 99999;
 
-            var text = point.Attribute(attrName)?.Value;
+            var text = point.Attribute( attrName )?.Value;
 
-            if (string.IsNullOrEmpty(text))
+            if( string.IsNullOrEmpty( text ) )
             {
-                Logger?.Error("Missing longitude value");
+                Logger?.Error( "Missing longitude value" );
                 return false;
             }
 
-            if (!double.TryParse(text!, out var retVal))
+            if( !double.TryParse( text!, out var retVal ) )
             {
-                Logger?.Error<string, string>("Unparseable {0} value '{1}'", name, text);
+                Logger?.Error<string, string>( "Unparseable {0} value '{1}'", name, text );
                 return false;
             }
 

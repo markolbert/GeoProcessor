@@ -1,12 +1,29 @@
-﻿using System;
+﻿#region license
+
+// Copyright 2021 Mark A. Olbert
+// 
+// This library or program 'GeoProcessorApp' is free software: you can redistribute it
+// and/or modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation, either version 3 of the License,
+// or (at your option) any later version.
+// 
+// This library or program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License along with
+// this library or program.  If not, see <https://www.gnu.org/licenses/>.
+
+#endregion
+
+using System;
 using System.IO;
-using System.Text;
 using Autofac;
 using J4JSoftware.Configuration.CommandLine;
 using J4JSoftware.ConsoleUtilities;
 using J4JSoftware.DependencyInjection;
 using J4JSoftware.Logging;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -15,8 +32,6 @@ namespace J4JSoftware.GeoProcessor
 {
     public class CompositionRoot : J4JCompositionRoot<J4JLoggerConfiguration>
     {
-        public static CompositionRoot Default { get; }
-
         static CompositionRoot()
         {
             Default = new CompositionRoot();
@@ -36,63 +51,65 @@ namespace J4JSoftware.GeoProcessor
             UseConsoleLifetime = true;
         }
 
+        public static CompositionRoot Default { get; }
+
         protected override void SetupConfigurationEnvironment( IConfigurationBuilder builder )
         {
             base.SetupConfigurationEnvironment( builder );
 
             var options = new OptionCollection( CommandLineStyle.Linux, loggerFactory: () => CachedLogger );
 
-            options.Bind<AppConfig, string>(x => x.InputFile.FilePath, "i", "inputFile");
-            options.Bind<AppConfig, string>(x => x.DefaultRouteName, "n", "defaultName");
-            options.Bind<AppConfig, string>(x => x.OutputFile.FilePath, "o", "outputFile");
-            options.Bind<AppConfig, ExportType>(x => x.ExportType, "t", "outputType");
-            options.Bind<AppConfig, bool>(x => x.StoreAPIKey, "k", "storeApiKey");
-            options.Bind<AppConfig, bool>(x => x.RunInteractive, "r", "runInteractive");
-            options.Bind<AppConfig, ProcessorType>(x => x.ProcessorType, "p", "snapProcessor");
+            options.Bind<AppConfig, string>( x => x.InputFile.FilePath, "i", "inputFile" );
+            options.Bind<AppConfig, string>( x => x.DefaultRouteName, "n", "defaultName" );
+            options.Bind<AppConfig, string>( x => x.OutputFile.FilePath, "o", "outputFile" );
+            options.Bind<AppConfig, ExportType>( x => x.ExportType, "t", "outputType" );
+            options.Bind<AppConfig, bool>( x => x.StoreAPIKey, "k", "storeApiKey" );
+            options.Bind<AppConfig, bool>( x => x.RunInteractive, "r", "runInteractive" );
+            options.Bind<AppConfig, ProcessorType>( x => x.ProcessorType, "p", "snapProcessor" );
 
-            builder.SetBasePath(Environment.CurrentDirectory)
-                .AddJsonFile(Path.Combine(Environment.CurrentDirectory, Program.AppConfigFile), false, false)
-                .AddJsonFile(Path.Combine(Program.AppUserFolder, Program.UserConfigFile), true, false)
+            builder.SetBasePath( Environment.CurrentDirectory )
+                .AddJsonFile( Path.Combine( Environment.CurrentDirectory, Program.AppConfigFile ), false, false )
+                .AddJsonFile( Path.Combine( Program.AppUserFolder, Program.UserConfigFile ), true, false )
                 .AddUserSecrets<AppConfig>()
-                .AddJ4JCommandLine(options);
+                .AddJ4JCommandLine( options );
         }
 
         protected override void SetupDependencyInjection( HostBuilderContext hbc, ContainerBuilder builder )
         {
             base.SetupDependencyInjection( hbc, builder );
 
-            builder.Register(c =>
-            {
-                AppConfig? config = null;
-
-                try
+            builder.Register( c =>
                 {
-                    config = hbc.Configuration.Get<AppConfig>();
-                }
-                catch (Exception e)
-                {
-                    CachedLogger.Fatal<string>(
-                        "Failed to parse configuration information. Message was: {0}",
-                        e.Message);
-                }
+                    AppConfig? config = null;
 
-                config ??= new AppConfig();
+                    try
+                    {
+                        config = hbc.Configuration.Get<AppConfig>();
+                    }
+                    catch( Exception e )
+                    {
+                        CachedLogger.Fatal<string>(
+                            "Failed to parse configuration information. Message was: {0}",
+                            e.Message );
+                    }
 
-                if (!string.IsNullOrEmpty(config.OutputFile.FileNameWithoutExtension))
+                    config ??= new AppConfig();
+
+                    if( !string.IsNullOrEmpty( config.OutputFile.FileNameWithoutExtension ) )
+                        return config;
+
+                    config.OutputFile.FilePath = config.InputFile.FilePath;
+                    config.OutputFile.FileNameWithoutExtension =
+                        $"{config.OutputFile.FileNameWithoutExtension}-processed";
+
+                    config.OutputFile.Type = config.InputFile.Type switch
+                    {
+                        ImportType.KMZ => ExportType.KMZ,
+                        _ => ExportType.KML
+                    };
+
                     return config;
-
-                config.OutputFile.FilePath = config.InputFile.FilePath;
-                config.OutputFile.FileNameWithoutExtension =
-                    $"{config.OutputFile.FileNameWithoutExtension}-processed";
-
-                config.OutputFile.Type = config.InputFile.Type switch
-                {
-                    ImportType.KMZ => ExportType.KMZ,
-                    _ => ExportType.KML
-                };
-
-                return config;
-            })
+                } )
                 .AsImplementedInterfaces()
                 .AsSelf()
                 .SingleInstance();
@@ -127,7 +144,7 @@ namespace J4JSoftware.GeoProcessor
 
             var config = hbc.Configuration.Get<AppConfig>();
 
-            if (config!.StoreAPIKey)
+            if( config!.StoreAPIKey )
                 services.AddHostedService<StoreKeyApp>();
             else
                 services.AddHostedService<RouteApp>();

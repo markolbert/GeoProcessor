@@ -1,9 +1,28 @@
-﻿using System;
+﻿#region license
+
+// Copyright 2021 Mark A. Olbert
+// 
+// This library or program 'GeoProcessor' is free software: you can redistribute it
+// and/or modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation, either version 3 of the License,
+// or (at your option) any later version.
+// 
+// This library or program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License along with
+// this library or program.  If not, see <https://www.gnu.org/licenses/>.
+
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
+using GoogleApi;
 using GoogleApi.Entities.Maps.Roads.Common;
 using GoogleApi.Entities.Maps.Roads.SnapToRoads.Request;
 using GoogleApi.Entities.Maps.Roads.SnapToRoads.Response;
@@ -12,7 +31,7 @@ using Location = GoogleApi.Entities.Common.Location;
 
 namespace J4JSoftware.GeoProcessor
 {
-    [RouteProcessor(ProcessorType.Google)]
+    [ RouteProcessor( ProcessorType.Google ) ]
     public class GoogleProcessor : CloudRouteProcessor
     {
         public GoogleProcessor(
@@ -21,12 +40,12 @@ namespace J4JSoftware.GeoProcessor
         )
             : base( config, ProcessorType.Google, logger )
         {
-            Type = GeoExtensions.GetTargetType<RouteProcessorAttribute>(GetType())!.Type;
+            Type = GeoExtensions.GetTargetType<RouteProcessorAttribute>( GetType() )!.Type;
         }
 
         public ProcessorType Type { get; }
 
-        protected override async Task<List<Coordinate>?> ExecuteRequestAsync( 
+        protected override async Task<List<Coordinate>?> ExecuteRequestAsync(
             List<Coordinate> coordinates,
             CancellationToken cancellationToken )
         {
@@ -41,17 +60,17 @@ namespace J4JSoftware.GeoProcessor
 
             try
             {
-                result = await GoogleApi.GoogleMaps.SnapToRoad.QueryAsync( request, cancellationToken );
+                result = await GoogleMaps.SnapToRoad.QueryAsync( request, cancellationToken );
             }
             catch( Exception e )
             {
-                Logger?.Error<string>("Snap to road request failed. Message was '{0}'", e.Message);
+                Logger?.Error<string>( "Snap to road request failed. Message was '{0}'", e.Message );
                 return null;
             }
 
             if( result == null )
             {
-                Logger?.Error("Snap to road request failed");
+                Logger?.Error( "Snap to road request failed" );
                 return null;
             }
 
@@ -62,10 +81,7 @@ namespace J4JSoftware.GeoProcessor
                     .Select( p => new Coordinate( p.Location.Latitude, p.Location.Longitude ) )
                     .ToList();
 
-            foreach( var error in errors )
-            {
-                Logger?.Error<string>( "Snap to road error: {0}", error.ErrorMessage );
-            }
+            foreach( var error in errors ) Logger?.Error<string>( "Snap to road error: {0}", error.ErrorMessage );
 
             return null;
         }

@@ -6,8 +6,8 @@
     },
     "Bing": {
       "RequiresKey": true,
-      "HasPointsLimit": true, 
-      "SupportsSnapping": true, 
+      "HasPointsLimit": true,
+      "SupportsSnapping": true,
       "MaxPointsPerRequest": 100,
       "MaxSeparation": "2 km"
     },

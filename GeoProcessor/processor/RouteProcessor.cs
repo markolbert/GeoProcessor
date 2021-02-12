@@ -1,6 +1,24 @@
-﻿using System;
+﻿#region license
+
+// Copyright 2021 Mark A. Olbert
+// 
+// This library or program 'GeoProcessor' is free software: you can redistribute it
+// and/or modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation, either version 3 of the License,
+// or (at your option) any later version.
+// 
+// This library or program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License along with
+// this library or program.  If not, see <https://www.gnu.org/licenses/>.
+
+#endregion
+
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using J4JSoftware.Logging;
@@ -9,8 +27,6 @@ namespace J4JSoftware.GeoProcessor
 {
     public class RouteProcessor : IRouteProcessor
     {
-        public event EventHandler<int>? PointsProcessed;
-
         private int _reportingInterval;
 
         protected RouteProcessor(
@@ -22,7 +38,7 @@ namespace J4JSoftware.GeoProcessor
             Processor = config.ProcessorType;
             ProcessorType = processorType;
 
-            ReportingInterval = ProcessorType.MaxPointsPerRequest() == Int32.MaxValue
+            ReportingInterval = ProcessorType.MaxPointsPerRequest() == int.MaxValue
                 ? 500
                 : ProcessorType.MaxPointsPerRequest() * 5;
 
@@ -33,6 +49,10 @@ namespace J4JSoftware.GeoProcessor
         protected IJ4JLogger? Logger { get; }
         protected ProcessorType ProcessorType { get; }
 
+        protected ProcessorInfo Configuration { get; }
+        protected ProcessorType Processor { get; }
+        public event EventHandler<int>? PointsProcessed;
+
         public int ReportingInterval
         {
             get => _reportingInterval;
@@ -41,7 +61,7 @@ namespace J4JSoftware.GeoProcessor
             {
                 if( value <= 0 )
                 {
-                    var temp = ProcessorType.MaxPointsPerRequest() == Int32.MaxValue
+                    var temp = ProcessorType.MaxPointsPerRequest() == int.MaxValue
                         ? 500
                         : ProcessorType.MaxPointsPerRequest() * 5;
 
@@ -49,20 +69,31 @@ namespace J4JSoftware.GeoProcessor
 
                     Logger?.Error( "ReportingInterval must be >= 0, defaulting to {0}", temp );
                 }
-                else _reportingInterval = value;
+                else
+                {
+                    _reportingInterval = value;
+                }
             }
         }
 
-        protected void OnReportingInterval( int points ) => PointsProcessed?.Invoke( this, points );
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
+        public virtual async Task<LinkedList<Coordinate>?> ProcessAsync( LinkedList<Coordinate> nodes,
+            CancellationToken cancellationToken )
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
+        {
+            return null;
+        }
 
-        protected ProcessorInfo Configuration { get; }
-        protected ProcessorType Processor { get; }
+        protected void OnReportingInterval( int points )
+        {
+            PointsProcessed?.Invoke( this, points );
+        }
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         protected virtual async Task<List<Coordinate>?> ExecuteRequestAsync(
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
             List<Coordinate> coordinates,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken )
         {
             return null;
         }
@@ -75,13 +106,6 @@ namespace J4JSoftware.GeoProcessor
                 prevNode = prevNode == null
                     ? linkedList.AddFirst( snappedPt )
                     : linkedList.AddAfter( prevNode, snappedPt );
-        }
-
-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-        public virtual async Task<LinkedList<Coordinate>?> ProcessAsync( LinkedList<Coordinate> nodes, CancellationToken cancellationToken )
-#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
-        {
-            return null;
         }
     }
 }

@@ -1,4 +1,23 @@
-﻿using System;
+﻿#region license
+
+// Copyright 2021 Mark A. Olbert
+// 
+// This library or program 'GeoProcessorApp' is free software: you can redistribute it
+// and/or modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation, either version 3 of the License,
+// or (at your option) any later version.
+// 
+// This library or program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License along with
+// this library or program.  If not, see <https://www.gnu.org/licenses/>.
+
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -7,6 +26,7 @@ using Autofac.Features.Indexed;
 using J4JSoftware.ConsoleUtilities;
 using J4JSoftware.Logging;
 using Microsoft.Extensions.Hosting;
+
 #pragma warning disable 8618
 
 namespace J4JSoftware.GeoProcessor
@@ -16,12 +36,12 @@ namespace J4JSoftware.GeoProcessor
         internal const string AutofacKey = "RouteApp";
 
         private readonly AppConfig _config;
-        private readonly IHostApplicationLifetime _lifetime;
-        private readonly IIndex<ImportType, IImporter> _importers;
-        private readonly IExporter _exporter;
         private readonly IRouteProcessor _distProc;
-        private readonly IRouteProcessor _routeProc;
+        private readonly IExporter _exporter;
+        private readonly IIndex<ImportType, IImporter> _importers;
+        private readonly IHostApplicationLifetime _lifetime;
         private readonly IJ4JLogger _logger;
+        private readonly IRouteProcessor _routeProc;
 
         public RouteApp(
             AppConfig config,
@@ -56,7 +76,7 @@ namespace J4JSoftware.GeoProcessor
 
         public async Task StartAsync( CancellationToken cancellationToken )
         {
-            if( !_config.IsValid(_logger) )
+            if( !_config.IsValid( _logger ) )
             {
                 _lifetime.StopApplication();
                 return;
@@ -72,18 +92,16 @@ namespace J4JSoftware.GeoProcessor
 
             // if the import based on the extension failed, try all our importers
             if( pointSets == null )
-            {
                 foreach( var fType in Enum.GetValues<ImportType>()
                     .Where( ft => ft != _config.InputFile.Type && ft != ImportType.Unknown ) )
                 {
                     pointSets = await LoadFileAsync( fType, cancellationToken );
 
-                    if( pointSets == null ) 
+                    if( pointSets == null )
                         continue;
 
                     break;
                 }
-            }
 
             if( pointSets == null )
             {
@@ -95,19 +113,17 @@ namespace J4JSoftware.GeoProcessor
 
             for( var idx = 0; idx < pointSets.Count; idx++ )
             {
-                if( await ProcessPointSet( pointSets[idx], cancellationToken ) )
+                if( await ProcessPointSet( pointSets[ idx ], cancellationToken ) )
                     continue;
 
-                _logger.Error<string, int>("Failed to process KMLDocument '{0}' ({1})", pointSets[idx].RouteName, idx);
+                _logger.Error( "Failed to process KMLDocument '{0}' ({1})", pointSets[ idx ].RouteName, idx );
                 _lifetime.StopApplication();
 
                 return;
             }
 
             for( var idx = 0; idx < pointSets.Count; idx++ )
-            {
                 await _exporter.ExportAsync( pointSets[ idx ], idx, cancellationToken );
-            }
 
             _lifetime.StopApplication();
         }
@@ -131,32 +147,33 @@ namespace J4JSoftware.GeoProcessor
         {
             var prevPts = pointSet.Points.Count;
 
-            if (!await RunRouteProcessor(pointSet, _distProc, cancellationToken))
+            if( !await RunRouteProcessor( pointSet, _distProc, cancellationToken ) )
                 return false;
 
-            _logger.Information("Reduced points from {0:n0} to {1:n0} by coalescing nearby points",
+            _logger.Information( "Reduced points from {0:n0} to {1:n0} by coalescing nearby points",
                 prevPts,
-                pointSet.Points.Count);
+                pointSet.Points.Count );
 
             prevPts = pointSet.Points.Count;
 
-            if (!await RunRouteProcessor(pointSet, _routeProc, cancellationToken))
+            if( !await RunRouteProcessor( pointSet, _routeProc, cancellationToken ) )
                 return false;
 
-            _logger.Information("Snapping to route changed point count from {0:n0} to {1:n0}",
+            _logger.Information( "Snapping to route changed point count from {0:n0} to {1:n0}",
                 prevPts,
-                pointSet.Points.Count);
+                pointSet.Points.Count );
 
             return true;
         }
 
-        private async Task<bool> RunRouteProcessor( PointSet pointSet, IRouteProcessor processor, CancellationToken cancellationToken)
+        private async Task<bool> RunRouteProcessor( PointSet pointSet, IRouteProcessor processor,
+            CancellationToken cancellationToken )
         {
-            var routePts = await processor.ProcessAsync(pointSet.Points, cancellationToken);
+            var routePts = await processor.ProcessAsync( pointSet.Points, cancellationToken );
 
-            if (routePts == null)
+            if( routePts == null )
             {
-                _logger.Error("Route processor '{0}' failed", processor.GetType());
+                _logger.Error( "Route processor '{0}' failed", processor.GetType() );
                 return false;
             }
 
@@ -164,6 +181,5 @@ namespace J4JSoftware.GeoProcessor
 
             return true;
         }
-
     }
 }

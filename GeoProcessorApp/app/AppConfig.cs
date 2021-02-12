@@ -1,7 +1,25 @@
-﻿using System.Collections.Generic;
+﻿#region license
+
+// Copyright 2021 Mark A. Olbert
+// 
+// This library or program 'GeoProcessorApp' is free software: you can redistribute it
+// and/or modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation, either version 3 of the License,
+// or (at your option) any later version.
+// 
+// This library or program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License along with
+// this library or program.  If not, see <https://www.gnu.org/licenses/>.
+
+#endregion
+
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using J4JSoftware.ConsoleUtilities;
 using J4JSoftware.Logging;
 
 namespace J4JSoftware.GeoProcessor
@@ -11,24 +29,33 @@ namespace J4JSoftware.GeoProcessor
         public bool StoreAPIKey { get; set; }
         public bool RunInteractive { get; set; }
 
-        public InputFileInfo InputFile{ get; } = new();
+        public InputFileInfo InputFile { get; } = new();
 
         public ExportType ExportType
         {
             get => OutputFile.Type;
             set => OutputFile.Type = value;
         }
+
+        public Dictionary<ProcessorType, ProcessorInfo> Processors { get; set; } =
+            new();
+
+        public Dictionary<ProcessorType, APIKey> APIKeys { get; set; } = new();
+
+        public string DefaultRouteName { get; set; } = "Unnamed Route";
+
+        public J4JLoggerConfiguration? Logging { get; set; }
         public OutputFileInfo OutputFile { get; } = new();
+        public int RouteWidth { get; set; } = 4;
+        public Color RouteColor { get; set; } = Color.Red;
+        public Color RouteHighlightColor { get; set; } = Color.DarkTurquoise;
 
         public ProcessorType ProcessorType { get; set; } = ProcessorType.None;
-        public Dictionary<ProcessorType, ProcessorInfo> Processors { get; set; } =
-            new Dictionary<ProcessorType, ProcessorInfo>();
+
         public ProcessorInfo ProcessorInfo => Processors.ContainsKey( ProcessorType )
             ? Processors[ ProcessorType ]
             : new ProcessorInfo();
 
-        public Dictionary<ProcessorType, APIKey> APIKeys { get; set; } = new Dictionary<ProcessorType, APIKey>();
-        
         public string APIKey
         {
             get => APIKeys.ContainsKey( ProcessorType ) ? APIKeys[ ProcessorType ].Value : string.Empty;
@@ -40,13 +67,6 @@ namespace J4JSoftware.GeoProcessor
                 else APIKeys.Add( ProcessorType, new APIKey { Value = value, Type = ProcessorType } );
             }
         }
-
-        public string DefaultRouteName { get; set; } = "Unnamed Route";
-        public int RouteWidth { get; set; } = 4;
-        public Color RouteColor { get; set; } = Color.Red;
-        public Color RouteHighlightColor { get; set; } = Color.DarkTurquoise;
-
-        public J4JLoggerConfiguration? Logging { get; set; }
 
         public bool IsValid( IJ4JLogger? logger )
         {

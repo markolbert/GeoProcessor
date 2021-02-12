@@ -1,9 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#region license
+
+// Copyright 2021 Mark A. Olbert
+// 
+// This library or program 'Test.GeoProcessor' is free software: you can redistribute it
+// and/or modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation, either version 3 of the License,
+// or (at your option) any later version.
+// 
+// This library or program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License along with
+// this library or program.  If not, see <https://www.gnu.org/licenses/>.
+
+#endregion
+
+using System;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Autofac;
 using Autofac.Features.Indexed;
 using FluentAssertions;
@@ -25,20 +40,20 @@ namespace Test.GeoProcessor
             Default.Initialize();
         }
 
-        public static CompositionRoot Default { get; }
-
         private CompositionRoot()
             : base( "J4JSoftware", "Test.GeoProcessor" )
         {
             var loggerConfig = new J4JLoggerConfiguration();
-            
-            loggerConfig.Channels.Add(new ConsoleConfig()  );
-            loggerConfig.Channels.Add(new DebugConfig()  );
+
+            loggerConfig.Channels.Add( new ConsoleConfig() );
+            loggerConfig.Channels.Add( new DebugConfig() );
 
             StaticConfiguredLogging( loggerConfig );
 
             UseConsoleLifetime = true;
         }
+
+        public static CompositionRoot Default { get; }
 
         protected override void SetupDependencyInjection( HostBuilderContext hbc, ContainerBuilder builder )
         {
@@ -55,8 +70,8 @@ namespace Test.GeoProcessor
         {
             base.SetupConfigurationEnvironment( builder );
 
-            builder.SetBasePath(Environment.CurrentDirectory)
-                .AddJsonFile(Path.Combine(Environment.CurrentDirectory, "appConfig.json"), false, false)
+            builder.SetBasePath( Environment.CurrentDirectory )
+                .AddJsonFile( Path.Combine( Environment.CurrentDirectory, "appConfig.json" ), false, false )
                 .AddUserSecrets<CompositionRoot>();
         }
 
@@ -70,16 +85,19 @@ namespace Test.GeoProcessor
             return retVal;
         }
 
-        public IExporter GetExporter(ExportType type)
+        public IExporter GetExporter( ExportType type )
         {
             var exporters = Host?.Services.GetRequiredService<IIndex<ExportType, IExporter>>();
             exporters.Should().NotBeNull();
 
-            exporters!.TryGetValue(type, out var retVal).Should().BeTrue();
+            exporters!.TryGetValue( type, out var retVal ).Should().BeTrue();
 
             return retVal;
         }
 
-        public IExportConfig GetExportConfig () => Host?.Services.GetRequiredService<IExportConfig>();
+        public IExportConfig GetExportConfig()
+        {
+            return Host?.Services.GetRequiredService<IExportConfig>();
+        }
     }
 }
