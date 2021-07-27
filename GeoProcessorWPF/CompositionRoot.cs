@@ -18,7 +18,9 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using System.IO;
+using System.Windows;
 using Autofac;
 using J4JSoftware.DependencyInjection;
 using J4JSoftware.Logging;
@@ -29,14 +31,18 @@ using Microsoft.Extensions.Hosting;
 
 namespace J4JSoftware.GeoProcessor
 {
-    public class CompositionRoot : J4JViewModelLocator<J4JLoggerConfiguration>
+    public class CompositionRoot : XamlJ4JCompositionRoot<J4JLoggerConfiguration>
     {
         public const string AppName = "GeoProcessor";
         public const string AppConfigFile = "appConfig.json";
         public const string UserConfigFile = "userConfig.json";
 
         public CompositionRoot()
-            : base( "J4JSoftware", AppName, "J4JSoftware.GeoProcessor.DataProtection" )
+            : base( 
+                "J4JSoftware", 
+                AppName, 
+                ()=>DesignerProperties.GetIsInDesignMode(new DependencyObject()),
+                "J4JSoftware.GeoProcessor.DataProtection" )
         {
             NetEventChannelConfiguration = new NetEventConfig
             {
