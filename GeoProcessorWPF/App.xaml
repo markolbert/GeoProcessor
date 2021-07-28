@@ -37,7 +37,7 @@
                     <local:TextToDouble x:Key="textToDouble" />
                 </ResourceDictionary>
 
-                <ResourceDictionary Source="CustomComboBox.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/J4JSoftware.WPFUtilities;component/CustomComboBox.xaml"/>
 
             </ResourceDictionary.MergedDictionaries>
 

@@ -23,9 +23,9 @@ using FluentValidation;
 
 namespace J4JSoftware.GeoProcessor
 {
-    public class MainViewValidator : AbstractValidator<IMainViewModel>
+    public class MainVMValidator : AbstractValidator<MainVM>
     {
-        public MainViewValidator()
+        public MainVMValidator()
         {
             RuleFor( x => x.InputPath )
                 .Must( File.Exists )
@@ -35,8 +35,9 @@ namespace J4JSoftware.GeoProcessor
                 .NotEmpty()
                 .WithMessage( "An output file must be specified" );
 
+            // x?.Any() ?? false is required because at design time the processors are not defined
             RuleFor( x => x.SnapToRouteProcessors )
-                .Must( x => x.Any() )
+                .Must( x => x?.Any() ?? false )
                 .WithMessage( "No snap-to-route processors are defined" );
 
             RuleFor( x => x.SelectedSnapToRouteProcessor )

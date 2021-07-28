@@ -32,18 +32,20 @@ using System.Windows.Input;
 using J4JSoftware.Logging;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.Win32;
+#pragma warning disable 8618
 
 namespace J4JSoftware.GeoProcessor
 {
-    public class MainViewModel : ObservableRecipient, IMainViewModel
+    public class MainVM : ObservableRecipient
     {
         private readonly IAppConfig _appConfig;
-        private readonly IJ4JLogger? _logger;
+        private readonly J4JLogger? _logger;
 
-        private readonly MainViewValidator _validator = new();
+        private readonly MainVMValidator _validator = new();
 
         private bool _configIsValid;
 
@@ -56,10 +58,10 @@ namespace J4JSoftware.GeoProcessor
         private ProcessWindow? _procWin;
         private ProcessorType _snapType;
 
-        public MainViewModel(
+        public MainVM(
             IAppConfig appConfig,
             IUserConfig userConfig,
-            IJ4JLogger? logger )
+            J4JLogger? logger )
         {
             _appConfig = appConfig;
 
@@ -82,13 +84,39 @@ namespace J4JSoftware.GeoProcessor
 
             InitSnapToRouteProcessors( userConfig );
             SelectedSnapToRouteProcessor =
-                SnapToRouteProcessors!.Any() ? SnapToRouteProcessors.First() : ProcessorType.None;
+                SnapToRouteProcessors!.Any() ? SnapToRouteProcessors!.First() : ProcessorType.None;
             Validate();
 
             // go live for messages
             IsActive = true;
 
             Validate();
+        }
+
+        // this constructor intended only for design-time use
+        public MainVM()
+        {
+            _appConfig = new MockAppConfig();
+
+            InputPath = _appConfig.InputFile.FilePath;
+            OutputPath = _appConfig.OutputFile.FilePath;
+
+            ExportTypes = new ObservableCollection<ExportType>(Enum.GetValues<ExportType>()
+                .Where(x => x != ExportType.Unknown));
+
+            var userConfig = new MockUserConfig();
+
+            InitSnapToRouteProcessors(userConfig);
+            SelectedSnapToRouteProcessor =
+                SnapToRouteProcessors!.Any() ? SnapToRouteProcessors!.First() : ProcessorType.None;
+
+            SelectedExportType = ExportType.KML;
+            ConfigurationIsValid = true;
+
+            for( var idx = 0; idx < 3; idx++ )
+            {
+                Messages.Add($"Message #{idx + 1}");
+            }
         }
 
         public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
@@ -125,7 +153,7 @@ namespace J4JSoftware.GeoProcessor
                          || userConfig.APIKeys.TryGetValue( x, out var apiKey ) &&
                          !string.IsNullOrEmpty( apiKey.Value ) ) ) );
 
-            OnPropertyChanged( "SnapToRouteProcessors" );
+            OnPropertyChanged( nameof(SnapToRouteProcessors) );
         }
 
         private async Task DisplayMessageAsync( string message, string dlgTitle = "GeoProcessor" )
@@ -141,11 +169,11 @@ namespace J4JSoftware.GeoProcessor
         {
             base.OnActivated();
 
-            Messenger.Register<MainViewModel, ProcessorStateMessage, string>( this,
+            Messenger.Register<MainVM, ProcessorStateMessage, string>( this,
                 "primary",
                 ProcessorStateMessageHandler );
 
-            Messenger.Register<MainViewModel, CloseModalWindowMessage, string>( this,
+            Messenger.Register<MainVM, CloseModalWindowMessage, string>( this,
                 "primary",
                 CloseModalWindowMessageHandler );
         }
@@ -157,7 +185,7 @@ namespace J4JSoftware.GeoProcessor
             Messenger.UnregisterAll( this );
         }
 
-        private void ProcessorStateMessageHandler( MainViewModel recipient, ProcessorStateMessage pcMesg )
+        private void ProcessorStateMessageHandler( MainVM recipient, ProcessorStateMessage pcMesg )
         {
             switch( pcMesg.ProcessorState )
             {
@@ -175,7 +203,7 @@ namespace J4JSoftware.GeoProcessor
             }
         }
 
-        private void CloseModalWindowMessageHandler( MainViewModel recipient, CloseModalWindowMessage cmwMesg )
+        private void CloseModalWindowMessageHandler( MainVM recipient, CloseModalWindowMessage cmwMesg )
         {
             switch( cmwMesg.Window )
             {

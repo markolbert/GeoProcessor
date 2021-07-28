@@ -18,12 +18,12 @@
 #endregion
 
 using System.Windows.Media;
-using J4JSoftware.WPFViewModel;
+using J4JSoftware.WPFUtilities;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 
 namespace J4JSoftware.GeoProcessor
 {
-    public class RouteDisplayViewModel : ObservableRecipient, IRouteDisplayViewModel
+    public class RouteDisplayVM : ObservableRecipient
     {
         private IAppConfig _appConfig;
         private Color _highlightColor;
@@ -31,7 +31,7 @@ namespace J4JSoftware.GeoProcessor
         private int _routeWidth;
         private readonly bool _suppressChangeMessages = true;
 
-        public RouteDisplayViewModel( IAppConfig appConfig )
+        public RouteDisplayVM( IAppConfig appConfig )
         {
             _appConfig = appConfig;
 
@@ -44,6 +44,19 @@ namespace J4JSoftware.GeoProcessor
 
             // go live for messages
             IsActive = true;
+        }
+
+        // this constructor is intended solely for use at design-time
+        public RouteDisplayVM()
+        {
+            _appConfig = new MockAppConfig();
+
+            RouteWidth = 4;
+            RouteColor = _appConfig.RouteColor.ToMediaColor();
+            RouteHighlightColor = _appConfig.RouteHighlightColor.ToMediaColor();
+
+            // we didn't want to generate settings changed messages during initial configuration
+            _suppressChangeMessages = false;
         }
 
         public int RouteWidth
@@ -89,7 +102,7 @@ namespace J4JSoftware.GeoProcessor
         {
             base.OnActivated();
 
-            Messenger.Register<RouteDisplayViewModel, SettingsReloadedMessage, string>( this,
+            Messenger.Register<RouteDisplayVM, SettingsReloadedMessage, string>( this,
                 "primary",
                 SettingsReloadedMessageHandler );
         }
@@ -101,7 +114,7 @@ namespace J4JSoftware.GeoProcessor
             Messenger.UnregisterAll( this );
         }
 
-        private void SettingsReloadedMessageHandler( RouteDisplayViewModel recipient, SettingsReloadedMessage srMesg )
+        private void SettingsReloadedMessageHandler( RouteDisplayVM recipient, SettingsReloadedMessage srMesg )
         {
             _appConfig = srMesg.AppConfig;
 

@@ -5,12 +5,19 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d"
-             d:DesignHeight="200" d:DesignWidth="500"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
              TextElement.FontWeight="Normal"
              TextElement.FontSize="14"
              Background="{DynamicResource MaterialDesignPaper}"
-             DataContext="{Binding RouteEnginesViewModel, Source={StaticResource ViewModelLocator}}">
+             DataContext="{Binding RouteEnginesVM, Source={StaticResource ViewModelLocator}}">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../common/StandardStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -26,70 +33,65 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Label Grid.Column="0" Grid.Row="0"
-               Content="Engine Type"
-               VerticalAlignment="Center" />
+        <TextBlock Grid.Column="0" Grid.Row="0"
+                   VerticalAlignment="Center"
+                   Text="Engine Type"/>
 
         <ComboBox Grid.Column="1" Grid.Row="0"
                   HorizontalAlignment="Left"
-                  Margin="5"
                   IsEditable="False"
                   ItemsSource="{Binding ProcessorTypes}"
                   SelectedItem="{Binding SelectedProcessorType}" />
 
-        <Label Grid.Column="0" Grid.Row="1"
-               Content="API Key"
-               VerticalAlignment="Center"
-               Visibility="{Binding APIKeyVisible}" />
+        <TextBlock Grid.Column="0" Grid.Row="1"
+                   Text="API Key"
+                   VerticalAlignment="Center"
+                   Visibility="{Binding APIKeyVisible}" />
 
-        <TextBox Grid.Column="1" Grid.Row="1"
+        <TextBox Grid.Column="1" Grid.Row="1" 
                  VerticalAlignment="Center"
-                 Margin="5"
-                 MinWidth="200"
+                 MaxWidth="400"
                  Text="{Binding APIKey}"
                  Visibility="{Binding APIKeyVisible}" />
 
-        <Label Grid.Column="0" Grid.Row="2"
-               Content="Encrypted API Key"
-               VerticalAlignment="Top"
-               Visibility="{Binding APIKeyVisible}" />
+        <TextBlock Grid.Column="0" Grid.Row="2"
+                   Text="Encrypted API Key"
+                   VerticalAlignment="Top"
+                   Visibility="{Binding APIKeyVisible}" />
 
         <TextBlock Grid.Column="1" Grid.Row="2"
                    VerticalAlignment="Top"
-                   Margin="5"
-                   MinWidth="200"
+                   MaxWidth="400"
                    Background="PaleTurquoise"
                    TextWrapping="Wrap"
                    Text="{Binding EncryptedAPIKey, Mode=OneWay }"
                    Visibility="{Binding APIKeyVisible}" />
 
-        <Label Grid.Column="0" Grid.Row="3"
-               Content="Maximum Distance Multiplier"
+        <TextBlock Grid.Column="0" Grid.Row="3"
+               Text="Maximum Distance Multiplier"
                VerticalAlignment="Center"
                Visibility="{Binding APIKeyVisible}" />
 
         <mah:NumericUpDown Grid.Column="1" Grid.Row="3"
                            HorizontalAlignment="Left"
-                           Margin="5"
                            Minimum="1"
                            Maximum="20"
                            Visibility="{Binding APIKeyVisible}"
                            Value="{Binding Path=MaxDistanceMultiplier, Mode=TwoWay }" />
 
-        <Label Grid.Column="0" Grid.Row="4"
-               Content="Maximum Separation"
-               VerticalAlignment="Center" />
+        <TextBlock Grid.Column="0" Grid.Row="4"
+                   Text="Maximum Separation"
+                   VerticalAlignment="Center" />
 
         <StackPanel Grid.Column="1" Grid.Row="4"
                     Orientation="Horizontal">
 
             <TextBox Margin="5"
                      VerticalAlignment="Center"
-                     Width="75"
+
                      Text="{Binding DistanceValue, Mode=TwoWay, Converter={StaticResource textToDouble}}" />
 
-            <ComboBox Margin="0, 5"
-                      VerticalAlignment="Center"
+            <ComboBox VerticalAlignment="Center"
                       IsEditable="False"
                       ItemsSource="{Binding UnitTypes}"
                       SelectedItem="{Binding SelectedUnitType}" />

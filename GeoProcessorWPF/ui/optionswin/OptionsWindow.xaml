@@ -17,15 +17,22 @@
                  ShowMaxRestoreButton="False"
                  ShowMinButton="False"
                  Title="GeoProcessor"
-                 Height="450" Width="800">
+                 d:DataContext="{d:DesignInstance Type=local:OptionsVM, IsDesignTimeCreatable=true }"
+                 DataContext="{Binding OptionsVM, Source={StaticResource ViewModelLocator} }">
 
-    <DockPanel LastChildFill="True"
-               DataContext="{Binding OptionsViewModel, Source={StaticResource ViewModelLocator} }">
+    <mah:MetroWindow.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../common/StandardStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </mah:MetroWindow.Resources>
+
+    <DockPanel LastChildFill="True">
 
         <DockPanel DockPanel.Dock="Bottom">
 
             <Button DockPanel.Dock="Right"
-                    Margin="5, 5, 10,10"
                     HorizontalAlignment="Right"
                     Content="Close"
                     Command="{Binding CloseCommand}"
@@ -34,14 +41,12 @@
                                                   AncestorType=Window}}" />
 
             <Button DockPanel.Dock="Right"
-                    Margin="5, 5, 10,10"
                     HorizontalAlignment="Right"
                     Content="Reload"
                     IsEnabled="{Binding SettingsChanged}"
                     Command="{Binding ReloadCommand}" />
 
             <Button DockPanel.Dock="Right"
-                    Margin="5, 5, 10,10"
                     HorizontalAlignment="Right"
                     Content="Save"
                     IsEnabled="{Binding SettingsChanged}"
@@ -59,7 +64,7 @@
             </mah:MetroTabItem>
 
             <mah:MetroTabItem Header="Route Engines">
-                <local:RouteEnginesTabItem />
+                <local:RouteEnginesTabItem MaxWidth="600" />
             </mah:MetroTabItem>
 
         </mah:MetroTabControl>

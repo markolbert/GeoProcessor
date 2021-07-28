@@ -24,18 +24,19 @@ using System.Windows;
 using Autofac;
 using J4JSoftware.DependencyInjection;
 using J4JSoftware.Logging;
-using J4JSoftware.WPFViewModel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace J4JSoftware.GeoProcessor
 {
-    public class CompositionRoot : XamlJ4JCompositionRoot<J4JLoggerConfiguration>
+    public class CompositionRoot : XamlJ4JCompositionRoot
     {
         public const string AppName = "GeoProcessor";
         public const string AppConfigFile = "appConfig.json";
         public const string UserConfigFile = "userConfig.json";
+
+        public static CompositionRoot Default { get; } = new();
 
         public CompositionRoot()
             : base( 
@@ -44,45 +45,56 @@ namespace J4JSoftware.GeoProcessor
                 ()=>DesignerProperties.GetIsInDesignMode(new DependencyObject()),
                 "J4JSoftware.GeoProcessor.DataProtection" )
         {
-            NetEventChannelConfiguration = new NetEventConfig
-            {
-                OutputTemplate = "[{Level:u3}] {Message}",
-                EventElements = EventElements.None
-            };
-
-            if( InDesignMode )
-            {
-                var loggerConfig = new J4JLoggerConfiguration();
-
-                loggerConfig.Channels.Add( new DebugConfig() );
-                loggerConfig.Channels.Add( NetEventChannelConfiguration );
-
-                StaticConfiguredLogging( loggerConfig );
-            }
-            else
-            {
-                var provider = new ChannelConfigProvider( "Logging" )
-                    .AddChannel<ConsoleConfig>( "Channels:Console" )
-                    .AddChannel<DebugConfig>( "Channels:Debug" );
-
-                provider.AddChannel( NetEventChannelConfiguration );
-
-                ConfigurationBasedLogging( provider );
-            }
-
             Initialize();
         }
 
-        public NetEventConfig NetEventChannelConfiguration { get; }
-        public IMainViewModel MainViewModel => Host!.Services.GetRequiredService<IMainViewModel>();
-        public IProcessorViewModel ProcessorViewModel => Host!.Services.GetRequiredService<IProcessorViewModel>();
-        public IOptionsViewModel OptionsViewModel => Host!.Services.GetRequiredService<IOptionsViewModel>();
+        protected override void ConfigureLoggerDefaults( J4JLogger logger, IConfiguration configuration )
+        {
+            var loggerInfo = new LoggerInfo( configuration );
 
-        public IRouteDisplayViewModel RouteDisplayViewModel =>
-            Host!.Services.GetRequiredService<IRouteDisplayViewModel>();
+            logger.ApplySettings( loggerInfo );
 
-        public IRouteEnginesViewModel RouteEnginesViewModel =>
-            Host!.Services.GetRequiredService<IRouteEnginesViewModel>();
+            if( loggerInfo.ChannelSpecific == null )
+            {
+                CachedLogger.Error("No logging channels defined");
+                return;
+            }
+
+            foreach( var kvp in loggerInfo.ChannelSpecific )
+            {
+                switch( kvp.Key.ToLower() )
+                {
+                    case "debug":
+                        var debugChannel = logger.AddDebug();
+                        debugChannel.Parameters.ApplySettings( kvp.Value );
+                        break;
+
+                    case "console":
+                        var consoleChannel = logger.AddConsole();
+                        consoleChannel.Parameters.ApplySettings(kvp.Value);
+                        break;
+
+                    case "file":
+                        var fileChannel = logger.AddFile();
+                        fileChannel.Parameters.ApplySettings(kvp.Value);
+                        break;
+
+                    default:
+                        CachedLogger.Error<string>( "Unsupported J4JLogging channel '{0}'", kvp.Key );
+                        break;
+                }
+            }
+
+            NetEventChannel = logger.AddNetEvent();
+        }
+
+        public NetEventChannel? NetEventChannel { get; private set; }
+
+        public MainVM MainVM => Host!.Services.GetRequiredService<MainVM>();
+        public ProcessorVM ProcessorVM => Host!.Services.GetRequiredService<ProcessorVM>();
+        public OptionsVM OptionsVM => Host!.Services.GetRequiredService<OptionsVM>();
+        public RouteDisplayVM RouteDisplayVM => Host!.Services.GetRequiredService<RouteDisplayVM>();
+        public RouteEnginesVM RouteEnginesVM => Host!.Services.GetRequiredService<RouteEnginesVM>();
 
         protected override void SetupConfigurationEnvironment( IConfigurationBuilder builder )
         {
@@ -92,31 +104,6 @@ namespace J4JSoftware.GeoProcessor
                 .AddJsonFile( Path.Combine( ApplicationConfigurationFolder, AppConfigFile ), false, false )
                 .AddJsonFile( Path.Combine( UserConfigurationFolder, UserConfigFile ), true, false )
                 .AddUserSecrets<CompositionRoot>();
-        }
-
-        protected override void RegisterViewModels( ViewModelDependencyBuilder builder )
-        {
-            base.RegisterViewModels( builder );
-
-            builder.RegisterViewModelInterface<IMainViewModel>()
-                .DesignTime<DesignTimeMainViewModel>()
-                .RunTime<MainViewModel>();
-
-            builder.RegisterViewModelInterface<IOptionsViewModel>()
-                .DesignTime<DesignTimeOptionsViewModel>()
-                .RunTime<OptionsViewModel>();
-
-            builder.RegisterViewModelInterface<IRouteDisplayViewModel>()
-                .DesignTime<DesignTimeRouteDisplayViewModel>()
-                .RunTime<RouteDisplayViewModel>();
-
-            builder.RegisterViewModelInterface<IRouteEnginesViewModel>()
-                .DesignTime<DesignTimeRouteEnginesViewModel>()
-                .RunTime<RouteEnginesViewModel>();
-
-            builder.RegisterViewModelInterface<IProcessorViewModel>()
-                .DesignTime<DesignTimeProcessorViewModel>()
-                .RunTime<ProcessorViewModel>();
         }
 
         protected override void SetupDependencyInjection( HostBuilderContext hbc, ContainerBuilder builder )
@@ -129,7 +116,7 @@ namespace J4JSoftware.GeoProcessor
 
                     retVal.ApplicationConfigurationFolder = ApplicationConfigurationFolder;
                     retVal.UserConfigurationFolder = UserConfigurationFolder;
-                    retVal.NetEventChannelConfiguration = NetEventChannelConfiguration;
+                    retVal.NetEventChannel = NetEventChannel;
 
                     return retVal;
                 } )
@@ -150,6 +137,21 @@ namespace J4JSoftware.GeoProcessor
                 .SingleInstance();
 
             builder.RegisterType<MainWindow>()
+                .AsSelf();
+
+            builder.RegisterType<MainVM>()
+                .AsSelf();
+
+            builder.RegisterType<OptionsVM>()
+                .AsSelf();
+
+            builder.RegisterType<RouteDisplayVM>()
+                .AsSelf();
+
+            builder.RegisterType<RouteEnginesVM>()
+                .AsSelf();
+
+            builder.RegisterType<ProcessorVM>()
                 .AsSelf();
 
             builder.RegisterModule<AutofacGeoProcessorModule>();

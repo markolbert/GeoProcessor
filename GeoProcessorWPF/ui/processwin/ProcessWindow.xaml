@@ -5,6 +5,7 @@
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
                  xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
+                 xmlns:local="clr-namespace:J4JSoftware.GeoProcessor"
                  mc:Ignorable="d"
                  TextElement.Foreground="{DynamicResource MaterialDesignBody}"
                  TextElement.FontWeight="Normal"
@@ -14,11 +15,19 @@
                  ShowCloseButton="False"
                  ShowMaxRestoreButton="False"
                  ShowMinButton="False"
-                 DataContext="{Binding ProcessorViewModel, Source={StaticResource ViewModelLocator} }"
+                 d:DataContext="{d:DesignInstance Type=local:ProcessorVM, IsDesignTimeCreatable=true}"
+                 DataContext="{Binding ProcessorVM, Source={StaticResource ViewModelLocator} }"
                  ResizeMode="CanResizeWithGrip"
                  GlowBrush="{DynamicResource MahApps.Brushes.Accent}"
-                 Title="Process File"
-                 Height="250" Width="500">
+                 Title="Process File">
+
+    <mah:MetroWindow.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../common/StandardStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </mah:MetroWindow.Resources>
 
     <behaviors:Interaction.Triggers>
         <behaviors:EventTrigger EventName="Loaded"
@@ -42,40 +51,36 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Label Grid.Column="0" Grid.Row="0"
-               Content="Phase" />
+        <TextBlock Grid.Column="0" Grid.Row="0"
+                   Text="Phase" />
 
         <TextBlock Grid.Column="1" Grid.Row="0"
-                   Margin="5"
                    VerticalAlignment="Center"
                    Text="{Binding Phase}" />
 
-        <Label Grid.Column="0" Grid.Row="1"
-               Content="Points Processed" />
+        <TextBlock Grid.Column="0" Grid.Row="1"
+                   Text="Points Processed" />
 
         <TextBlock Grid.Column="1" Grid.Row="1"
-                   Margin="5"
                    VerticalAlignment="Center"
                    Text="{Binding PointsProcessed, StringFormat=n0}" />
 
-        <Label Grid.Column="0" Grid.Row="2"
-               Content="Messages" />
+        <TextBlock Grid.Column="0" Grid.Row="2"
+                   Text="Messages" />
 
         <ScrollViewer Grid.Column="1" Grid.Row="2"
-                      Margin="5">
+                      VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding Messages}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding}"
-                                   TextWrapping="Wrap"
-                                   Margin="0,0,0,3" />
+                                   TextWrapping="Wrap"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
 
         <Button Grid.Column="1" Grid.Row="3"
-                Margin="5, 5, 10, 10"
                 HorizontalAlignment="Right"
                 Content="Abort"
                 Command="{Binding AbortCommand}"

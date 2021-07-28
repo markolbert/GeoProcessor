@@ -21,12 +21,13 @@ using System.IO;
 using System.Text.Json;
 using System.Windows.Input;
 using MahApps.Metro.Controls.Dialogs;
+using Microsoft.Extensions.Options;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 
 namespace J4JSoftware.GeoProcessor
 {
-    public class OptionsViewModel : ObservableRecipient, IOptionsViewModel
+    public class OptionsVM : ObservableRecipient
     {
         private readonly IAppConfig _appConfig;
         private readonly IUserConfig _userConfig;
@@ -36,7 +37,7 @@ namespace J4JSoftware.GeoProcessor
 
         private bool _settingsChanged;
 
-        public OptionsViewModel(
+        public OptionsVM(
             IAppConfig appConfig,
             IUserConfig userConfig
         )
@@ -58,6 +59,17 @@ namespace J4JSoftware.GeoProcessor
             SettingsChanged = false;
         }
 
+        // this constructor is intended for use at design-time only
+#pragma warning disable 8618
+        public OptionsVM()
+#pragma warning restore 8618
+        {
+            _appConfig = new MockAppConfig();
+            _userConfig = new MockUserConfig();
+
+            SettingsChanged = false;
+        }
+
         public bool SettingsChanged
         {
             get => _settingsChanged;
@@ -70,12 +82,12 @@ namespace J4JSoftware.GeoProcessor
         {
             base.OnActivated();
 
-            Messenger.Register<OptionsViewModel, SettingsChangedMessage, string>( this,
+            Messenger.Register<OptionsVM, SettingsChangedMessage, string>( this,
                 "primary",
                 SettingsChangedMessageHandler );
         }
 
-        private void SettingsChangedMessageHandler( OptionsViewModel recipient, SettingsChangedMessage scMesg )
+        private void SettingsChangedMessageHandler( OptionsVM recipient, SettingsChangedMessage scMesg )
         {
             SettingsChanged = true;
         }
@@ -128,7 +140,7 @@ namespace J4JSoftware.GeoProcessor
 
         public ICommand CloseCommand { get; }
 
-        private void CloseCommandHandler( OptionsWindow optionWin )
+        private void CloseCommandHandler( OptionsWindow? optionWin )
         {
             if( SettingsChanged )
             {

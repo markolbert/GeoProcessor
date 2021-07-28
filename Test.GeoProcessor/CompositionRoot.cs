@@ -31,7 +31,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace Test.GeoProcessor
 {
-    public class CompositionRoot : J4JCompositionRoot<J4JLoggerConfiguration>
+    public class CompositionRoot : J4JCompositionRoot
     {
         static CompositionRoot()
         {
@@ -43,14 +43,13 @@ namespace Test.GeoProcessor
         private CompositionRoot()
             : base( "J4JSoftware", "Test.GeoProcessor" )
         {
-            var loggerConfig = new J4JLoggerConfiguration();
-
-            loggerConfig.Channels.Add( new ConsoleConfig() );
-            loggerConfig.Channels.Add( new DebugConfig() );
-
-            StaticConfiguredLogging( loggerConfig );
-
             UseConsoleLifetime = true;
+        }
+
+        protected override void ConfigureLoggerDefaults( J4JLogger logger, IConfiguration configuration )
+        {
+            logger.AddConsole();
+            logger.AddDebug();
         }
 
         public static CompositionRoot Default { get; }

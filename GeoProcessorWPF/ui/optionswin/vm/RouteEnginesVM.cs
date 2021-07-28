@@ -25,7 +25,7 @@ using Microsoft.Toolkit.Mvvm.ComponentModel;
 
 namespace J4JSoftware.GeoProcessor
 {
-    public class RouteEnginesViewModel : ObservableRecipient, IRouteEnginesViewModel
+    public class RouteEnginesVM : ObservableRecipient
     {
         private readonly IAppConfig _appConfig;
         private readonly IUserConfig _userConfig;
@@ -39,7 +39,7 @@ namespace J4JSoftware.GeoProcessor
         private UnitTypes _selectedUnitType;
         private PropertySettingState _setState;
 
-        public RouteEnginesViewModel(
+        public RouteEnginesVM(
             IAppConfig appConfig,
             IUserConfig userConfig )
         {
@@ -51,6 +51,28 @@ namespace J4JSoftware.GeoProcessor
 
             UnitTypes = new ObservableCollection<UnitTypes>( Enum.GetValues<UnitTypes>() );
             SelectedProcessorType = ProcessorTypes.FirstOrDefault( x => x != ProcessorType.Distance );
+
+            _setState = PropertySettingState.Normal;
+        }
+
+        // this constructor is intended solely for use at design-time
+        public RouteEnginesVM()
+        {
+            _appConfig = new MockAppConfig();
+            _userConfig = new MockUserConfig();
+
+            APIKey = "some clever API key";
+            APIKeyVisible = Visibility.Visible;
+            MaxDistanceMultiplier = 3;
+            DistanceValue = 2.0;
+
+            ProcessorTypes = new ObservableCollection<ProcessorType>(Enum.GetValues<ProcessorType>()
+                .Where(x => x != ProcessorType.None));
+
+            SelectedProcessorType = ProcessorTypes.FirstOrDefault(x => x != ProcessorType.Distance);
+
+            UnitTypes = new ObservableCollection<UnitTypes>(Enum.GetValues<UnitTypes>());
+            SelectedUnitType = UnitTypes[ 0 ];
 
             _setState = PropertySettingState.Normal;
         }

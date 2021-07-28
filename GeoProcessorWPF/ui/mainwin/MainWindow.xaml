@@ -4,6 +4,7 @@
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                 xmlns:local="clr-namespace:J4JSoftware.GeoProcessor"
                  mc:Ignorable="d"
                  ResizeMode="CanResizeWithGrip"
                  GlowBrush="{DynamicResource MahApps.Brushes.Accent}"
@@ -12,18 +13,24 @@
                  TextElement.FontSize="14"
                  WindowTitleBrush="Teal"
                  Background="{DynamicResource MaterialDesignPaper}"
-                 DataContext="{Binding MainViewModel, Source={StaticResource ViewModelLocator}}"
+                 d:DataContext="{d:DesignInstance Type=local:MainVM, IsDesignTimeCreatable=True }"
+                 DataContext="{Binding MainVM, Source={StaticResource ViewModelLocator}}"
                  Title="GeoProcessor"
                  Height="380" Width="630">
 
-    <Window.Resources>
-    </Window.Resources>
+    <mah:MetroWindow.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../common/StandardStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </mah:MetroWindow.Resources>
 
     <Grid Height="348" VerticalAlignment="Top">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="0.6*" MinWidth="250" />
-            <ColumnDefinition Width="0.4*" />
+            <ColumnDefinition Width="Auto" MinWidth="250" />
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
@@ -31,35 +38,19 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <ScrollViewer Grid.Column="2" Grid.Row="0" Grid.RowSpan="4"
-                      Margin="5">
-            <ItemsControl ItemsSource="{Binding Messages}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Foreground="Red"
-                                   Margin="0,0,0,5"
-                                   TextWrapping="Wrap"
-                                   Text="{Binding }" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </ScrollViewer>
-
-        <Label Grid.Column="0" Grid.Row="0"
-               VerticalAlignment="Center"
-               Content="Input File" />
+        <TextBlock Grid.Column="0" Grid.Row="0"
+               Text="Input File" />
 
         <StackPanel Grid.Column="1" Grid.Row="0"
+                    VerticalAlignment="Center"
                     Orientation="Horizontal">
 
-            <TextBox IsReadOnly="True"
-                     Margin="5"
-                     MinWidth="100"
-                     Text="{Binding InputPath, Mode=OneWay}">
+            <TextBlock Text="{Binding InputPath, Mode=OneWay}">
+
                 <Validation.ErrorTemplate>
                     <ControlTemplate>
                         <Border BorderBrush="Red"
@@ -68,62 +59,54 @@
                         </Border>
                     </ControlTemplate>
                 </Validation.ErrorTemplate>
-            </TextBox>
+
+            </TextBlock>
 
             <Button Content="..."
                     Style="{DynamicResource MaterialDesignToolButton}"
-                    VerticalAlignment="Center"
                     Command="{Binding InputFileCommand }" />
 
         </StackPanel>
 
-        <Label Grid.Column="0" Grid.Row="1"
-               VerticalAlignment="Center"
-               Content="Output Type" />
+        <TextBlock Grid.Column="0" Grid.Row="1"
+               Text="Output Type" />
 
         <ComboBox Grid.Column="1" Grid.Row="1"
-                  Margin="5,0,0,0"
-                  HorizontalAlignment="Left"
-                  VerticalAlignment="Center"
                   IsEditable="False"
                   ItemsSource="{Binding ExportTypes}"
                   SelectedItem="{Binding SelectedExportType}" />
 
-        <Label Grid.Column="0" Grid.Row="2"
-               VerticalAlignment="Center"
-               Content="Output File" />
-        <StackPanel Grid.Column="1" Grid.Row="2"
-                    Orientation="Horizontal">
+        <TextBlock Grid.Column="0" Grid.Row="2"
+               Text="Output File" />
 
-            <TextBox IsReadOnly="True"
-                     Margin="5"
-                     MinWidth="100"
-                     Text="{Binding OutputPath, Mode=OneWay}">
-                <Validation.ErrorTemplate>
-                    <ControlTemplate>
-                        <Border BorderBrush="Red"
-                                BorderThickness="0,0,0,1">
-                            <AdornedElementPlaceholder />
-                        </Border>
-                    </ControlTemplate>
-                </Validation.ErrorTemplate>
-            </TextBox>
+        <StackPanel Grid.Column="1"  Grid.Row="2"
+                    Orientation="Horizontal"
+                    VerticalAlignment="Center">
+
+                <TextBlock Text="{Binding OutputPath, Mode=OneWay}">
+                
+                    <Validation.ErrorTemplate>
+                        <ControlTemplate>
+                            <Border BorderBrush="Red"
+                                    BorderThickness="0,0,0,1">
+                                <AdornedElementPlaceholder />
+                            </Border>
+                        </ControlTemplate>
+                    </Validation.ErrorTemplate>
+
+                </TextBlock>
 
             <Button Content="..."
-                    VerticalAlignment="Center"
                     Style="{DynamicResource MaterialDesignToolButton}"
                     Command="{Binding OutputFileCommand }" />
 
         </StackPanel>
 
-        <Label Grid.Column="0" Grid.Row="3"
-               VerticalAlignment="Center"
-               Content="Snap-to-Route Processor" />
+        <TextBlock Grid.Column="0" Grid.Row="3"
+               Text="Snap-to-Route Processor" />
 
         <ComboBox Grid.Column="1" Grid.Row="3"
                   HorizontalAlignment="Left"
-                  VerticalAlignment="Center"
-                  Margin="5"
                   ItemsSource="{Binding SnapToRouteProcessors, ValidatesOnNotifyDataErrors=True}"
                   SelectedItem="{Binding SelectedSnapToRouteProcessor}">
             <Validation.ErrorTemplate>
@@ -137,17 +120,38 @@
 
         </ComboBox>
 
-        <TextBlock Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="4"
-                   Margin="5,40,5,5"
+        <TextBlock Grid.Column="2" Grid.Row="0"
+                   Grid.RowSpan="4" 
+                   VerticalAlignment="Top"
                    TextWrapping="Wrap">
-            Select the input file, the output type and the output file, and then click Process File.
-            For more information please check out the
+            <Run>Select the input file, the output type and the output file, and</Run>
+            <Run>then click Process File. For more information please check out the</Run>
             <Hyperlink Command="{Binding HelpCommand}">
                 online instructions
             </Hyperlink>
         </TextBlock>
 
-        <DockPanel Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="5"
+        <ScrollViewer Grid.Column="0" Grid.Row="4" 
+                      Grid.ColumnSpan="3"
+                      VerticalScrollBarVisibility="Auto">
+
+            <ItemsControl ItemsSource="{Binding Messages}">
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Foreground="Red"
+                                   Margin="0,0,0,5"
+                                   TextWrapping="Wrap"
+                                   Text="{Binding }" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+
+            </ItemsControl>
+
+        </ScrollViewer>
+
+        <DockPanel Grid.Column="0" Grid.Row="5"
+                   Grid.ColumnSpan="3" 
                    VerticalAlignment="Bottom">
 
             <Button DockPanel.Dock="Right"

@@ -60,7 +60,7 @@ namespace J4JSoftware.GeoProcessor
 
         public string ApplicationConfigurationFolder { get; set; } = string.Empty;
         public string UserConfigurationFolder { get; set; } = string.Empty;
-        public NetEventConfig? NetEventChannelConfiguration { get; set; }
+        public NetEventChannel? NetEventChannel { get; set; }
 
         public InputFileInfo InputFile { get; } = new();
         public OutputFileInfo OutputFile { get; } = new();
@@ -84,6 +84,6 @@ namespace J4JSoftware.GeoProcessor
         public Color RouteColor { get; set; } = Color.Red;
         public Color RouteHighlightColor { get; set; } = Color.DarkTurquoise;
 
-        public J4JLoggerConfiguration? Logging { get; set; }
+        public LoggerInfo? Logging { get; set; }
     }
 }

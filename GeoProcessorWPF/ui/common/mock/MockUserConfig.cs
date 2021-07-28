@@ -17,16 +17,38 @@
 
 #endregion
 
-using System.ComponentModel;
-using System.Windows.Input;
+using System;
+using System.Collections.Generic;
 
 namespace J4JSoftware.GeoProcessor
 {
-    public interface IOptionsViewModel : INotifyPropertyChanged, INotifyPropertyChanging
+    public class MockUserConfig : IUserConfig
     {
-        bool SettingsChanged { get; }
-        ICommand SaveCommand { get; }
-        ICommand ReloadCommand { get; }
-        ICommand CloseCommand { get; }
+        public MockUserConfig()
+        {
+            APIKeys = new Dictionary<ProcessorType, APIKey>();
+
+            foreach( var procType in Enum.GetValues<ProcessorType>() )
+            {
+                APIKeys.Add( procType, new APIKey { Value = "some API key" } );
+            }
+        }
+
+        public Dictionary<ProcessorType, APIKey> APIKeys { get; set; }
+        
+        public UserConfig Copy()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RestoreFrom( UserConfig src )
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetAPIKey( ProcessorType procType )
+        {
+            throw new NotImplementedException();
+        }
     }
 }

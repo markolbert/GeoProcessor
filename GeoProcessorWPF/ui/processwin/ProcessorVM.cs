@@ -32,13 +32,13 @@ using Microsoft.Toolkit.Mvvm.Input;
 
 namespace J4JSoftware.GeoProcessor
 {
-    public class ProcessorViewModel : ObservableRecipient, IProcessorViewModel
+    public class ProcessorVM : ObservableRecipient
     {
         private readonly IAppConfig _appConfig;
         private readonly IIndex<ExportType, IExporter> _exporters;
         private readonly IIndex<ImportType, IImporter> _importers;
 
-        private readonly IJ4JLogger? _logger;
+        private readonly J4JLogger? _logger;
         private readonly IIndex<ProcessorType, IRouteProcessor> _snapProcessors;
         private readonly IUserConfig _userConfig;
         private CancellationTokenSource? _cancellationSrc;
@@ -47,19 +47,19 @@ namespace J4JSoftware.GeoProcessor
 
         private ProcessorState _procState;
 
-        public ProcessorViewModel(
+        public ProcessorVM(
             IAppConfig appConfig,
             IUserConfig userConfig,
             IIndex<ImportType, IImporter> importers,
             IIndex<ExportType, IExporter> exporters,
             IIndex<ProcessorType, IRouteProcessor> snapProcessors,
-            IJ4JLogger? logger )
+            J4JLogger? logger )
         {
             _logger = logger;
             _logger?.SetLoggedType( GetType() );
 
             _appConfig = appConfig;
-            _appConfig.NetEventChannelConfiguration!.LogEvent += DisplayLogEventAsync;
+            _appConfig.NetEventChannel!.LogEvent += DisplayLogEventAsync;
 
             _userConfig = userConfig;
 
@@ -69,6 +69,23 @@ namespace J4JSoftware.GeoProcessor
 
             AbortCommand = new RelayCommand<ProcessWindow>( AbortCommandHandler );
             WindowLoadedCommand = new AsyncRelayCommand( WindowLoadedCommandAsync );
+        }
+
+        // this constructor is intended solely for use at design-time
+#pragma warning disable 8618
+        public ProcessorVM()
+#pragma warning restore 8618
+        {
+            _appConfig = new MockAppConfig();
+            _userConfig = new MockUserConfig();
+
+            Phase = "Some Phase...";
+            PointsProcessed = 1234;
+
+            for( var idx = 0; idx < 5; idx++ )
+            {
+                Messages.Add( $"Message #{idx + 1}" );
+            }
         }
 
         public ProcessorState ProcessorState
@@ -118,7 +135,7 @@ namespace J4JSoftware.GeoProcessor
 
         public ICommand AbortCommand { get; }
 
-        private void AbortCommandHandler( ProcessWindow procWin )
+        private void AbortCommandHandler( ProcessWindow? procWin )
         {
             _cancellationSrc?.Cancel();
 
