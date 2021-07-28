@@ -40,7 +40,7 @@ namespace J4JSoftware.GeoProcessor
         private readonly IExporter _exporter;
         private readonly IIndex<ImportType, IImporter> _importers;
         private readonly IHostApplicationLifetime _lifetime;
-        private readonly IJ4JLogger _logger;
+        private readonly J4JLogger _logger;
         private readonly IRouteProcessor _routeProc;
 
         public RouteApp(
@@ -50,7 +50,7 @@ namespace J4JSoftware.GeoProcessor
             IIndex<ImportType, IImporter> importers,
             IIndex<ExportType, IExporter> exporters,
             IIndex<ProcessorType, IRouteProcessor> snapProcessors,
-            IJ4JLogger logger
+            J4JLogger logger
         )
         {
             _config = config;

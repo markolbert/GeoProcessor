@@ -38,13 +38,13 @@ namespace J4JSoftware.GeoProcessor
 
         private readonly AppConfig _config;
         private readonly IHostApplicationLifetime _lifetime;
-        private readonly IJ4JLogger _logger;
+        private readonly J4JLogger _logger;
 
         public StoreKeyApp(
             AppConfig config,
             IHostApplicationLifetime lifetime,
             IIndex<string, IConfigurationUpdater> configUpdaters,
-            IJ4JLogger logger
+            J4JLogger logger
         )
         {
             _config = config;

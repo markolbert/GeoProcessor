@@ -18,6 +18,7 @@
 #endregion
 
 using System;
+using System.Drawing;
 using System.IO;
 using Autofac;
 using J4JSoftware.Configuration.CommandLine;
@@ -30,7 +31,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace J4JSoftware.GeoProcessor
 {
-    public class CompositionRoot : J4JCompositionRoot<J4JLoggerConfiguration>
+    public class CompositionRoot : J4JCompositionRoot
     {
         static CompositionRoot()
         {
@@ -42,13 +43,17 @@ namespace J4JSoftware.GeoProcessor
         private CompositionRoot()
             : base( "J4JSoftware", Program.AppName, "J4JSoftware.GeoProcessor.DataProtection" )
         {
-            var provider = new ChannelConfigProvider( "Logging" )
-                .AddChannel<ConsoleConfig>( "Channels:Console" )
-                .AddChannel<DebugConfig>( "Channels:Debug" );
+            //var provider = new ChannelConfigProvider( "Logging" )
+            //    .AddChannel<ConsoleConfig>( "Channels:Console" )
+            //    .AddChannel<DebugConfig>( "Channels:Debug" );
 
-            ConfigurationBasedLogging( provider );
+            //ConfigurationBasedLogging( provider );
 
             UseConsoleLifetime = true;
+        }
+
+        protected override void ConfigureLoggerDefaults( J4JLogger logger, IConfiguration configuration )
+        {
         }
 
         public static CompositionRoot Default { get; }

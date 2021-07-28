@@ -20,9 +20,10 @@
     }
   },
   "Logging": {
-    "EventElements": "None",
-    "SourceRootPath": "C:\\Programming\\GeoProcessor\\",
-    "Channels": {
+    "Global": {
+      "SourceRootPath": "C:\\Programming\\GeoProcessor\\"
+    },
+    "ChannelSpecific": {
       "Debug": {
         "MinimumLevel": "Information"
       },
