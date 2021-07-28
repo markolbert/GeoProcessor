@@ -31,7 +31,7 @@ namespace J4JSoftware.GeoProcessor
         protected CloudRouteProcessor(
             IImportConfig config,
             ProcessorType processorType,
-            IJ4JLogger? logger )
+            J4JLogger? logger )
             : base( config, processorType, logger )
         {
             APIKey = config.APIKey;

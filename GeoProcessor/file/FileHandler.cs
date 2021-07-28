@@ -23,7 +23,7 @@ namespace J4JSoftware.GeoProcessor
 {
     public class FileHandler
     {
-        protected FileHandler( IGeoConfig config, IJ4JLogger? logger )
+        protected FileHandler( IGeoConfig config, J4JLogger? logger )
         {
             Configuration = config;
 
@@ -31,7 +31,7 @@ namespace J4JSoftware.GeoProcessor
             Logger?.SetLoggedType( GetType() );
         }
 
-        protected IJ4JLogger? Logger { get; }
+        protected J4JLogger? Logger { get; }
         protected IGeoConfig Configuration { get; }
     }
 }

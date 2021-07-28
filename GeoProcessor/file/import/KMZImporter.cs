@@ -32,7 +32,7 @@ namespace J4JSoftware.GeoProcessor
     [ Importer( ImportType.KMZ ) ]
     public class KMZImporter : KMLImporter
     {
-        public KMZImporter( IGeoConfig config, IJ4JLogger? logger = null )
+        public KMZImporter( IGeoConfig config, J4JLogger? logger = null )
             : base( config, logger )
         {
             Type = GeoExtensions.GetTargetType<ImporterAttribute>( GetType() )!.Type;
