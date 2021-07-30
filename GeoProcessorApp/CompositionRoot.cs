@@ -41,19 +41,45 @@ namespace J4JSoftware.GeoProcessor
         }
 
         private CompositionRoot()
-            : base( "J4JSoftware", Program.AppName, "J4JSoftware.GeoProcessor.DataProtection" )
+            : base(
+                "J4JSoftware",
+                Program.AppName,
+                "J4JSoftware.GeoProcessor.DataProtection",
+                typeof(LoggerInfo)
+            )
         {
-            //var provider = new ChannelConfigProvider( "Logging" )
-            //    .AddChannel<ConsoleConfig>( "Channels:Console" )
-            //    .AddChannel<DebugConfig>( "Channels:Debug" );
-
-            //ConfigurationBasedLogging( provider );
-
             UseConsoleLifetime = true;
         }
 
-        protected override void ConfigureLoggerDefaults( J4JLogger logger, IConfiguration configuration )
+        protected override void ConfigureLogger( J4JLogger logger, ILoggerConfig? configuration )
         {
+            if( configuration?.GetConfiguration() is not LoggerInfo loggerInfo ) 
+                return;
+
+            logger.ApplyGlobalConfiguration( loggerInfo.Global );
+
+            foreach( var channelName in loggerInfo.Channels )
+            {
+                var channelType = ( channelName.ToLower() switch
+                {
+                    "console" => typeof(ConsoleChannel),
+                    "debug" => typeof(DebugChannel),
+                    "file" => typeof(FileChannel),
+                    "netevent" => typeof(NetEventChannel),
+                    "lastevent" => typeof(LastEventChannel),
+                    _ => null
+                } );
+
+                if( channelType == null ) 
+                    continue;
+
+                var newChannel = GetLoggerChannel( channelType, loggerInfo.ChannelSpecific.ContainsKey( "console" )
+                    ? loggerInfo.ChannelSpecific[ "console" ]
+                    : null );
+
+                if( newChannel != null )
+                    logger.Channels.Add( newChannel );
+            }
         }
 
         public static CompositionRoot Default { get; }

@@ -46,7 +46,7 @@ namespace Test.GeoProcessor
             UseConsoleLifetime = true;
         }
 
-        protected override void ConfigureLoggerDefaults( J4JLogger logger, IConfiguration configuration )
+        protected override void ConfigureLogger( J4JLogger logger, ILoggerConfig? configuration )
         {
             logger.AddConsole();
             logger.AddDebug();

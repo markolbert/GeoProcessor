@@ -39,53 +39,53 @@ namespace J4JSoftware.GeoProcessor
         public static CompositionRoot Default { get; } = new();
 
         public CompositionRoot()
-            : base( 
-                "J4JSoftware", 
-                AppName, 
-                ()=>DesignerProperties.GetIsInDesignMode(new DependencyObject()),
-                "J4JSoftware.GeoProcessor.DataProtection" )
+            : base(
+                "J4JSoftware",
+                AppName,
+                () => DesignerProperties.GetIsInDesignMode( new DependencyObject() ),
+                "J4JSoftware.GeoProcessor.DataProtection",
+                typeof(LoggerInfo)
+            )
         {
             Initialize();
         }
 
-        protected override void ConfigureLoggerDefaults( J4JLogger logger, IConfiguration configuration )
+        protected override void ConfigureLogger(J4JLogger logger, ILoggerConfig? configuration)
         {
-            var loggerInfo = new LoggerInfo( configuration );
-
-            logger.ApplySettings( loggerInfo );
-
-            if( loggerInfo.ChannelSpecific == null )
+            if( configuration?.GetConfiguration() is not LoggerInfo loggerInfo )
             {
-                CachedLogger.Error("No logging channels defined");
+                logger.AddNetEvent();
                 return;
             }
 
-            foreach( var kvp in loggerInfo.ChannelSpecific )
+            logger.ApplyGlobalConfiguration(loggerInfo.Global);
+
+            logger.AddNetEvent( loggerInfo.ChannelSpecific.ContainsKey( "console" )
+                ? loggerInfo.ChannelSpecific[ "netevent" ]
+                : null );
+
+            foreach (var channelName in loggerInfo.Channels)
             {
-                switch( kvp.Key.ToLower() )
+                var channelType = (channelName.ToLower() switch
                 {
-                    case "debug":
-                        var debugChannel = logger.AddDebug();
-                        debugChannel.Parameters.ApplySettings( kvp.Value );
-                        break;
+                    "console" => typeof(ConsoleChannel),
+                    "debug" => typeof(DebugChannel),
+                    "file" => typeof(FileChannel),
+                    "netevent" => typeof(NetEventChannel),
+                    "lastevent" => typeof(LastEventChannel),
+                    _ => null
+                });
 
-                    case "console":
-                        var consoleChannel = logger.AddConsole();
-                        consoleChannel.Parameters.ApplySettings(kvp.Value);
-                        break;
+                if( channelType == null ) 
+                    continue;
+                
+                var newChannel = GetLoggerChannel(channelType, loggerInfo.ChannelSpecific.ContainsKey("console")
+                    ? loggerInfo.ChannelSpecific["console"]
+                    : null);
 
-                    case "file":
-                        var fileChannel = logger.AddFile();
-                        fileChannel.Parameters.ApplySettings(kvp.Value);
-                        break;
-
-                    default:
-                        CachedLogger.Error<string>( "Unsupported J4JLogging channel '{0}'", kvp.Key );
-                        break;
-                }
+                if (newChannel != null)
+                    logger.Channels.Add(newChannel);
             }
-
-            NetEventChannel = logger.AddNetEvent();
         }
 
         public NetEventChannel? NetEventChannel { get; private set; }
