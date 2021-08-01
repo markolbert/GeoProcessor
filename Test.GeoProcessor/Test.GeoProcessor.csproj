@@ -2,6 +2,7 @@
 
   <PropertyGroup>
 	  <TargetFramework>net5.0</TargetFramework>
+	  <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
     <UserSecretsId>c4df8534-ac60-47de-83c9-d12433053249</UserSecretsId>
     <Configurations>Debug;Release;NuGetRelease</Configurations>

@@ -30,24 +30,12 @@ namespace J4JSoftware.GeoProcessor
     {
         private async void Application_Startup( object sender, StartupEventArgs e )
         {
-            var compRoot = TryFindResource( "ViewModelLocator" ) as CompositionRoot;
-            if( compRoot?.Host == null )
-                throw new NullReferenceException( "Couldn't find ViewModelLocator resource" );
-
-            await compRoot.Host.StartAsync();
-
-            var mainWindow = compRoot.Host.Services.GetRequiredService<MainWindow>();
+            var mainWindow = new MainWindow();
             mainWindow.Show();
         }
 
         private async void Application_Exit( object sender, ExitEventArgs e )
         {
-            var compRoot = (CompositionRoot) TryFindResource( "ViewModelLocator" );
-
-            using( compRoot.Host! )
-            {
-                await compRoot.Host!.StopAsync();
-            }
         }
     }
 }

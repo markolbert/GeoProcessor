@@ -46,7 +46,7 @@ namespace Test.GeoProcessor
             UseConsoleLifetime = true;
         }
 
-        protected override void ConfigureLogger( J4JLogger logger, ILoggerConfig? configuration )
+        protected override void ConfigureLogger( J4JLogger logger )
         {
             logger.AddConsole();
             logger.AddDebug();
@@ -96,7 +96,7 @@ namespace Test.GeoProcessor
 
         public IExportConfig GetExportConfig()
         {
-            return Host?.Services.GetRequiredService<IExportConfig>();
+            return Host?.Services.GetRequiredService<IExportConfig>()!;
         }
     }
 }

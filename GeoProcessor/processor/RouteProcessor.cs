@@ -51,6 +51,7 @@ namespace J4JSoftware.GeoProcessor
 
         protected ProcessorInfo Configuration { get; }
         protected ProcessorType Processor { get; }
+
         public event EventHandler<int>? PointsProcessed;
 
         public int ReportingInterval

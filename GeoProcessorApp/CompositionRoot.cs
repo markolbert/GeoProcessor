@@ -20,6 +20,7 @@
 using System;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using Autofac;
 using J4JSoftware.Configuration.CommandLine;
 using J4JSoftware.ConsoleUtilities;
@@ -45,41 +46,18 @@ namespace J4JSoftware.GeoProcessor
                 "J4JSoftware",
                 Program.AppName,
                 "J4JSoftware.GeoProcessor.DataProtection",
-                typeof(LoggerInfo)
+                typeof(AppConfig)
             )
         {
             UseConsoleLifetime = true;
         }
 
-        protected override void ConfigureLogger( J4JLogger logger, ILoggerConfig? configuration )
+        protected override void ConfigureLogger( J4JLogger logger )
         {
-            if( configuration?.GetConfiguration() is not LoggerInfo loggerInfo ) 
+            if( LoggerConfiguration is not AppConfig appConfig )
                 return;
 
-            logger.ApplyGlobalConfiguration( loggerInfo.Global );
-
-            foreach( var channelName in loggerInfo.Channels )
-            {
-                var channelType = ( channelName.ToLower() switch
-                {
-                    "console" => typeof(ConsoleChannel),
-                    "debug" => typeof(DebugChannel),
-                    "file" => typeof(FileChannel),
-                    "netevent" => typeof(NetEventChannel),
-                    "lastevent" => typeof(LastEventChannel),
-                    _ => null
-                } );
-
-                if( channelType == null ) 
-                    continue;
-
-                var newChannel = GetLoggerChannel( channelType, loggerInfo.ChannelSpecific.ContainsKey( "console" )
-                    ? loggerInfo.ChannelSpecific[ "console" ]
-                    : null );
-
-                if( newChannel != null )
-                    logger.Channels.Add( newChannel );
-            }
+            LoggerConfigurator.Configure( logger, appConfig.Logging );
         }
 
         public static CompositionRoot Default { get; }
@@ -109,6 +87,7 @@ namespace J4JSoftware.GeoProcessor
         {
             base.SetupDependencyInjection( hbc, builder );
 
+            // register AppConfig
             builder.Register( c =>
                 {
                     AppConfig? config = null;

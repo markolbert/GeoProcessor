@@ -11,6 +11,7 @@
                  TextElement.FontWeight="Normal"
                  TextElement.FontSize="14"
                  WindowTitleBrush="Teal"
+                 SizeToContent="WidthAndHeight"
                  Background="{DynamicResource MaterialDesignPaper}"
                  ShowCloseButton="False"
                  ShowMaxRestoreButton="False"
@@ -69,6 +70,7 @@
                    Text="Messages" />
 
         <ScrollViewer Grid.Column="1" Grid.Row="2"
+                      MaxWidth="500"
                       VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding Messages}">
                 <ItemsControl.ItemTemplate>

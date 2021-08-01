@@ -21,14 +21,16 @@
   },
   "Logging": {
     "Global": {
-      "SourceRootPath": "C:\\Programming\\GeoProcessor\\"
+      "SourceRootPath": "C:\\Programming\\GeoProcessor\\",
+      "IncludeSourcePath":  true 
     },
     "ChannelSpecific": {
       "Debug": {
         "MinimumLevel": "Information"
       },
       "Console": {
-        "MinimumLevel": "Information"
+        "MinimumLevel": "Information",
+        "RequireNewLine":  true 
       }
     }
   }

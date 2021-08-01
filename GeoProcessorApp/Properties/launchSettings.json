@@ -2,7 +2,7 @@
   "profiles": {
     "DebugProfile": {
       "commandName": "Project",
-      "commandLineArgs": "-r -i  \"C:\\Users\\Mark\\Desktop\\web/EatSleepRIDE-GPX-342822.gpx\""
+      "commandLineArgs": "-r -i  \"C:\\Users\\Mark\\OneDrive - arcabama\\Desktop Temp/EatSleepRIDE-GPX-342822.gpx\""
     }
   }
 }

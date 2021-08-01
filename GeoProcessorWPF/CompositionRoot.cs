@@ -20,6 +20,7 @@
 using System;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using Autofac;
 using J4JSoftware.DependencyInjection;
@@ -43,49 +44,27 @@ namespace J4JSoftware.GeoProcessor
                 "J4JSoftware",
                 AppName,
                 () => DesignerProperties.GetIsInDesignMode( new DependencyObject() ),
-                "J4JSoftware.GeoProcessor.DataProtection",
-                typeof(LoggerInfo)
+                "J4JSoftware.GeoProcessor.DataProtection", 
+                loggingConfigType:typeof(AppConfig)
             )
         {
             Initialize();
         }
 
-        protected override void ConfigureLogger(J4JLogger logger, ILoggerConfig? configuration)
+        protected override void ConfigureLogger( J4JLogger logger )
         {
-            if( configuration?.GetConfiguration() is not LoggerInfo loggerInfo )
+            if( LoggerConfiguration is not AppConfig appConfig )
             {
                 logger.AddNetEvent();
                 return;
             }
 
-            logger.ApplyGlobalConfiguration(loggerInfo.Global);
+            LoggerConfigurator.Configure( logger, appConfig.Logging, "netevent" );
 
-            logger.AddNetEvent( loggerInfo.ChannelSpecific.ContainsKey( "console" )
-                ? loggerInfo.ChannelSpecific[ "netevent" ]
-                : null );
+            appConfig.NetEventChannel = Host!.Services.GetService<NetEventChannel>();
 
-            foreach (var channelName in loggerInfo.Channels)
-            {
-                var channelType = (channelName.ToLower() switch
-                {
-                    "console" => typeof(ConsoleChannel),
-                    "debug" => typeof(DebugChannel),
-                    "file" => typeof(FileChannel),
-                    "netevent" => typeof(NetEventChannel),
-                    "lastevent" => typeof(LastEventChannel),
-                    _ => null
-                });
-
-                if( channelType == null ) 
-                    continue;
-                
-                var newChannel = GetLoggerChannel(channelType, loggerInfo.ChannelSpecific.ContainsKey("console")
-                    ? loggerInfo.ChannelSpecific["console"]
-                    : null);
-
-                if (newChannel != null)
-                    logger.Channels.Add(newChannel);
-            }
+            if( appConfig.NetEventChannel == null )
+                CachedLogger.Error( "Could not find NetEventChannel" );
         }
 
         public NetEventChannel? NetEventChannel { get; private set; }
@@ -116,10 +95,10 @@ namespace J4JSoftware.GeoProcessor
 
                     retVal.ApplicationConfigurationFolder = ApplicationConfigurationFolder;
                     retVal.UserConfigurationFolder = UserConfigurationFolder;
-                    retVal.NetEventChannel = NetEventChannel;
 
                     return retVal;
                 } )
+                .AsSelf()
                 .AsImplementedInterfaces()
                 .SingleInstance();
 
@@ -135,9 +114,6 @@ namespace J4JSoftware.GeoProcessor
                 } )
                 .AsImplementedInterfaces()
                 .SingleInstance();
-
-            builder.RegisterType<MainWindow>()
-                .AsSelf();
 
             builder.RegisterType<MainVM>()
                 .AsSelf();

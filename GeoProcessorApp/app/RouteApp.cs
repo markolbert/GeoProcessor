@@ -43,6 +43,9 @@ namespace J4JSoftware.GeoProcessor
         private readonly J4JLogger _logger;
         private readonly IRouteProcessor _routeProc;
 
+        private string _processingPhase = string.Empty;
+        private int _ptsProcessed;
+
         public RouteApp(
             AppConfig config,
             IHostApplicationLifetime lifetime,
@@ -58,7 +61,9 @@ namespace J4JSoftware.GeoProcessor
             _importers = importers;
 
             _exporter = exporters[ config.ExportType ];
+
             _distProc = snapProcessors[ ProcessorType.Distance ];
+            _distProc.PointsProcessed += PointsProcessedHandler;
 
             _logger = logger;
             _logger.SetLoggedType( GetType() );
@@ -67,11 +72,19 @@ namespace J4JSoftware.GeoProcessor
                 && updater.Update( _config ) )
             {
                 _routeProc = snapProcessors[ config.ProcessorType ];
+                _routeProc.PointsProcessed += PointsProcessedHandler;
+
                 return;
             }
 
             _logger.Fatal( "Incomplete configuration, aborting" );
             _lifetime.StopApplication();
+        }
+
+        private void PointsProcessedHandler( object? sender, int pointsProcessed )
+        {
+            _ptsProcessed += pointsProcessed;
+            _logger?.Information( "{0}: {1:n0} points processed", _processingPhase, _ptsProcessed );
         }
 
         public async Task StartAsync( CancellationToken cancellationToken )
@@ -145,22 +158,26 @@ namespace J4JSoftware.GeoProcessor
 
         private async Task<bool> ProcessPointSet( PointSet pointSet, CancellationToken cancellationToken )
         {
-            var prevPts = pointSet.Points.Count;
+            _ptsProcessed = 0;
+            _processingPhase = "Coalescing";
+            var initialPts = pointSet.Points.Count;
 
             if( !await RunRouteProcessor( pointSet, _distProc, cancellationToken ) )
                 return false;
 
             _logger.Information( "Reduced points from {0:n0} to {1:n0} by coalescing nearby points",
-                prevPts,
+                initialPts,
                 pointSet.Points.Count );
 
-            prevPts = pointSet.Points.Count;
+            _ptsProcessed = 0;
+            _processingPhase = "Snapping to Route";
+            initialPts = pointSet.Points.Count;
 
             if( !await RunRouteProcessor( pointSet, _routeProc, cancellationToken ) )
                 return false;
 
             _logger.Information( "Snapping to route changed point count from {0:n0} to {1:n0}",
-                prevPts,
+                initialPts,
                 pointSet.Points.Count );
 
             return true;
