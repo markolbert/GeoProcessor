@@ -31,13 +31,22 @@ using Microsoft.Extensions.Hosting;
 
 namespace J4JSoftware.GeoProcessor
 {
-    public class CompositionRoot : XamlJ4JCompositionRoot
+    public sealed class CompositionRoot : XamlCompositionRoot
     {
         public const string AppName = "GeoProcessor";
         public const string AppConfigFile = "appConfig.json";
         public const string UserConfigFile = "userConfig.json";
 
-        public static CompositionRoot Default { get; } = new();
+        private static CompositionRoot? _compRoot;
+
+        public static CompositionRoot Default
+        {
+            get
+            {
+                _compRoot ??= new CompositionRoot();
+                return _compRoot;
+            }
+        }
 
         public CompositionRoot()
             : base(
@@ -48,7 +57,7 @@ namespace J4JSoftware.GeoProcessor
                 loggingConfigType:typeof(AppConfig)
             )
         {
-            Initialize();
+            Build();
         }
 
         protected override void ConfigureLogger( J4JLogger logger )
@@ -66,8 +75,6 @@ namespace J4JSoftware.GeoProcessor
             if( appConfig.NetEventChannel == null )
                 CachedLogger.Error( "Could not find NetEventChannel" );
         }
-
-        public NetEventChannel? NetEventChannel { get; private set; }
 
         public MainVM MainVM => Host!.Services.GetRequiredService<MainVM>();
         public ProcessorVM ProcessorVM => Host!.Services.GetRequiredService<ProcessorVM>();

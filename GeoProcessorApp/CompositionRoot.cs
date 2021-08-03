@@ -32,13 +32,22 @@ using Microsoft.Extensions.Hosting;
 
 namespace J4JSoftware.GeoProcessor
 {
-    public class CompositionRoot : J4JCompositionRoot
+    public class CompositionRoot : ConsoleCompositionRoot
     {
-        static CompositionRoot()
-        {
-            Default = new CompositionRoot();
+        private static CompositionRoot? _compRoot;
 
-            Default.Initialize();
+        public static CompositionRoot Default
+        {
+            get
+            {
+                if( _compRoot != null ) 
+                    return _compRoot;
+
+                _compRoot = new CompositionRoot();
+                _compRoot.Build();
+
+                return _compRoot;
+            }
         }
 
         private CompositionRoot()
@@ -59,8 +68,6 @@ namespace J4JSoftware.GeoProcessor
 
             LoggerConfigurator.Configure( logger, appConfig.Logging );
         }
-
-        public static CompositionRoot Default { get; }
 
         protected override void SetupConfigurationEnvironment( IConfigurationBuilder builder )
         {

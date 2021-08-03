@@ -31,13 +31,22 @@ using Microsoft.Extensions.Hosting;
 
 namespace Test.GeoProcessor
 {
-    public class CompositionRoot : J4JCompositionRoot
+    public class CompositionRoot : ConsoleCompositionRoot
     {
-        static CompositionRoot()
-        {
-            Default = new CompositionRoot();
+        private static CompositionRoot? _compRoot;
 
-            Default.Initialize();
+        public static CompositionRoot Default
+        {
+            get
+            {
+                if( _compRoot == null )
+                {
+                    _compRoot = new CompositionRoot();
+                    _compRoot.Build();
+                }
+
+                return _compRoot!;
+            }
         }
 
         private CompositionRoot()
@@ -51,8 +60,6 @@ namespace Test.GeoProcessor
             logger.AddConsole();
             logger.AddDebug();
         }
-
-        public static CompositionRoot Default { get; }
 
         protected override void SetupDependencyInjection( HostBuilderContext hbc, ContainerBuilder builder )
         {
