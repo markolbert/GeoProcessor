@@ -31,7 +31,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace J4JSoftware.GeoProcessor
 {
-    public sealed class CompositionRoot : XamlCompositionRoot
+    public sealed class CompositionRoot : XamlRoot<AppConfig, LoggerConfigurator>
     {
         public const string AppName = "GeoProcessor";
         public const string AppConfigFile = "appConfig.json";
@@ -53,23 +53,22 @@ namespace J4JSoftware.GeoProcessor
                 "J4JSoftware",
                 AppName,
                 () => DesignerProperties.GetIsInDesignMode( new DependencyObject() ),
-                "J4JSoftware.GeoProcessor.DataProtection", 
-                loggingConfigType:typeof(AppConfig)
+                "J4JSoftware.GeoProcessor.DataProtection"
             )
         {
             Build();
         }
 
+        protected override void RegisterLoggerConfiguration(ContainerBuilder builder)
+        {
+            // no op, because we've already registered AppConfig for other reasons
+        }
+
         protected override void ConfigureLogger( J4JLogger logger )
         {
-            if( LoggerConfiguration is not AppConfig appConfig )
-            {
-                logger.AddNetEvent();
-                return;
-            }
+            LoggerConfigurator.Configure( logger, LoggerConfig!.Logging, "netevent" );
 
-            LoggerConfigurator.Configure( logger, appConfig.Logging, "netevent" );
-
+            var appConfig = Host!.Services.GetRequiredService<AppConfig>();
             appConfig.NetEventChannel = Host!.Services.GetService<NetEventChannel>();
 
             if( appConfig.NetEventChannel == null )

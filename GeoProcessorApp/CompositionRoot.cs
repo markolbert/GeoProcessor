@@ -32,7 +32,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace J4JSoftware.GeoProcessor
 {
-    public class CompositionRoot : ConsoleCompositionRoot
+    public class CompositionRoot : ConsoleRoot<AppConfig, LoggerConfigurator>
     {
         private static CompositionRoot? _compRoot;
 
@@ -54,20 +54,18 @@ namespace J4JSoftware.GeoProcessor
             : base(
                 "J4JSoftware",
                 Program.AppName,
-                "J4JSoftware.GeoProcessor.DataProtection",
-                typeof(AppConfig)
+                dataProtectionPurpose: "J4JSoftware.GeoProcessor.DataProtection"
             )
         {
-            UseConsoleLifetime = true;
         }
 
-        protected override void ConfigureLogger( J4JLogger logger )
+        protected override void RegisterLoggerConfiguration( ContainerBuilder builder )
         {
-            if( LoggerConfiguration is not AppConfig appConfig )
-                return;
-
-            LoggerConfigurator.Configure( logger, appConfig.Logging );
+            // no op, because we've already registered AppConfig for other reasons
         }
+
+        protected override void ConfigureLogger( J4JLogger logger ) =>
+            LoggerConfigurator.Configure( logger, LoggerConfig!.Logging );
 
         protected override void SetupConfigurationEnvironment( IConfigurationBuilder builder )
         {
