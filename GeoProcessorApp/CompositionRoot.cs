@@ -71,21 +71,23 @@ namespace J4JSoftware.GeoProcessor
         {
             base.SetupConfigurationEnvironment( builder );
 
-            var options = new OptionCollection( CommandLineStyle.Linux, loggerFactory: () => CachedLogger );
-
-            options.Bind<AppConfig, string>( x => x.InputFile.FilePath, "i", "inputFile" );
-            options.Bind<AppConfig, string>( x => x.DefaultRouteName, "n", "defaultName" );
-            options.Bind<AppConfig, string>( x => x.OutputFile.FilePath, "o", "outputFile" );
-            options.Bind<AppConfig, ExportType>( x => x.ExportType, "t", "outputType" );
-            options.Bind<AppConfig, bool>( x => x.StoreAPIKey, "k", "storeApiKey" );
-            options.Bind<AppConfig, bool>( x => x.RunInteractive, "r", "runInteractive" );
-            options.Bind<AppConfig, ProcessorType>( x => x.ProcessorType, "p", "snapProcessor" );
-
             builder.SetBasePath( Environment.CurrentDirectory )
                 .AddJsonFile( Path.Combine( Environment.CurrentDirectory, Program.AppConfigFile ), false, false )
                 .AddJsonFile( Path.Combine( Program.AppUserFolder, Program.UserConfigFile ), true, false )
-                .AddUserSecrets<AppConfig>()
-                .AddJ4JCommandLine( options );
+                .AddUserSecrets<AppConfig>();
+        }
+
+        protected override void ConfigureCommandLineParsing( IOptionCollection options )
+        {
+            base.ConfigureCommandLineParsing( options );
+
+            options.Bind<AppConfig, string>(x => x.InputFile.FilePath, "i", "inputFile");
+            options.Bind<AppConfig, string>(x => x.DefaultRouteName, "n", "defaultName");
+            options.Bind<AppConfig, string>(x => x.OutputFile.FilePath, "o", "outputFile");
+            options.Bind<AppConfig, ExportType>(x => x.ExportType, "t", "outputType");
+            options.Bind<AppConfig, bool>(x => x.StoreAPIKey, "k", "storeApiKey");
+            options.Bind<AppConfig, bool>(x => x.RunInteractive, "r", "runInteractive");
+            options.Bind<AppConfig, ProcessorType>(x => x.ProcessorType, "p", "snapProcessor");
         }
 
         protected override void SetupDependencyInjection( HostBuilderContext hbc, ContainerBuilder builder )

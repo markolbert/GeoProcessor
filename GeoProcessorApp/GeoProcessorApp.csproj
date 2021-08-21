@@ -37,7 +37,6 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\J4JCommandLine\J4JCommandLine\J4JCommandLine.csproj" />
 		<ProjectReference Include="..\..\J4JLogging\J4JLogging\J4JLogging.csproj" />
 		<ProjectReference Include="..\..\ProgrammingUtilities\DependencyInjection\DependencyInjection.csproj" />
 		<ProjectReference Include="..\..\ProgrammingUtilities\VisualUtilities\VisualUtilities.csproj" />
