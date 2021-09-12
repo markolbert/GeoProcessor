@@ -38,7 +38,10 @@ namespace J4JSoftware.GeoProcessor
         private const string LongitudeName = "lon";
         private const string LatitudeName = "lat";
 
-        public GPXImporter( IImportConfig config, J4JLogger? logger = null )
+        public GPXImporter( 
+            IImportConfig config, 
+            IJ4JLogger? logger = null 
+            )
             : base( config, logger )
         {
             Type = GeoExtensions.GetTargetType<ImporterAttribute>( GetType() )!.Type;

@@ -36,7 +36,7 @@ namespace J4JSoftware.GeoProcessor
     {
         public GoogleProcessor(
             IImportConfig config,
-            J4JLogger? logger
+            IJ4JLogger? logger
         )
             : base( config, ProcessorType.Google, logger )
         {

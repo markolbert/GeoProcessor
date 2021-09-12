@@ -24,7 +24,7 @@ namespace J4JSoftware.GeoProcessor
 {
     public partial class Distance
     {
-        public static bool TryParse( string text, out Distance? result, J4JLogger? logger = null )
+        public static bool TryParse( string text, out Distance? result, IJ4JLogger? logger = null )
         {
             result = null;
 

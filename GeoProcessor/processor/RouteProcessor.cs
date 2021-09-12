@@ -32,7 +32,7 @@ namespace J4JSoftware.GeoProcessor
         protected RouteProcessor(
             IGeoConfig config,
             ProcessorType processorType,
-            J4JLogger? logger )
+            IJ4JLogger? logger )
         {
             Configuration = config.ProcessorInfo!;
             Processor = config.ProcessorType;
@@ -46,7 +46,7 @@ namespace J4JSoftware.GeoProcessor
             Logger?.SetLoggedType( GetType() );
         }
 
-        protected J4JLogger? Logger { get; }
+        protected IJ4JLogger? Logger { get; }
         protected ProcessorType ProcessorType { get; }
 
         protected ProcessorInfo Configuration { get; }

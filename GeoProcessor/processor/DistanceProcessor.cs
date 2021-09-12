@@ -30,7 +30,7 @@ namespace J4JSoftware.GeoProcessor
     {
         public DistanceProcessor(
             IGeoConfig config,
-            J4JLogger? logger
+            IJ4JLogger? logger
         )
             : base( config, ProcessorType.Distance, logger )
         {

@@ -31,7 +31,7 @@ namespace J4JSoftware.GeoProcessor
     {
         public BingProcessor(
             IImportConfig config,
-            J4JLogger? logger
+            IJ4JLogger? logger
         )
             : base( config, ProcessorType.Bing, logger )
         {

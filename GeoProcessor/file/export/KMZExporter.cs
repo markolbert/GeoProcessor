@@ -30,7 +30,10 @@ namespace J4JSoftware.GeoProcessor
     [ Exporter( ExportType.KMZ ) ]
     public class KMZExporter : KMLExporter
     {
-        public KMZExporter( IExportConfig config, J4JLogger? logger = null )
+        public KMZExporter( 
+            IExportConfig config, 
+            IJ4JLogger? logger = null 
+            )
             : base( config, logger )
         {
             Type = GeoExtensions.GetTargetType<ExporterAttribute>( GetType() )!.Type;
