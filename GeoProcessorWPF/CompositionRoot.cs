@@ -21,6 +21,7 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using Autofac;
 using J4JSoftware.DependencyInjection;
@@ -28,10 +29,11 @@ using J4JSoftware.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 
 namespace J4JSoftware.GeoProcessor
 {
-    public sealed class CompositionRoot : XamlRoot<AppConfig, LoggerConfigurator>
+    public sealed class CompositionRoot : XamlRoot
     {
         public const string AppName = "GeoProcessor";
         public const string AppConfigFile = "appConfig.json";
@@ -59,20 +61,19 @@ namespace J4JSoftware.GeoProcessor
             Build();
         }
 
-        protected override void RegisterLoggerConfiguration(ContainerBuilder builder)
+        protected override void ConfigureLogger( J4JLoggerConfiguration loggerConfig )
         {
-            // no op, because we've already registered AppConfig for other reasons
-        }
+            loggerConfig.AddEnricher<CallingContextEnricher>();
+            loggerConfig.CallingContextToText = ConvertCallingContextToText;
+            
+            loggerConfig.SerilogConfiguration.ReadFrom.Configuration( Configuration );
 
-        protected override void ConfigureLogger( J4JLogger logger )
-        {
-            LoggerConfigurator.Configure( logger, LoggerConfig!.Logging, "netevent" );
+            loggerConfig.SerilogConfiguration.WriteTo.NetEvent( out var netEventSink );
 
             var appConfig = Host!.Services.GetRequiredService<AppConfig>();
-            appConfig.NetEventChannel = Host!.Services.GetService<NetEventChannel>();
-
-            if( appConfig.NetEventChannel == null )
-                CachedLogger.Error( "Could not find NetEventChannel" );
+            appConfig.NetEventSink = netEventSink;
+            if (appConfig.NetEventSink == null)
+                CachedLogger.Error("Could not configure NetEventSink");
         }
 
         public MainVM MainVM => Host!.Services.GetRequiredService<MainVM>();
@@ -137,6 +138,33 @@ namespace J4JSoftware.GeoProcessor
                 .AsSelf();
 
             builder.RegisterModule<AutofacGeoProcessorModule>();
+        }
+
+        private static string ConvertCallingContextToText(
+            Type? loggedType,
+            string callerName,
+            int lineNum,
+            string srcFilePath)
+        {
+            return CallingContextEnricher.DefaultConvertToText(loggedType,
+                callerName,
+                lineNum,
+                CallingContextEnricher.RemoveProjectPath(srcFilePath, GetProjectPath()));
+        }
+
+        private static string GetProjectPath([CallerFilePath] string filePath = "")
+        {
+            var dirInfo = new DirectoryInfo(Path.GetDirectoryName(filePath)!);
+
+            while (dirInfo.Parent != null)
+            {
+                if (dirInfo.EnumerateFiles("*.csproj").Any())
+                    break;
+
+                dirInfo = dirInfo.Parent;
+            }
+
+            return dirInfo.FullName;
         }
     }
 }

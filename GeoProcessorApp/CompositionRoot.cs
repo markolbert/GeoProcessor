@@ -21,6 +21,7 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Autofac;
 using J4JSoftware.Configuration.CommandLine;
 using J4JSoftware.ConsoleUtilities;
@@ -29,10 +30,11 @@ using J4JSoftware.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 
 namespace J4JSoftware.GeoProcessor
 {
-    public class CompositionRoot : ConsoleRoot<AppConfig, LoggerConfigurator>
+    public class CompositionRoot : ConsoleRoot
     {
         private static CompositionRoot? _compRoot;
 
@@ -59,13 +61,12 @@ namespace J4JSoftware.GeoProcessor
         {
         }
 
-        protected override void RegisterLoggerConfiguration( ContainerBuilder builder )
+        protected override void ConfigureLogger( J4JLoggerConfiguration loggerConfig )
         {
-            // no op, because we've already registered AppConfig for other reasons
+            loggerConfig.AddEnricher<CallingContextEnricher>();
+            loggerConfig.CallingContextToText = ConvertCallingContextToText;
+            loggerConfig.SerilogConfiguration.ReadFrom.Configuration( Configuration );
         }
-
-        protected override void ConfigureLogger( J4JLogger logger ) =>
-            LoggerConfigurator.Configure( logger, LoggerConfig!.Logging );
 
         protected override void SetupConfigurationEnvironment( IConfigurationBuilder builder )
         {
@@ -77,17 +78,17 @@ namespace J4JSoftware.GeoProcessor
                 .AddUserSecrets<AppConfig>();
         }
 
-        protected override void ConfigureCommandLineParsing( IOptionCollection options )
+        protected override void ConfigureCommandLineParsing()
         {
-            base.ConfigureCommandLineParsing( options );
+            base.ConfigureCommandLineParsing();
 
-            options.Bind<AppConfig, string>(x => x.InputFile.FilePath, "i", "inputFile");
-            options.Bind<AppConfig, string>(x => x.DefaultRouteName, "n", "defaultName");
-            options.Bind<AppConfig, string>(x => x.OutputFile.FilePath, "o", "outputFile");
-            options.Bind<AppConfig, ExportType>(x => x.ExportType, "t", "outputType");
-            options.Bind<AppConfig, bool>(x => x.StoreAPIKey, "k", "storeApiKey");
-            options.Bind<AppConfig, bool>(x => x.RunInteractive, "r", "runInteractive");
-            options.Bind<AppConfig, ProcessorType>(x => x.ProcessorType, "p", "snapProcessor");
+            CommandLineOptions!.Bind<AppConfig, string>(x => x.InputFile.FilePath, "i", "inputFile");
+            CommandLineOptions.Bind<AppConfig, string>(x => x.DefaultRouteName, "n", "defaultName");
+            CommandLineOptions.Bind<AppConfig, string>(x => x.OutputFile.FilePath, "o", "outputFile");
+            CommandLineOptions.Bind<AppConfig, ExportType>(x => x.ExportType, "t", "outputType");
+            CommandLineOptions.Bind<AppConfig, bool>(x => x.StoreAPIKey, "k", "storeApiKey");
+            CommandLineOptions.Bind<AppConfig, bool>(x => x.RunInteractive, "r", "runInteractive");
+            CommandLineOptions.Bind<AppConfig, ProcessorType>(x => x.ProcessorType, "p", "snapProcessor");
         }
 
         protected override void SetupDependencyInjection( HostBuilderContext hbc, ContainerBuilder builder )
@@ -165,6 +166,33 @@ namespace J4JSoftware.GeoProcessor
                 services.AddHostedService<StoreKeyApp>();
             else
                 services.AddHostedService<RouteApp>();
+        }
+
+        private static string ConvertCallingContextToText(
+            Type? loggedType,
+            string callerName,
+            int lineNum,
+            string srcFilePath)
+        {
+            return CallingContextEnricher.DefaultConvertToText(loggedType,
+                callerName,
+                lineNum,
+                CallingContextEnricher.RemoveProjectPath(srcFilePath, GetProjectPath()));
+        }
+
+        private static string GetProjectPath([CallerFilePath] string filePath = "")
+        {
+            var dirInfo = new DirectoryInfo(Path.GetDirectoryName(filePath)!);
+
+            while (dirInfo.Parent != null)
+            {
+                if (dirInfo.EnumerateFiles("*.csproj").Any())
+                    break;
+
+                dirInfo = dirInfo.Parent;
+            }
+
+            return dirInfo.FullName;
         }
     }
 }

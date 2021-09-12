@@ -28,6 +28,7 @@ using J4JSoftware.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 
 namespace Test.GeoProcessor
 {
@@ -54,10 +55,10 @@ namespace Test.GeoProcessor
         {
         }
 
-        protected override void ConfigureLogger( J4JLogger logger )
+        protected override void ConfigureLogger( J4JLoggerConfiguration loggerConfig )
         {
-            logger.AddConsole();
-            logger.AddDebug();
+            loggerConfig.AddEnricher<CallingContextEnricher>();
+            loggerConfig.SerilogConfiguration.WriteTo.Debug();
         }
 
         protected override void SetupDependencyInjection( HostBuilderContext hbc, ContainerBuilder builder )
