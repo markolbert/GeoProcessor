@@ -44,7 +44,6 @@ namespace J4JSoftware.GeoProcessor
 
         public string DefaultRouteName { get; set; } = "Unnamed Route";
 
-        public LoggerInfo? Logging { get; set; }
         public OutputFileInfo OutputFile { get; } = new();
         public int RouteWidth { get; set; } = 4;
         public Color RouteColor { get; set; } = Color.Red;
@@ -68,7 +67,7 @@ namespace J4JSoftware.GeoProcessor
             }
         }
 
-        public bool IsValid( J4JLogger? logger )
+        public bool IsValid( IJ4JLogger? logger )
         {
             // if we're storing an API key there's nothing to check
             if( StoreAPIKey )
