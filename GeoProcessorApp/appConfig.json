@@ -19,19 +19,30 @@
       "MaxSeparation": "2 km"
     }
   },
-  "Logging": {
-    "Global": {
-      "SourceRootPath": "C:\\Programming\\GeoProcessor\\",
-      "IncludeSourcePath":  true 
-    },
-    "ChannelSpecific": {
-      "Debug": {
-        "MinimumLevel": "Information"
+  "Serilog": {
+    "MinimumLevel": "Information",
+    "Using": [ "Serilog.Sinks.Console", "Serilog.Sinks.File", "Serilog.Sinks.Debug" ],
+    "WriteTo": [
+      {
+        "Name": "Console",
+        "Args": {
+          "outputTemplate": "{Timestamp:HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj} {CallingContext} {Exception}{NewLine}"
+        }
       },
-      "Console": {
-        "MinimumLevel": "Information",
-        "RequireNewLine":  true 
+      {
+        "Name": "Debug",
+        "Args": {
+          "outputTemplate": "{Timestamp:HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj} {CallingContext} {Exception}"
+        }
+      },
+      {
+        "Name": "File",
+        "Args": {
+          "path": "log.txt",
+          "rollingInterval": "Day",
+          "outputTemplate": "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj} {CallingContext} {Exception}"
+        }
       }
-    }
+    ]
   }
 }
