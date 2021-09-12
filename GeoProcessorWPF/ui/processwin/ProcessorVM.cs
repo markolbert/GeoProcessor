@@ -38,7 +38,7 @@ namespace J4JSoftware.GeoProcessor
         private readonly IIndex<ExportType, IExporter> _exporters;
         private readonly IIndex<ImportType, IImporter> _importers;
 
-        private readonly J4JLogger? _logger;
+        private readonly IJ4JLogger? _logger;
         private readonly IIndex<ProcessorType, IRouteProcessor> _snapProcessors;
         private readonly IUserConfig _userConfig;
         private CancellationTokenSource? _cancellationSrc;
@@ -53,13 +53,13 @@ namespace J4JSoftware.GeoProcessor
             IIndex<ImportType, IImporter> importers,
             IIndex<ExportType, IExporter> exporters,
             IIndex<ProcessorType, IRouteProcessor> snapProcessors,
-            J4JLogger? logger )
+            IJ4JLogger? logger )
         {
             _logger = logger;
             _logger?.SetLoggedType( GetType() );
 
             _appConfig = appConfig;
-            _appConfig.NetEventChannel!.LogEvent += DisplayLogEventAsync;
+            _appConfig.NetEventSink!.LogEvent += DisplayLogEventAsync;
 
             _userConfig = userConfig;
 

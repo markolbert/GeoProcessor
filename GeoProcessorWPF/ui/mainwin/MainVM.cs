@@ -43,7 +43,7 @@ namespace J4JSoftware.GeoProcessor
     public class MainVM : ObservableRecipient
     {
         private readonly IAppConfig _appConfig;
-        private readonly J4JLogger? _logger;
+        private readonly IJ4JLogger? _logger;
 
         private readonly MainVMValidator _validator = new();
 
@@ -61,7 +61,7 @@ namespace J4JSoftware.GeoProcessor
         public MainVM(
             IAppConfig appConfig,
             IUserConfig userConfig,
-            J4JLogger? logger )
+            IJ4JLogger? logger )
         {
             _appConfig = appConfig;
 

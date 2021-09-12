@@ -40,7 +40,7 @@ namespace J4JSoftware.GeoProcessor
         private readonly IExporter _exporter;
         private readonly IIndex<ImportType, IImporter> _importers;
         private readonly IHostApplicationLifetime _lifetime;
-        private readonly J4JLogger _logger;
+        private readonly IJ4JLogger _logger;
         private readonly IRouteProcessor _routeProc;
 
         private string _processingPhase = string.Empty;
@@ -53,7 +53,7 @@ namespace J4JSoftware.GeoProcessor
             IIndex<ImportType, IImporter> importers,
             IIndex<ExportType, IExporter> exporters,
             IIndex<ProcessorType, IRouteProcessor> snapProcessors,
-            J4JLogger logger
+            IJ4JLogger logger
         )
         {
             _config = config;
