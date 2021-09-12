@@ -26,13 +26,12 @@ namespace J4JSoftware.GeoProcessor
     {
         string ApplicationConfigurationFolder { get; set; }
         string UserConfigurationFolder { get; set; }
-        NetEventChannel? NetEventChannel { get; set; }
+        NetEventSink? NetEventSink { get; set; }
         InputFileInfo InputFile { get; }
 
         Dictionary<ProcessorType, ProcessorInfo> Processors { get; set; }
 
         ExportType ExportType { get; set; }
-        LoggerInfo? Logging { get; set; }
         void RestoreFrom( CachedAppConfig src );
     }
 }

@@ -32,11 +32,10 @@ namespace J4JSoftware.GeoProcessor
         public Color RouteHighlightColor { get; set; } =Color.Aqua;
         public string ApplicationConfigurationFolder { get; set; } = string.Empty;
         public string UserConfigurationFolder { get; set; } = string.Empty;
-        public NetEventChannel? NetEventChannel { get; set; }
+        public NetEventSink? NetEventSink { get; set; }
         public InputFileInfo InputFile { get; }
         public Dictionary<ProcessorType, ProcessorInfo> Processors { get; set; } = new();
         public ExportType ExportType { get; set; } = ExportType.KML;
-        public LoggerInfo? Logging { get; set; }
 
         public void RestoreFrom( CachedAppConfig src )
         {
