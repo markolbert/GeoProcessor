@@ -120,7 +120,9 @@ namespace J4JSoftware.GeoProcessor
         private async void DisplayPointsProcessedAsync( object? sender, int points )
         {
             PointsProcessed += points;
-            await Dispatcher.Yield();
+           _logger?.Information( "{0}: {1:n0} points processed",Phase, PointsProcessed );
+
+           await Dispatcher.Yield();
         }
 
         private async void DisplayLogEventAsync( object? sender, NetEventArgs e )
@@ -297,7 +299,7 @@ namespace J4JSoftware.GeoProcessor
             processor.PointsProcessed += DisplayPointsProcessedAsync;
 
             var routePts = await processor.ProcessAsync( pointSet.Points, cancellationToken );
-
+ 
             processor.PointsProcessed -= DisplayPointsProcessedAsync;
 
             if( routePts == null )

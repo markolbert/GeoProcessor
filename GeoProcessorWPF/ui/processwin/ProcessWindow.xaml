@@ -71,6 +71,7 @@
 
         <ScrollViewer Grid.Column="1" Grid.Row="2"
                       MaxWidth="500"
+                      MaxHeight="500"
                       VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding Messages}">
                 <ItemsControl.ItemTemplate>
