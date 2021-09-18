@@ -27,6 +27,7 @@ using System.Threading.Tasks;
 using Alba.CsConsoleFormat.Fluent;
 using Autofac.Features.Indexed;
 using J4JSoftware.ConsoleUtilities;
+using J4JSoftware.DependencyInjection;
 using J4JSoftware.Logging;
 using Microsoft.Extensions.Hosting;
 
@@ -38,25 +39,31 @@ namespace J4JSoftware.GeoProcessor
 
         private readonly AppConfig _config;
         private readonly IHostApplicationLifetime _lifetime;
-        private readonly IJ4JLogger _logger;
+        private readonly IJ4JLogger? _logger;
+        private readonly J4JHostInfo _hostInfo;
+        private readonly IJ4JProtection _protection;
 
         public StoreKeyApp(
             AppConfig config,
             IHostApplicationLifetime lifetime,
             IIndex<string, IConfigurationUpdater> configUpdaters,
-            IJ4JLogger logger
+            J4JHostInfo hostInfo,
+            IJ4JProtection protection,
+            IJ4JLogger? logger
         )
         {
             _config = config;
             _lifetime = lifetime;
+            _hostInfo = hostInfo;
+            _protection = protection;
 
             _logger = logger;
-            _logger.SetLoggedType( GetType() );
+            _logger?.SetLoggedType( GetType() );
 
             if( !configUpdaters.TryGetValue( AutofacKey, out var updater ) || !updater.Update( _config ) )
                 return;
 
-            _logger.Fatal( "Incomplete configuration, aborting" );
+            _logger?.Fatal( "Incomplete configuration, aborting" );
             _lifetime.StopApplication();
         }
 
@@ -82,12 +89,11 @@ namespace J4JSoftware.GeoProcessor
 
             if( !secureProcessors.Any() )
             {
-                _logger.Error( "No processors are defined" );
+                _logger?.Error( "No processors are defined" );
                 _lifetime.StopApplication();
 
                 return;
             }
-
 
             Colors.WriteLine( "Select the ", "processor ".Yellow(), " whose API key you want to encrypt and store:\n" );
 
@@ -104,7 +110,13 @@ namespace J4JSoftware.GeoProcessor
 
             if( string.IsNullOrEmpty( apiKey ) )
             {
-                _logger.Error( "Key is undefined, configuration not updated" );
+                _logger?.Error( "Key is undefined, configuration not updated" );
+                _lifetime.StopApplication();
+            }
+
+            if( !_protection.Protect( apiKey!, out var encryptedKey ) )
+            {
+                _logger?.Error("Could not encrypt the API key");
                 _lifetime.StopApplication();
             }
 
@@ -113,7 +125,7 @@ namespace J4JSoftware.GeoProcessor
             var newKey = new APIKey
             {
                 Type = procType,
-                Value = apiKey!
+                EncryptedValue = encryptedKey!
             };
 
             if( !tempConfig.APIKeys.ContainsKey( procType ) )
@@ -127,11 +139,11 @@ namespace J4JSoftware.GeoProcessor
             var serialized = JsonSerializer.Serialize( tempConfig, jsonOptions );
 
             await File.WriteAllTextAsync(
-                Path.Combine( Program.AppUserFolder, Program.UserConfigFile ),
+                Path.Combine( _hostInfo.UserConfigurationFolder, Program.UserConfigFile ),
                 serialized,
                 cancellationToken );
 
-            _logger.Information( "{0} API key updated", procType );
+            _logger?.Information( "{0} API key updated", procType );
 
             _lifetime.StopApplication();
         }
