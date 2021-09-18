@@ -21,6 +21,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="CompositionRoot.cs" />
     <Compile Remove="ui\mainwin\DesignTimeMainViewModel.cs" />
   </ItemGroup>
 

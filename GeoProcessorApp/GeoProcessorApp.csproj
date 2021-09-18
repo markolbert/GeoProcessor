@@ -18,6 +18,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="CompositionRoot.cs" />
     <Compile Remove="ConsoleExtensions.cs" />
   </ItemGroup>
 

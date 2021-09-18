@@ -21,12 +21,13 @@ using System;
 using System.IO;
 using System.Threading;
 using FluentAssertions;
+using J4JSoftware.DependencyInjection;
 using J4JSoftware.GeoProcessor;
 using Xunit;
 
 namespace Test.GeoProcessor
 {
-    public class GeoTests
+    public class GeoTests : TestBase
     {
         [ Theory ]
         [ InlineData( "testData.gpx" ) ]
@@ -42,7 +43,7 @@ namespace Test.GeoProcessor
 
             fileInfo.Type.Should().NotBe( ImportType.Unknown );
 
-            var importer = CompositionRoot.Default.GetImporter( fileInfo.Type );
+            var importer = GetImporter( fileInfo.Type );
             importer.Should().NotBeNull();
 
             var cancellationToken = new CancellationToken();
@@ -69,7 +70,7 @@ namespace Test.GeoProcessor
 
             fileInfo.Type.Should().NotBe( ImportType.Unknown );
 
-            var importer = CompositionRoot.Default.GetImporter( fileInfo.Type );
+            var importer = GetImporter( fileInfo.Type );
             importer.Should().NotBeNull();
 
             var cancellationToken = new CancellationToken();
@@ -78,14 +79,14 @@ namespace Test.GeoProcessor
             pointSets.Should().NotBeNull();
 
 
-            var outInfo = CompositionRoot.Default.GetExportConfig();
+            var outInfo = GetExportConfig();
             outInfo.Should().NotBeNull();
 
             outInfo.OutputFile.FilePath = fileInfo.FilePath;
             outInfo.OutputFile.Type = type;
             outInfo.OutputFile.FileNameWithoutExtension = $"{outInfo.OutputFile.FileNameWithoutExtension}-processed";
 
-            var exporter = CompositionRoot.Default.GetExporter( type );
+            var exporter = GetExporter( type );
             exporter.Should().NotBeNull();
 
             ( await exporter.ExportAsync( pointSets![ 0 ], 0, cancellationToken ) ).Should().BeTrue();
