@@ -22,6 +22,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BingMapsRESTToolkit;
+using J4JSoftware.DependencyInjection;
 using J4JSoftware.Logging;
 
 namespace J4JSoftware.GeoProcessor

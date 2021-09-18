@@ -59,7 +59,9 @@ namespace J4JSoftware.GeoProcessor
             _logger?.SetLoggedType( GetType() );
 
             _appConfig = appConfig;
-            _appConfig.NetEventSink!.LogEvent += DisplayLogEventAsync;
+
+            if( _logger != null )
+                _logger.LogEvent += DisplayLogEventAsync;
 
             _userConfig = userConfig;
 
