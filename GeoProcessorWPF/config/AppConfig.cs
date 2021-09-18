@@ -58,8 +58,6 @@ namespace J4JSoftware.GeoProcessor
             RouteHighlightColor = src.RouteHighlightColor;
         }
 
-        public string ApplicationConfigurationFolder { get; set; } = string.Empty;
-        public string UserConfigurationFolder { get; set; } = string.Empty;
         public NetEventSink? NetEventSink { get; set; }
 
         public InputFileInfo InputFile { get; } = new();

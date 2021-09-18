@@ -33,7 +33,7 @@
                     Source="pack://application:,,,/MaterialDesignThemes.MahApps;component/Themes/MaterialDesignTheme.MahApps.Flyout.xaml" />
 
                 <ResourceDictionary>
-                    <local:CompositionRoot x:Key="ViewModelLocator" />
+                    <local:ViewModelLocator x:Key="ViewModelLocator" />
                     <local:TextToDouble x:Key="textToDouble" />
                 </ResourceDictionary>
 

@@ -24,8 +24,8 @@ namespace J4JSoftware.GeoProcessor
 {
     public interface IAppConfig : IImportConfig, IExportConfig
     {
-        string ApplicationConfigurationFolder { get; set; }
-        string UserConfigurationFolder { get; set; }
+        //string ApplicationConfigurationFolder { get; set; }
+        //string UserConfigurationFolder { get; set; }
         NetEventSink? NetEventSink { get; set; }
         InputFileInfo InputFile { get; }
 
