@@ -28,13 +28,17 @@ namespace J4JSoftware.GeoProcessor
     /// </summary>
     public partial class App : Application
     {
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         private async void Application_Startup( object sender, StartupEventArgs e )
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             var mainWindow = new MainWindow();
             mainWindow.Show();
         }
 
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         private async void Application_Exit( object sender, ExitEventArgs e )
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
         }
     }

@@ -36,6 +36,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.Win32;
+#pragma warning disable 4014
 #pragma warning disable 8618
 
 namespace J4JSoftware.GeoProcessor

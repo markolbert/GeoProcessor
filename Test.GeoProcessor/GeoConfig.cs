@@ -20,6 +20,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using J4JSoftware.GeoProcessor;
+#pragma warning disable 8618
 
 namespace Test.GeoProcessor
 {
