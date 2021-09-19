@@ -28,7 +28,6 @@ using GoogleApi.Entities.Maps.Roads.SnapToRoads.Request;
 using GoogleApi.Entities.Maps.Roads.SnapToRoads.Response;
 using J4JSoftware.DependencyInjection;
 using J4JSoftware.Logging;
-using Location = GoogleApi.Entities.Common.Location;
 
 namespace J4JSoftware.GeoProcessor
 {
@@ -54,7 +53,7 @@ namespace J4JSoftware.GeoProcessor
             {
                 Interpolate = true,
                 Key = APIKey,
-                Path = coordinates.Select( c => new Location( c.Latitude, c.Longitude ) )
+                Path = coordinates.Select( c => new GoogleApi.Entities.Maps.Roads.Common.Coordinate( c.Latitude, c.Longitude ) )
             };
 
             SnapToRoadsResponse? result = null;
