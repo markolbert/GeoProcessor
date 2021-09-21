@@ -39,7 +39,6 @@ namespace J4JSoftware.GeoProcessor
         private IHost CreateHost()
         {
             var hostConfig = new J4JHostConfiguration()
-                .OperatingSystem( OSNames.Windows )
                 .Publisher( "J4JSoftware" )
                 .ApplicationName( "GeoProcessor" )
                 .AddApplicationConfigurationFile( AppConfigFile )
