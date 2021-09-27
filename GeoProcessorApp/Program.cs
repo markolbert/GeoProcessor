@@ -57,10 +57,11 @@ namespace J4JSoftware.GeoProcessor
                 .AddConfigurationInitializers( SetupConfiguration )
                 .LoggerInitializer( SetupLogging )
                 .FilePathTrimmer( FilePathTrimmer )
-                .CommandLineOperatingSystem( CommandLineOperatingSystems.Windows )
-                .CommandLineOptionsInitializer( SetupOptions )
                 .AddDependencyInjectionInitializers( SetupDependencyInjection )
                 .AddServicesInitializers( SetupServices );
+
+            hostConfig.AddCommandLineProcessing( CommandLineOperatingSystems.Windows )
+                .OptionsInitializer( SetupOptions );
 
             _buildLogger = hostConfig.Logger;
 
