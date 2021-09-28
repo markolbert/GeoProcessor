@@ -104,7 +104,7 @@ namespace J4JSoftware.GeoProcessor
         private static void SetupLogging( IConfiguration config, J4JLoggerConfiguration loggerConfig )
             => loggerConfig.SerilogConfiguration.ReadFrom.Configuration( config );
 
-        private static void SetupOptions( IOptionCollection options )
+        private static void SetupOptions( OptionCollection options )
         {
             options.Bind<AppConfig, string>(x => x.InputFile.FilePath, "i", "inputFile");
             options.Bind<AppConfig, string>(x => x.DefaultRouteName, "n", "defaultName");
