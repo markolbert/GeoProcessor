@@ -11,13 +11,16 @@
 		<Company>Jump for Joy Software</Company>
 		<Product>J4JSoftware Windows GeoProcessor</Product>
 		<Description>a Windows app for processing GPX, KML and KMZ files, and snapping GPS tracks to roadways</Description>
-		<Copyright>© Mark A. Olbert all rights reserved</Copyright>
+		<Copyright>2021 Mark A. Olbert</Copyright>
+		<PackageDescription>a WPF application for processing GPX, KML and KMZ files, and snapping GPS tracks to roadways</PackageDescription>
 		<RepositoryUrl>https://github.com/markolbert/GeoProcessor</RepositoryUrl>
 		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageIcon>Diego nuspec.png</PackageIcon>
 		<RepositoryType>git</RepositoryType>
-		<Version>0.8.0.0</Version>
-		<AssemblyVersion>0.8.0.0</AssemblyVersion>
-		<ApplicationIcon>GeoProcessor.ico</ApplicationIcon>
+		<Version>1.2.0.0</Version>
+		<AssemblyVersion>1.2.0.0</AssemblyVersion>
+		<PackageReleaseNotes>conformed to latest J4JCommandLine, DependencyInjection and J4JLogger APIs</PackageReleaseNotes>
 	</PropertyGroup>
 
 	<ItemGroup>
