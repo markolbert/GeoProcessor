@@ -1,78 +1,79 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-	<OutputType>WinExe</OutputType>
-	<TargetFramework>net5.0-windows</TargetFramework>
-	<UseWPF>true</UseWPF>
-	<RootNamespace>J4JSoftware.GeoProcessor</RootNamespace>
-	<Nullable>enable</Nullable>
-	<UserSecretsId>76f2e027-4d42-4daf-b830-d339bb3279a0</UserSecretsId>
-	<Authors>Mark A. Olbert</Authors>
-	<Company>Jump for Joy Software</Company>
-	<Product>J4JSoftware Windows GeoProcessor</Product>
-	<Description>a Windows app for processing GPX, KML and KMZ files, and snapping GPS tracks to roadways</Description>
-	<Copyright>© Mark A. Olbert all rights reserved</Copyright>
-	<RepositoryUrl>https://github.com/markolbert/GeoProcessor</RepositoryUrl>
-	  <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-	<RepositoryType>git</RepositoryType>
-	<Version>0.8.0.0</Version>
-	<AssemblyVersion>0.8.0.0</AssemblyVersion>
-	<ApplicationIcon>GeoProcessor.ico</ApplicationIcon>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net5.0-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
+		<RootNamespace>J4JSoftware.GeoProcessor</RootNamespace>
+		<Nullable>enable</Nullable>
+		<UserSecretsId>76f2e027-4d42-4daf-b830-d339bb3279a0</UserSecretsId>
+		<Authors>Mark A. Olbert</Authors>
+		<Company>Jump for Joy Software</Company>
+		<Product>J4JSoftware Windows GeoProcessor</Product>
+		<Description>a Windows app for processing GPX, KML and KMZ files, and snapping GPS tracks to roadways</Description>
+		<Copyright>© Mark A. Olbert all rights reserved</Copyright>
+		<RepositoryUrl>https://github.com/markolbert/GeoProcessor</RepositoryUrl>
+		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+		<RepositoryType>git</RepositoryType>
+		<Version>0.8.0.0</Version>
+		<AssemblyVersion>0.8.0.0</AssemblyVersion>
+		<ApplicationIcon>GeoProcessor.ico</ApplicationIcon>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="CompositionRoot.cs" />
-    <Compile Remove="ui\mainwin\DesignTimeMainViewModel.cs" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="FluentValidation" Version="10.3.3" />
+		<PackageReference Include="MahApps.Metro" Version="2.4.7" />
+		<PackageReference Include="MaterialDesignThemes" Version="4.1.0" />
+		<PackageReference Include="MaterialDesignThemes.MahApps" Version="0.1.7" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="5.0.0" />
+		<PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.0.2" />
+		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.31" />
+		<PackageReference Include="Serilog.Settings.Configuration" Version="3.2.0" />
+		<PackageReference Include="Serilog.Sinks.Console" Version="4.0.0" />
+		<PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />
+		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+		<PackageReference Update="Microsoft.VCRTForwarders.140" Version="1.0.7" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="10.3.3" />
-    <PackageReference Include="MahApps.Metro" Version="2.4.7" />
-    <PackageReference Include="MaterialDesignThemes" Version="4.1.0" />
-    <PackageReference Include="MaterialDesignThemes.MahApps" Version="0.1.7" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.0.2" />
-    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.31" />
-    <PackageReference Include="Serilog.Settings.Configuration" Version="3.2.0" />
-    <PackageReference Include="Serilog.Sinks.Console" Version="4.0.0" />
-    <PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />
-    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\J4JLogging\J4JLogging\J4JLogging.csproj" />
+		<ProjectReference Include="..\..\ProgrammingUtilities\DependencyInjection\DependencyInjection.csproj" />
+		<ProjectReference Include="..\..\ProgrammingUtilities\VisualUtilities\VisualUtilities.csproj" />
+		<ProjectReference Include="..\..\ProgrammingUtilities\WPFUtilities\WPFUtilities.csproj" />
+		<ProjectReference Include="..\AutofacGeoProcessor\AutofacGeoProcessor.csproj" />
+		<ProjectReference Include="..\GeoProcessor\GeoProcessor.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\J4JLogging\J4JLogging\J4JLogging.csproj" />
-    <ProjectReference Include="..\..\ProgrammingUtilities\DependencyInjection\DependencyInjection.csproj" />
-    <ProjectReference Include="..\..\ProgrammingUtilities\VisualUtilities\VisualUtilities.csproj" />
-    <ProjectReference Include="..\..\ProgrammingUtilities\WPFUtilities\WPFUtilities.csproj" />
-    <ProjectReference Include="..\AutofacGeoProcessor\AutofacGeoProcessor.csproj" />
-    <ProjectReference Include="..\GeoProcessor\GeoProcessor.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="J4JSoftware.Logging" Version="4.0.0" />
+		<PackageReference Include="J4JSoftware.DependencyInjection" Version="2.0.0" />
+		<PackageReference Include="J4JSoftware.VisualUtilities" Version="1.0.0" />
+		<PackageReference Include="J4JSoftware.WPFUtilities" Version="1.0.0" />
+		<PackageReference Include="J4JSoftware.GeoProcessor.Autofac" Version="1.2.0" />
+		<PackageReference Include="J4JSoftware.GeoProcessor" Version="1.2.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Update="appConfig.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="license.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Update="appConfig.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="license.txt">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Update="Microsoft.VCRTForwarders.140" Version="1.0.7" />
-  </ItemGroup>
+	<ItemGroup>
+		<Page Update="ui\optionswin\OptionsWindow.xaml">
+			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+			<SubType>Designer</SubType>
+		</Page>
+	</ItemGroup>
 
-  <ItemGroup>
-    <Page Update="ui\optionswin\OptionsWindow.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="..\..\Media\JumpForJoy\Diego nuspec.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\Media\JumpForJoy\Diego nuspec.png">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+	</ItemGroup>
 
 </Project>

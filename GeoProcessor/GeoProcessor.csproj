@@ -1,25 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-	  <TargetFramework>net5.0</TargetFramework>
-	  <RootNamespace>J4JSoftware.GeoProcessor</RootNamespace>
-	  <AssemblyName>J4JSoftware.GeoProcessor</AssemblyName>
-	  <Nullable>enable</Nullable>
-	  <Authors>Mark A. Olbert</Authors>
-	  <Company>Jump for Joy Software</Company>
-	  <Product>J4JSoftware GeoProcessing Library</Product>
-	  <Description>a library for processing GPX, KML and KMZ files, and snapping GPS tracks to roadways</Description>
-	  <Copyright>© Mark A. Olbert all rights reserved</Copyright>
-	  <PackageDescription>a library for processing GPX, KML and KMZ files, and snapping GPS tracks to roadways</PackageDescription>
-	  <RepositoryUrl>https://github.com/markolbert/GeoProcessor</RepositoryUrl>
-	  <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-	  <PackageIcon>Diego nuspec.png</PackageIcon>
-	  <RepositoryType>git</RepositoryType>
-	  <Version>1.1.0.0</Version>
-	  <AssemblyVersion>1.1.0.0</AssemblyVersion>
-	  <PackageReleaseNotes>updates to support GeoProcessor WPF application</PackageReleaseNotes>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net5.0</TargetFramework>
+		<RootNamespace>J4JSoftware.GeoProcessor</RootNamespace>
+		<AssemblyName>J4JSoftware.GeoProcessor</AssemblyName>
+		<Nullable>enable</Nullable>
+		<Authors>Mark A. Olbert</Authors>
+		<Company>Jump for Joy Software</Company>
+		<Product>J4JSoftware GeoProcessing Library</Product>
+		<Description>a library for processing GPX, KML and KMZ files, and snapping GPS tracks to roadways</Description>
+		<Copyright>© Mark A. Olbert all rights reserved</Copyright>
+		<PackageDescription>a library for processing GPX, KML and KMZ files, and snapping GPS tracks to roadways</PackageDescription>
+		<RepositoryUrl>https://github.com/markolbert/GeoProcessor</RepositoryUrl>
+		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageIcon>Diego nuspec.png</PackageIcon>
+		<RepositoryType>git</RepositoryType>
+		<Version>1.2.0.0</Version>
+		<AssemblyVersion>1.2.0.0</AssemblyVersion>
+		<PackageReleaseNotes>conformed to latest J4JCommandLine, DependencyInjection and J4JLogger APIs</PackageReleaseNotes>
+	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="BingMapsRESTToolkit" Version="1.1.4" />
@@ -32,11 +32,17 @@
 		<ProjectReference Include="..\..\ProgrammingUtilities\VisualUtilities\VisualUtilities.csproj" />
 	</ItemGroup>
 
-  <ItemGroup>
-    <None Include="..\..\Media\JumpForJoy\Diego nuspec.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="J4JSoftware.Logging" Version="4.0.0" />
+		<PackageReference Include="J4JSoftware.DependencyInjection" Version="2.0.0" />
+		<PackageReference Include="J4JSoftware.VisualUtilities" Version="1.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="..\..\Media\JumpForJoy\Diego nuspec.png">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+	</ItemGroup>
 
 </Project>

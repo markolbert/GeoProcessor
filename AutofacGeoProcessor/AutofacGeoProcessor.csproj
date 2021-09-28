@@ -1,39 +1,43 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-	  <TargetFramework>net5.0</TargetFramework>
-	  <RootNamespace>J4JSoftware.GeoProcessor</RootNamespace>
-	  <AssemblyName>J4JSoftware.GeoProcessor.Autofac</AssemblyName>
-	  <Nullable>enable</Nullable>
-	  <Authors>Mark A. Olbert</Authors>
-	  <Company>Jump for Joy Software</Company>
-	  <Product>J4JSoftware Autofac add-on for GeoProcessing Library</Product>
-	  <Description>an Autofac module for simplifying use of the J4JSoftware GeoProcessor library</Description>
-	  <Copyright>© Mark A. Olbert all rights reserved</Copyright>
-	  <PackageDescription>an Autofac module for simplifying use of the J4JSoftware GeoProcessor library</PackageDescription>
-	  <RepositoryUrl>https://github.com/markolbert/GeoProcessor</RepositoryUrl>
-	  <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-	  <PackageIcon>Diego nuspec.png</PackageIcon>
-	  <RepositoryType>git</RepositoryType>
-	  <Version>1.0.1.0</Version>
-	  <AssemblyVersion>1.0.1.0</AssemblyVersion>
-	  <PackageReleaseNotes>changed license</PackageReleaseNotes>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net5.0</TargetFramework>
+		<RootNamespace>J4JSoftware.GeoProcessor</RootNamespace>
+		<AssemblyName>J4JSoftware.GeoProcessor.Autofac</AssemblyName>
+		<Nullable>enable</Nullable>
+		<Authors>Mark A. Olbert</Authors>
+		<Company>Jump for Joy Software</Company>
+		<Product>J4JSoftware Autofac add-on for GeoProcessing Library</Product>
+		<Description>an Autofac module for simplifying use of the J4JSoftware GeoProcessor library</Description>
+		<Copyright>© Mark A. Olbert all rights reserved</Copyright>
+		<PackageDescription>an Autofac module for simplifying use of the J4JSoftware GeoProcessor library</PackageDescription>
+		<RepositoryUrl>https://github.com/markolbert/GeoProcessor</RepositoryUrl>
+		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageIcon>Diego nuspec.png</PackageIcon>
+		<RepositoryType>git</RepositoryType>
+		<Version>1.2.0.0</Version>
+		<AssemblyVersion>1.2.0.0</AssemblyVersion>
+		<PackageReleaseNotes>conformed to latest J4JCommandLine, DependencyInjection and J4JLogger APIs</PackageReleaseNotes>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Include="..\..\Media\JumpForJoy\Diego nuspec.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\Media\JumpForJoy\Diego nuspec.png">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Autofac" Version="6.2.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Autofac" Version="6.2.0" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\GeoProcessor\GeoProcessor.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="J4JSoftware.GeoProcessor" Version="1.2.0" />
 	</ItemGroup>
 
 </Project>

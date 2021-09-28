@@ -1,53 +1,65 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>J4JSoftware.GeoProcessor</RootNamespace>
-    <Nullable>enable</Nullable>
-    <UserSecretsId>bddc2ef2-9330-48ea-b316-40fc738a4e28</UserSecretsId>
-    <Configurations>Debug;Release</Configurations>
-    <Authors>Mark A. Olbert</Authors>
-    <Company>Jump for Joy Software</Company>
-    <Product>GeoProcessor application</Product>
-    <Description>processes GPX, KML and KMX files (optionally converting them) using Microsoft Bing or Google Maps route-snapping algorithms to produce driving routes that can be displayed in mapping programs.</Description>
-	  <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-	  <PackageIcon>Diego nuspec.png</PackageIcon>
-    <Copyright>2021 Mark A. Olbert</Copyright>
-    <PackageReleaseNotes>initial public release</PackageReleaseNotes>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="5.0.0" />
-    <PackageReference Include="Serilog.Settings.Configuration" Version="3.2.0" />
-    <PackageReference Include="Serilog.Sinks.Console" Version="4.0.0" />
-    <PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />
-    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\AutofacGeoProcessor\AutofacGeoProcessor.csproj" />
-    <ProjectReference Include="..\GeoProcessor\GeoProcessor.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="appConfig.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net5.0</TargetFramework>
+		<RootNamespace>J4JSoftware.GeoProcessor</RootNamespace>
+		<Nullable>enable</Nullable>
+		<UserSecretsId>bddc2ef2-9330-48ea-b316-40fc738a4e28</UserSecretsId>
+		<Configurations>Debug;Release</Configurations>
+		<Authors>Mark A. Olbert</Authors>
+		<Company>Jump for Joy Software</Company>
+		<Product>GeoProcessor application</Product>
+		<Description>processes GPX, KML and KMX files (optionally converting them) using Microsoft Bing or Google Maps route-snapping algorithms to produce driving routes that can be displayed in mapping programs.</Description>
+		<Copyright>2021 Mark A. Olbert</Copyright>
+		<PackageDescription>a console application for processing GPX, KML and KMZ files, and snapping GPS tracks to roadways</PackageDescription>
+		<RepositoryUrl>https://github.com/markolbert/GeoProcessor</RepositoryUrl>
+		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageIcon>Diego nuspec.png</PackageIcon>
+		<RepositoryType>git</RepositoryType>
+		<Version>1.2.0.0</Version>
+		<AssemblyVersion>1.2.0.0</AssemblyVersion>
+		<PackageReleaseNotes>conformed to latest J4JCommandLine, DependencyInjection and J4JLogger APIs</PackageReleaseNotes>
+	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="5.0.0" />
+		<PackageReference Include="Serilog.Settings.Configuration" Version="3.2.0" />
+		<PackageReference Include="Serilog.Sinks.Console" Version="4.0.0" />
+		<PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />
+		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="appConfig.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\AutofacGeoProcessor\AutofacGeoProcessor.csproj" />
+		<ProjectReference Include="..\GeoProcessor\GeoProcessor.csproj" />
 		<ProjectReference Include="..\..\J4JLogging\J4JLogging\J4JLogging.csproj" />
 		<ProjectReference Include="..\..\ProgrammingUtilities\DependencyInjection\DependencyInjection.csproj" />
 		<ProjectReference Include="..\..\ProgrammingUtilities\VisualUtilities\VisualUtilities.csproj" />
 		<ProjectReference Include="..\..\ProgrammingUtilities\ConsoleUtilities\ConsoleUtilities.csproj" />
 	</ItemGroup>
 
-  <ItemGroup>
-    <None Include="..\..\Media\JumpForJoy\Diego nuspec.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="J4JSoftware.GeoProcessor.Autofac" Version="1.2.0" />
+		<PackageReference Include="J4JSoftware.GeoProcessor" Version="1.2.0" />
+		<PackageReference Include="J4JSoftware.Logging" Version="4.0.0" />
+		<PackageReference Include="J4JSoftware.DependencyInjection" Version="2.0.0" />
+		<PackageReference Include="J4JSoftware.VisualUtilities" Version="1.0.0" />
+		<PackageReference Include="J4JSoftware.ConsoleUtilities" Version="1.3.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="..\..\Media\JumpForJoy\Diego nuspec.png">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+	</ItemGroup>
 
 </Project>
