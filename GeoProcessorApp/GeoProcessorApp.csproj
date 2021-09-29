@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
 		<TargetFramework>net5.0</TargetFramework>
+		<AssemblyName>J4JSoftware.GeoProcessorApp</AssemblyName>
 		<RootNamespace>J4JSoftware.GeoProcessor</RootNamespace>
 		<Nullable>enable</Nullable>
 		<UserSecretsId>bddc2ef2-9330-48ea-b316-40fc738a4e28</UserSecretsId>
@@ -12,15 +13,16 @@
 		<Product>GeoProcessor application</Product>
 		<Description>processes GPX, KML and KMX files (optionally converting them) using Microsoft Bing or Google Maps route-snapping algorithms to produce driving routes that can be displayed in mapping programs.</Description>
 		<Copyright>2021 Mark A. Olbert</Copyright>
-		<PackageDescription>a console application for processing GPX, KML and KMZ files, and snapping GPS tracks to roadways</PackageDescription>
 		<RepositoryUrl>https://github.com/markolbert/GeoProcessor</RepositoryUrl>
-		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<PackageIcon>Diego nuspec.png</PackageIcon>
 		<RepositoryType>git</RepositoryType>
-		<Version>1.2.0.0</Version>
-		<AssemblyVersion>1.2.0.0</AssemblyVersion>
-		<PackageReleaseNotes>conformed to latest J4JCommandLine, DependencyInjection and J4JLogger APIs</PackageReleaseNotes>
+		<Version>1.2.1.0</Version>
+		<AssemblyVersion>1.2.1.0</AssemblyVersion>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageDescription>a console application for processing GPX, KML and KMZ files, and snapping GPS tracks to roadways</PackageDescription>
+		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+		<PackageIcon>Diego nuspec.png</PackageIcon>
+		<PackageReleaseNotes>added nuget readme, added company name to app name</PackageReleaseNotes>
+		<PackageReadmeFile>nuget-consoleapp.md</PackageReadmeFile>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -35,6 +37,7 @@
 		<None Update="appConfig.json">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Include="../docs/nuget-consoleapp.md" Pack="true" PackagePath="/" />
 	</ItemGroup>
 
 	<ItemGroup>

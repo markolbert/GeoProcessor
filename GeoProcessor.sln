@@ -27,6 +27,36 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WPFUtilities", "..\Programm
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "J4JCommandLine", "..\J4JCommandLine\J4JCommandLine\J4JCommandLine.csproj", "{2D02EC8B-3FFF-4DB7-9A67-17CB90FA01A2}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{112A0C80-B0AB-4789-B8E6-896D8BCD5F78}"
+	ProjectSection(SolutionItems) = preProject
+		docs\apikeys.md = docs\apikeys.md
+		docs\cmdline.md = docs\cmdline.md
+		docs\config.md = docs\config.md
+		docs\distance.md = docs\distance.md
+		docs\library.md = docs\library.md
+		docs\nposl-3.md = docs\nposl-3.md
+		docs\nuget-consoleapp.md = docs\nuget-consoleapp.md
+		docs\nuget-wpf.md = docs\nuget-wpf.md
+		docs\win-config.md = docs\win-config.md
+		docs\win-running-the-app.md = docs\win-running-the-app.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{063D4109-68B1-4295-B963-ABE0E4C278BB}"
+	ProjectSection(SolutionItems) = preProject
+		docs\assets\tldr-console.png = docs\assets\tldr-console.png
+		docs\assets\win-aborted.png = docs\assets\win-aborted.png
+		docs\assets\win-completed.png = docs\assets\win-completed.png
+		docs\assets\win-existing-file.png = docs\assets\win-existing-file.png
+		docs\assets\win-good-to-go.png = docs\assets\win-good-to-go.png
+		docs\assets\win-launch.png = docs\assets\win-launch.png
+		docs\assets\win-options-changed.png = docs\assets\win-options-changed.png
+		docs\assets\win-options-unsaved.png = docs\assets\win-options-unsaved.png
+		docs\assets\win-options.png = docs\assets\win-options.png
+		docs\assets\win-processing.png = docs\assets\win-processing.png
+		docs\assets\win-processors.png = docs\assets\win-processors.png
+		docs\assets\win-ready-to-begin.png = docs\assets\win-ready-to-begin.png
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -88,6 +118,7 @@ Global
 		{7F59F25F-4F4F-4361-8C6D-C52972F56269} = {5AD3F041-D553-492B-948D-E58BDA4373CF}
 		{A1406166-3FAD-4675-8782-A48C3B63382F} = {5AD3F041-D553-492B-948D-E58BDA4373CF}
 		{2D02EC8B-3FFF-4DB7-9A67-17CB90FA01A2} = {5AD3F041-D553-492B-948D-E58BDA4373CF}
+		{063D4109-68B1-4295-B963-ABE0E4C278BB} = {112A0C80-B0AB-4789-B8E6-896D8BCD5F78}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FE44BCE1-11E4-4584-BACC-44570810FB77}

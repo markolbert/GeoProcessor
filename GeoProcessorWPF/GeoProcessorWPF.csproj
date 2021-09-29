@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net5.0-windows</TargetFramework>
+		<AssemblyName>J4JSoftware.GeoProcessorWPF</AssemblyName>
 		<UseWPF>true</UseWPF>
 		<RootNamespace>J4JSoftware.GeoProcessor</RootNamespace>
 		<Nullable>enable</Nullable>
@@ -12,15 +13,16 @@
 		<Product>J4JSoftware Windows GeoProcessor</Product>
 		<Description>a Windows app for processing GPX, KML and KMZ files, and snapping GPS tracks to roadways</Description>
 		<Copyright>2021 Mark A. Olbert</Copyright>
-		<PackageDescription>a WPF application for processing GPX, KML and KMZ files, and snapping GPS tracks to roadways</PackageDescription>
 		<RepositoryUrl>https://github.com/markolbert/GeoProcessor</RepositoryUrl>
-		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<PackageIcon>Diego nuspec.png</PackageIcon>
 		<RepositoryType>git</RepositoryType>
-		<Version>1.2.0.0</Version>
-		<AssemblyVersion>1.2.0.0</AssemblyVersion>
-		<PackageReleaseNotes>conformed to latest J4JCommandLine, DependencyInjection and J4JLogger APIs</PackageReleaseNotes>
+		<Version>1.2.1.0</Version>
+		<AssemblyVersion>1.2.1.0</AssemblyVersion>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageDescription>a WPF application for processing GPX, KML and KMZ files, and snapping GPS tracks to roadways</PackageDescription>
+		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+		<PackageIcon>Diego nuspec.png</PackageIcon>
+		<PackageReleaseNotes>added nuget readme</PackageReleaseNotes>
+		<PackageReadmeFile>nuget-wpf.md</PackageReadmeFile>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -63,6 +65,7 @@
 		<None Update="license.txt">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+		<None Include="../docs/nuget-wpf.md" Pack="true" PackagePath="/" />
 	</ItemGroup>
 
 	<ItemGroup>
