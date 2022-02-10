@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net5.0</TargetFramework>
+		<TargetFramework>net6.0</TargetFramework>
 		<RootNamespace>J4JSoftware.GeoProcessor</RootNamespace>
 		<AssemblyName>J4JSoftware.GeoProcessor</AssemblyName>
 		<Nullable>enable</Nullable>

@@ -73,17 +73,17 @@ namespace J4JSoftware.GeoProcessor
                 return;
             }
 
-            var builder = hostConfig.CreateHostBuilder();
+            //var builder = hostConfig.CreateHostBuilder();
 
-            if( builder == null )
-            {
-                Console.WriteLine("Failed to create host builder.");
-                Environment.ExitCode = -1;
+            //if( builder == null )
+            //{
+            //    Console.WriteLine("Failed to create host builder.");
+            //    Environment.ExitCode = -1;
 
-                return;
-            }
+            //    return;
+            //}
 
-            Host = builder.Build();
+            Host = hostConfig.Build();
 
             if ( Host == null )
             {
