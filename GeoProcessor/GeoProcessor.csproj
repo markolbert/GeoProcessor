@@ -24,7 +24,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="BingMapsRESTToolkit" Version="1.1.4" />
-		<PackageReference Include="GoogleApi" Version="4.0.1" />
+		<PackageReference Include="GoogleApi" Version="4.0.6" />
 	</ItemGroup>
 
 	<ItemGroup>
