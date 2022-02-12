@@ -1,4 +1,16 @@
 {
+  "APIKeys": {
+    "Bing": {
+      "Type": 0,
+      "EncryptedValue":
+        "CfDJ8F385nPAG4ZHgy/YQwgOLkHGW/Pr\u002BOqyRAivJYOexSSsVnFGctdvURTWbXD/DDSCJS25rdfIuvYdLGBMtX4yo8TKz6rFKujRX1whRVAeMazwjy4VIubV4WUdqvj4b3eOfCX6DhPt8jB5V5s43P8Tg9anbqGwaotYCYfjVPldJYxnZyRz7jZKgFW3ip6ucRBIhT5K2/hAWI1RuXJ\u002Bv6bTr5I="
+    },
+    "Google": {
+      "Type": 0,
+      "EncryptedValue":
+        "CfDJ8F385nPAG4ZHgy/YQwgOLkE3N3ep4ispfrWakhHXAHmkZDjyOVExJkjWA\u002Bwo7l9rVFAoVXJh9rmsm5e7DwOBZQnozBZVQnI9nVrxMzhopOX//T/jFYg0qS9bmKiqO\u002Bk6CYkbh99fYFkVaJebJW9b4a8RcIbYC7zxOiungOZ7vgdH"
+    }
+  },
   "Logging": {
     "EventElements": "All",
     "SourceRootPath": "C:\\Programming\\GeoProcessor\\",

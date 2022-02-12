@@ -83,10 +83,7 @@ namespace Test.GeoProcessor
 
             hostConfig.MissingRequirements.Should().Be( J4JHostRequirements.AllMet );
 
-            var builder = hostConfig.CreateHostBuilder();
-            builder.Should().NotBeNull();
-
-            var retVal = builder!.Build();
+            var retVal = hostConfig!.Build();
             retVal.Should().NotBeNull();
 
             return retVal!;
