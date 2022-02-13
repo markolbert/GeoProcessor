@@ -25,8 +25,8 @@ namespace J4JSoftware.GeoProcessor
 {
     public class APIKey
     {
-        private string? _encryptedKey;
-        private string? _key;
+        private string _encryptedKey = string.Empty;
+        private string _key = string.Empty;
 
         internal IJ4JProtection? Protection { get; private set; }
 
@@ -36,25 +36,28 @@ namespace J4JSoftware.GeoProcessor
         {
             get
             {
-                if( _encryptedKey != null )
-                    return _encryptedKey;
-
-                // abort if we haven't been initialized or the plain text key is undefined/not yet set
-                if( Protection == null || string.IsNullOrEmpty( _key ) )
+                if( Protection == null )
                     return string.Empty;
 
-                if( Protection == null )
-                    throw new NullReferenceException(
-                        $"{nameof(APIKey)} is not initialized. {nameof(Initialize)}() must be called before use." );
+                if( !string.IsNullOrEmpty( _encryptedKey ) )
+                    return _encryptedKey;
 
                 if( !Protection.Protect( _key!, out var encrypted ) )
                     return string.Empty;
 
                 _encryptedKey = encrypted!;
+
                 return _encryptedKey;
             }
 
-            set => _encryptedKey = value;
+            set
+            {
+                _encryptedKey = value;
+
+                // force decryption if the cryption system is initialized
+                if( Protection != null )
+                    _key = string.Empty;
+            }
         }
 
         [ JsonIgnore ]
@@ -62,17 +65,17 @@ namespace J4JSoftware.GeoProcessor
         {
             get
             {
-                if( _key != null )
-                    return _key;
-
-                // abort if we haven't been initialized or the encrypted key is undefined/not yet set
-                if( Protection == null || string.IsNullOrEmpty( _encryptedKey ) )
+                if (Protection == null)
                     return string.Empty;
 
-                if( !Protection.Unprotect( _encryptedKey!, out var decrypted ) )
+                if (!string.IsNullOrEmpty(_key))
+                    return _key;
+
+                if ( !Protection.Unprotect( _encryptedKey!, out var decrypted ) )
                     return string.Empty;
 
                 _key = decrypted!;
+
                 return _key;
             }
 
@@ -80,8 +83,9 @@ namespace J4JSoftware.GeoProcessor
             {
                 _key = value;
 
-                // force re-encryption
-                _encryptedKey = null;
+                // force encryption if the cryption system is initialized
+                if( Protection != null )
+                    _encryptedKey = string.Empty;
             }
         }
 

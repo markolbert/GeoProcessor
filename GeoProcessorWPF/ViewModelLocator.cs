@@ -21,7 +21,7 @@ namespace J4JSoftware.GeoProcessor
         public const string AppConfigFile = "appConfig.json";
         public const string UserConfigFile = "userConfig.json";
 
-        private readonly IHost _host;
+        private readonly IJ4JHost _host;
 
         private IJ4JLogger? _buildLogger;
 
@@ -36,7 +36,7 @@ namespace J4JSoftware.GeoProcessor
         public RouteDisplayVM RouteDisplayVM => _host!.Services.GetRequiredService<RouteDisplayVM>();
         public RouteEnginesVM RouteEnginesVM => _host!.Services.GetRequiredService<RouteEnginesVM>();
 
-        private IHost CreateHost()
+        private IJ4JHost CreateHost()
         {
             var hostConfig = new J4JHostConfiguration()
                 .Publisher( "J4JSoftware" )
@@ -55,12 +55,7 @@ namespace J4JSoftware.GeoProcessor
                 throw new ArgumentException(
                     $"Could not create IHost. The following requirements were not met: {hostConfig.MissingRequirements.ToText()}" );
 
-            var builder = hostConfig.CreateHostBuilder();
-
-            if( builder == null )
-                throw new ArgumentException( "Failed to create host builder." );
-
-            var retVal = builder.Build();
+            var retVal = hostConfig.Build();
 
             if( retVal == null )
                 throw new ArgumentException( "Failed to build host" );
@@ -125,6 +120,10 @@ namespace J4JSoftware.GeoProcessor
 
             builder.RegisterType<ProcessorVM>()
                 .AsSelf();
+
+            //builder.Register( c => _host )
+            //       .As<IJ4JHost>()
+            //       .SingleInstance();
 
             builder.RegisterModule<AutofacGeoProcessorModule>();
         }

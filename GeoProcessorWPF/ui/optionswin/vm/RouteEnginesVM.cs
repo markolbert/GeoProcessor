@@ -21,6 +21,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using J4JSoftware.Logging;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 
 namespace J4JSoftware.GeoProcessor
@@ -29,6 +30,7 @@ namespace J4JSoftware.GeoProcessor
     {
         private readonly IAppConfig _appConfig;
         private readonly IUserConfig _userConfig;
+
         private string _apiKey = string.Empty;
 
         private Visibility _apiKeyVisibility = Visibility.Collapsed;
@@ -41,7 +43,8 @@ namespace J4JSoftware.GeoProcessor
 
         public RouteEnginesVM(
             IAppConfig appConfig,
-            IUserConfig userConfig )
+            IUserConfig userConfig
+            )
         {
             _appConfig = appConfig;
             _userConfig = userConfig;
@@ -50,6 +53,10 @@ namespace J4JSoftware.GeoProcessor
                 .Where( x => x != ProcessorType.None ) );
 
             UnitTypes = new ObservableCollection<UnitTypes>( Enum.GetValues<UnitTypes>() );
+
+            // go live for messages
+            IsActive = true;
+
             SelectedProcessorType = ProcessorTypes.FirstOrDefault( x => x != ProcessorType.Distance );
 
             _setState = PropertySettingState.Normal;
@@ -137,14 +144,17 @@ namespace J4JSoftware.GeoProcessor
             set
             {
                 SetProperty( ref _apiKey, value );
-                OnSettingsChanged();
 
                 if( _setState != PropertySettingState.Normal
                     || !_userConfig.APIKeys.TryGetValue( SelectedProcessorType, out var temp ) )
+                {
                     return;
+                }
 
                 temp.Value = value;
                 EncryptedAPIKey = temp.EncryptedValue;
+
+                OnSettingsChanged();
             }
         }
 
