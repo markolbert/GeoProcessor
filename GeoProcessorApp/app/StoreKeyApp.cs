@@ -40,21 +40,21 @@ namespace J4JSoftware.GeoProcessor
         private readonly AppConfig _config;
         private readonly IHostApplicationLifetime _lifetime;
         private readonly IJ4JLogger? _logger;
-        private readonly J4JHostInfo _hostInfo;
+        private readonly string _userConfigFolder;
         private readonly IJ4JProtection _protection;
 
         public StoreKeyApp(
             AppConfig config,
             IHostApplicationLifetime lifetime,
             IIndex<string, IConfigurationUpdater> configUpdaters,
-            J4JHostInfo hostInfo,
+            IJ4JHost host,
             IJ4JProtection protection,
             IJ4JLogger? logger
         )
         {
             _config = config;
             _lifetime = lifetime;
-            _hostInfo = hostInfo;
+            _userConfigFolder = host.UserConfigurationFolder;
             _protection = protection;
 
             _logger = logger;
@@ -139,7 +139,7 @@ namespace J4JSoftware.GeoProcessor
             var serialized = JsonSerializer.Serialize( tempConfig, jsonOptions );
 
             await File.WriteAllTextAsync(
-                Path.Combine( _hostInfo.UserConfigurationFolder, Program.UserConfigFile ),
+                Path.Combine( _userConfigFolder, Program.UserConfigFile ),
                 serialized,
                 cancellationToken );
 

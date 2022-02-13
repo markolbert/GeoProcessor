@@ -21,6 +21,7 @@ using System.IO;
 using System.Text.Json;
 using System.Windows.Input;
 using J4JSoftware.DependencyInjection;
+using J4JSoftware.Logging;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Extensions.Options;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
@@ -32,7 +33,8 @@ namespace J4JSoftware.GeoProcessor
     {
         private readonly IAppConfig _appConfig;
         private readonly IUserConfig _userConfig;
-        private readonly J4JHostInfo _hostInfo;
+        private readonly string _appConfigFolder;
+        private readonly string _userConfigFolder;
 
         private CachedAppConfig _cachedAppConfig;
         private UserConfig _prevUserConfig;
@@ -42,12 +44,13 @@ namespace J4JSoftware.GeoProcessor
         public OptionsVM(
             IAppConfig appConfig,
             IUserConfig userConfig,
-            J4JHostInfo hostInfo
+            IJ4JHost host
         )
         {
             _appConfig = appConfig;
             _userConfig = userConfig;
-            _hostInfo = hostInfo;
+            _appConfigFolder = host.ApplicationConfigurationFolder;
+            _userConfigFolder = host.UserConfigurationFolder;
 
             SaveCommand = new RelayCommand( SaveCommandHandlerAsync );
             ReloadCommand = new RelayCommand( ReloadCommandHandler );
@@ -116,7 +119,7 @@ namespace J4JSoftware.GeoProcessor
             var userText = JsonSerializer.Serialize( _userConfig, options );
 
             await File.WriteAllTextAsync(
-                Path.Combine( _hostInfo.UserConfigurationFolder, ViewModelLocator.UserConfigFile ),
+                Path.Combine( _userConfigFolder, ViewModelLocator.UserConfigFile ),
                 userText );
 
             _prevUserConfig = _userConfig.Copy();
@@ -124,7 +127,7 @@ namespace J4JSoftware.GeoProcessor
             var appText = JsonSerializer.Serialize( _appConfig, options );
 
             await File.WriteAllTextAsync(
-                Path.Combine( _hostInfo.ApplicationConfigurationFolder, ViewModelLocator.AppConfigFile ),
+                Path.Combine( _appConfigFolder, ViewModelLocator.AppConfigFile ),
                 appText );
 
             _cachedAppConfig = new CachedAppConfig( _appConfig );
