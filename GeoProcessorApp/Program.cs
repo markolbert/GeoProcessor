@@ -49,7 +49,7 @@ namespace J4JSoftware.GeoProcessor
 
         private static async Task Main( string[] args )
         {
-            var hostConfig = new J4JHostConfiguration()
+            var hostConfig = new J4JHostConfiguration(AppEnvironment.Console)
                 .ApplicationName( "GeoProcessor" )
                 .Publisher( "J4JSoftware" )
                 .AddApplicationConfigurationFile( "appConfig.json" )
@@ -101,7 +101,7 @@ namespace J4JSoftware.GeoProcessor
             builder.AddUserSecrets<AppConfig>();
         }
 
-        private static void SetupLogging( IConfiguration config, J4JLoggerConfiguration loggerConfig )
+        private static void SetupLogging( IConfiguration config, J4JHostConfiguration hostConfig, J4JLoggerConfiguration loggerConfig )
             => loggerConfig.SerilogConfiguration.ReadFrom.Configuration( config );
 
         private static void SetupOptions( OptionCollection options )

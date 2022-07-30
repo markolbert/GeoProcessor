@@ -24,12 +24,11 @@
 
 	<ItemGroup>
 		<PackageReference Include="BingMapsRESTToolkit" Version="1.1.4" />
-		<PackageReference Include="GoogleApi" Version="4.0.6" />
+		<PackageReference Include="GoogleApi" Version="4.0.7" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\J4JLogging\J4JLogging\J4JLogging.csproj" />
-		<ProjectReference Include="..\..\ProgrammingUtilities\DependencyInjection\DependencyInjection.csproj" />
 		<ProjectReference Include="..\..\ProgrammingUtilities\VisualUtilities\VisualUtilities.csproj" />
 	</ItemGroup>
 

@@ -72,7 +72,7 @@ namespace Test.GeoProcessor
 
         private IHost CreateHost()
         {
-            var hostConfig = new J4JHostConfiguration()
+            var hostConfig = new J4JHostConfiguration(AppEnvironment.Console)
                 .Publisher("J4JSoftware")
                 .ApplicationName("Tests.GeoProcessor")
                 .AddApplicationConfigurationFile("appConfig.json")
@@ -89,7 +89,7 @@ namespace Test.GeoProcessor
             return retVal!;
         }
 
-        private void LoggerInitializer( IConfiguration config, J4JLoggerConfiguration loggerConfig ) =>
+        private void LoggerInitializer( IConfiguration config, J4JHostConfiguration hostConfig, J4JLoggerConfiguration loggerConfig ) =>
             loggerConfig.SerilogConfiguration.WriteTo.Debug();
 
         private void SetupConfigurationEnvironment( IConfigurationBuilder builder )

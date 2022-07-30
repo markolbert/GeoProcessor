@@ -38,7 +38,7 @@ namespace J4JSoftware.GeoProcessor
 
         private IJ4JHost CreateHost()
         {
-            var hostConfig = new J4JHostConfiguration()
+            var hostConfig = new J4JHostConfiguration( AppEnvironment.Wpf )
                 .Publisher( "J4JSoftware" )
                 .ApplicationName( "GeoProcessor" )
                 .AddApplicationConfigurationFile( AppConfigFile )
@@ -68,7 +68,7 @@ namespace J4JSoftware.GeoProcessor
             builder.AddUserSecrets<AppConfig>();
         }
 
-        private void LoggerInitializer( IConfiguration config, J4JLoggerConfiguration loggerConfig )
+        private void LoggerInitializer( IConfiguration config, J4JHostConfiguration hostConfig, J4JLoggerConfiguration loggerConfig )
         {
             loggerConfig.SerilogConfiguration.ReadFrom.Configuration( config );
         }
