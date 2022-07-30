@@ -49,43 +49,34 @@ namespace J4JSoftware.GeoProcessor
 
         private static async Task Main( string[] args )
         {
-            var hostConfig = new J4JHostConfiguration(AppEnvironment.Console)
-                .ApplicationName( "GeoProcessor" )
-                .Publisher( "J4JSoftware" )
-                .AddApplicationConfigurationFile( "appConfig.json" )
-                .AddUserConfigurationFile( "userConfig.json" )
-                .AddConfigurationInitializers( SetupConfiguration )
-                .LoggerInitializer( SetupLogging )
-                .FilePathTrimmer( FilePathTrimmer )
-                .AddDependencyInjectionInitializers( SetupDependencyInjection )
-                .AddServicesInitializers( SetupServices );
+            var hostConfig = new J4JHostConfiguration( AppEnvironment.Console )
+                            .ApplicationName( "GeoProcessor" )
+                            .Publisher( "J4JSoftware" )
+                            .AddApplicationConfigurationFile( "appConfig.json" )
+                            .AddUserConfigurationFile( "userConfig.json" )
+                            .AddConfigurationInitializers( SetupConfiguration )
+                            .LoggerInitializer( SetupLogging )
+                            .FilePathTrimmer( FilePathTrimmer )
+                            .AddDependencyInjectionInitializers( SetupDependencyInjection )
+                            .AddServicesInitializers( SetupServices );
 
             hostConfig.AddCommandLineProcessing( CommandLineOperatingSystems.Windows )
-                .OptionsInitializer( SetupOptions );
+                      .OptionsInitializer( SetupOptions );
 
             _buildLogger = hostConfig.Logger;
 
             if( hostConfig.MissingRequirements != J4JHostRequirements.AllMet )
             {
-                Console.WriteLine($"Could not create IHost. The following requirements were not met: {hostConfig.MissingRequirements.ToText()}");
+                Console.WriteLine(
+                    $"Could not create IHost. The following requirements were not met: {hostConfig.MissingRequirements.ToText()}" );
                 Environment.ExitCode = -1;
 
                 return;
             }
 
-            //var builder = hostConfig.CreateHostBuilder();
-
-            //if( builder == null )
-            //{
-            //    Console.WriteLine("Failed to create host builder.");
-            //    Environment.ExitCode = -1;
-
-            //    return;
-            //}
-
             Host = hostConfig.Build();
 
-            if ( Host == null )
+            if( Host == null )
             {
                 Console.WriteLine( "Failed to build host" );
                 Environment.ExitCode = -1;
