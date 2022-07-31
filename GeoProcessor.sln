@@ -5,11 +5,11 @@ VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "extern", "extern", "{5AD3F041-D553-492B-948D-E58BDA4373CF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DependencyInjection", "..\ProgrammingUtilities\DependencyInjection\DependencyInjection.csproj", "{A80A75DD-DB4C-472D-8166-FE8F86FD7BF1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DependencyInjection", "\Programming\ProgrammingUtilities\DependencyInjection\DependencyInjection.csproj", "{A80A75DD-DB4C-472D-8166-FE8F86FD7BF1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "J4JLogging", "..\J4JLogging\J4JLogging\J4JLogging.csproj", "{70E3D3D7-4BFA-414E-806C-D007CD9342DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "J4JLogging", "\Programming\J4JLogging\J4JLogging\J4JLogging.csproj", "{70E3D3D7-4BFA-414E-806C-D007CD9342DC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VisualUtilities", "..\ProgrammingUtilities\VisualUtilities\VisualUtilities.csproj", "{6781EA78-CEEA-4B48-8D1E-E76CECE32A28}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VisualUtilities", "\Programming\ProgrammingUtilities\VisualUtilities\VisualUtilities.csproj", "{6781EA78-CEEA-4B48-8D1E-E76CECE32A28}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoProcessor", "GeoProcessor\GeoProcessor.csproj", "{4DA0E1B4-6972-4825-87DD-41A2F3A8D808}"
 EndProject
@@ -19,13 +19,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.GeoProcessor", "Test.G
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoProcessorApp", "GeoProcessorApp\GeoProcessorApp.csproj", "{9F6D7226-328A-4FA4-9D56-9B68F240E127}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleUtilities", "..\ProgrammingUtilities\ConsoleUtilities\ConsoleUtilities.csproj", "{7F59F25F-4F4F-4361-8C6D-C52972F56269}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleUtilities", "\Programming\ProgrammingUtilities\ConsoleUtilities\ConsoleUtilities.csproj", "{7F59F25F-4F4F-4361-8C6D-C52972F56269}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoProcessorWPF", "GeoProcessorWPF\GeoProcessorWPF.csproj", "{26C0D173-954F-4476-8C3C-79A4249C1E36}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WPFUtilities", "..\ProgrammingUtilities\WPFUtilities\WPFUtilities.csproj", "{A1406166-3FAD-4675-8782-A48C3B63382F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WPFUtilities", "\Programming\ProgrammingUtilities\WPFUtilities\WPFUtilities.csproj", "{A1406166-3FAD-4675-8782-A48C3B63382F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "J4JCommandLine", "..\J4JCommandLine\J4JCommandLine\J4JCommandLine.csproj", "{2D02EC8B-3FFF-4DB7-9A67-17CB90FA01A2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "J4JCommandLine", "\Programming\J4JCommandLine\J4JCommandLine\J4JCommandLine.csproj", "{2D02EC8B-3FFF-4DB7-9A67-17CB90FA01A2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{112A0C80-B0AB-4789-B8E6-896D8BCD5F78}"
 	ProjectSection(SolutionItems) = preProject

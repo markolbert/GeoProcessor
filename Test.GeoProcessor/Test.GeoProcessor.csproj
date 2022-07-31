@@ -31,7 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\ProgrammingUtilities\DependencyInjection\DependencyInjection.csproj" />
+    <ProjectReference Include="\Programming\ProgrammingUtilities\DependencyInjection\DependencyInjection.csproj" />
     <ProjectReference Include="..\AutofacGeoProcessor\AutofacGeoProcessor.csproj" />
     <ProjectReference Include="..\GeoProcessor\GeoProcessor.csproj" />
   </ItemGroup>

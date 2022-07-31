@@ -41,10 +41,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\J4JLogging\J4JLogging\J4JLogging.csproj" />
-		<ProjectReference Include="..\..\ProgrammingUtilities\DependencyInjection\DependencyInjection.csproj" />
-		<ProjectReference Include="..\..\ProgrammingUtilities\VisualUtilities\VisualUtilities.csproj" />
-		<ProjectReference Include="..\..\ProgrammingUtilities\WPFUtilities\WPFUtilities.csproj" />
+		<ProjectReference Include="\Programming\J4JLogging\J4JLogging\J4JLogging.csproj" />
+		<ProjectReference Include="\Programming\ProgrammingUtilities\DependencyInjection\DependencyInjection.csproj" />
+		<ProjectReference Include="\Programming\ProgrammingUtilities\VisualUtilities\VisualUtilities.csproj" />
+		<ProjectReference Include="\Programming\ProgrammingUtilities\WPFUtilities\WPFUtilities.csproj" />
 		<ProjectReference Include="..\AutofacGeoProcessor\AutofacGeoProcessor.csproj" />
 		<ProjectReference Include="..\GeoProcessor\GeoProcessor.csproj" />
 	</ItemGroup>
