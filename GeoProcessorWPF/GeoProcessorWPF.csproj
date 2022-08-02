@@ -26,10 +26,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="FluentValidation" Version="10.3.6" />
+		<PackageReference Include="FluentValidation" Version="11.1.0" />
 		<PackageReference Include="MahApps.Metro" Version="2.4.9" />
-		<PackageReference Include="MaterialDesignThemes" Version="4.3.0" />
-		<PackageReference Include="MaterialDesignThemes.MahApps" Version="0.2.0" />
+		<PackageReference Include="MaterialDesignThemes" Version="4.5.0" />
+		<PackageReference Include="MaterialDesignThemes.MahApps" Version="0.2.2" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
 		<PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.2" />
 		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
@@ -47,15 +47,6 @@
 		<ProjectReference Include="\Programming\ProgrammingUtilities\WPFUtilities\WPFUtilities.csproj" />
 		<ProjectReference Include="..\AutofacGeoProcessor\AutofacGeoProcessor.csproj" />
 		<ProjectReference Include="..\GeoProcessor\GeoProcessor.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="J4JSoftware.Logging" Version="4.0.0" />
-		<PackageReference Include="J4JSoftware.DependencyInjection" Version="2.0.0" />
-		<PackageReference Include="J4JSoftware.VisualUtilities" Version="1.0.0" />
-		<PackageReference Include="J4JSoftware.WPFUtilities" Version="1.0.0" />
-		<PackageReference Include="J4JSoftware.GeoProcessor.Autofac" Version="1.2.0" />
-		<PackageReference Include="J4JSoftware.GeoProcessor" Version="1.2.0" />
 	</ItemGroup>
 
 	<ItemGroup>

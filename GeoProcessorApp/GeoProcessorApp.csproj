@@ -50,15 +50,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="J4JSoftware.GeoProcessor.Autofac" Version="1.2.0" />
-		<PackageReference Include="J4JSoftware.GeoProcessor" Version="1.2.0" />
-		<PackageReference Include="J4JSoftware.Logging" Version="4.0.0" />
-		<PackageReference Include="J4JSoftware.DependencyInjection" Version="2.0.0" />
-		<PackageReference Include="J4JSoftware.VisualUtilities" Version="1.0.0" />
-		<PackageReference Include="J4JSoftware.ConsoleUtilities" Version="1.3.0" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<None Include="..\..\Media\JumpForJoy\Diego nuspec.png">
 			<Pack>True</Pack>
 			<PackagePath></PackagePath>
