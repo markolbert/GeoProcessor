@@ -19,15 +19,14 @@
 
 using System;
 
-namespace J4JSoftware.GeoProcessor
-{
-    [ Flags ]
-    public enum CoalesenceType
-    {
-        Distance = 1 << 0,
-        Bearing = 1 << 1,
+namespace J4JSoftware.GeoProcessor;
 
-        All = Distance | Bearing,
-        None = 0
-    }
+[ Flags ]
+public enum CoalesenceType
+{
+    Distance = 1 << 0,
+    Bearing = 1 << 1,
+
+    All = Distance | Bearing,
+    None = 0
 }

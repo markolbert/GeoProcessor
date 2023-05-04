@@ -19,27 +19,26 @@
 
 using System;
 
-namespace J4JSoftware.GeoProcessor
+namespace J4JSoftware.GeoProcessor;
+
+public class OutputFileInfo : FileInfo<ExportType>
 {
-    public class OutputFileInfo : FileInfo<ExportType>
+    protected override ExportType GetTypeFromExtension( string? ext )
     {
-        protected override ExportType GetTypeFromExtension( string? ext )
-        {
-            if( ext?.Length > 0
-                && Enum.TryParse( typeof(ExportType), ext[ 1.. ], true, out var parsed ) )
-                return (ExportType) parsed!;
+        if( ext?.Length > 0
+        && Enum.TryParse( typeof(ExportType), ext[ 1.. ], true, out var parsed ) )
+            return (ExportType) parsed!;
 
-            return ExportType.Unknown;
-        }
+        return ExportType.Unknown;
+    }
 
-        protected override string GetExtensionFromType( ExportType type )
+    protected override string GetExtensionFromType( ExportType type )
+    {
+        return type switch
         {
-            return type switch
-            {
-                ExportType.KMZ => ".kmz",
-                ExportType.KML => ".kml",
-                _ => string.Empty
-            };
-        }
+            ExportType.KMZ => ".kmz",
+            ExportType.KML => ".kml",
+            _ => string.Empty
+        };
     }
 }

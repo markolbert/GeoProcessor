@@ -23,46 +23,45 @@ using System.IO;
 
 #pragma warning disable 8618
 
-namespace J4JSoftware.GeoProcessor
+namespace J4JSoftware.GeoProcessor;
+
+public abstract class FileInfo<T>
+    where T : Enum
 {
-    public abstract class FileInfo<T>
-        where T : Enum
+    public string FilePath
     {
-        public string FilePath
+        get => GetPath();
+
+        set
         {
-            get => GetPath();
-
-            set
-            {
-                DirectoryPath = Path.GetDirectoryName( value ) ?? string.Empty;
-                FileNameWithoutExtension = Path.GetFileNameWithoutExtension( value );
-                Type = GetTypeFromExtension( Path.GetExtension( value ) );
-            }
+            DirectoryPath = Path.GetDirectoryName( value ) ?? string.Empty;
+            FileNameWithoutExtension = Path.GetFileNameWithoutExtension( value );
+            Type = GetTypeFromExtension( Path.GetExtension( value ) );
         }
-
-        public string DirectoryPath { get; protected set; }
-        public string FileNameWithoutExtension { get; set; }
-        public T Type { get; set; }
-        public string FileExtension => GetExtensionFromType( Type );
-
-        public string GetPath( int fileNum = 0 )
-        {
-            fileNum = fileNum < 0 ? 0 : fileNum;
-
-            var parts = new List<string>();
-
-            if( !string.IsNullOrEmpty( DirectoryPath ) )
-                parts.Add( DirectoryPath );
-
-            if( !string.IsNullOrEmpty( FileNameWithoutExtension ) )
-                parts.Add( fileNum > 0
-                    ? $"{FileNameWithoutExtension}-{fileNum}{FileExtension}"
-                    : $"{FileNameWithoutExtension}{FileExtension}" );
-
-            return parts.Count == 0 ? string.Empty : Path.Combine( parts.ToArray() );
-        }
-
-        protected abstract T GetTypeFromExtension( string? ext );
-        protected abstract string GetExtensionFromType( T type );
     }
+
+    public string DirectoryPath { get; protected set; }
+    public string FileNameWithoutExtension { get; set; }
+    public T Type { get; set; }
+    public string FileExtension => GetExtensionFromType( Type );
+
+    public string GetPath( int fileNum = 0 )
+    {
+        fileNum = fileNum < 0 ? 0 : fileNum;
+
+        var parts = new List<string>();
+
+        if( !string.IsNullOrEmpty( DirectoryPath ) )
+            parts.Add( DirectoryPath );
+
+        if( !string.IsNullOrEmpty( FileNameWithoutExtension ) )
+            parts.Add( fileNum > 0
+                           ? $"{FileNameWithoutExtension}-{fileNum}{FileExtension}"
+                           : $"{FileNameWithoutExtension}{FileExtension}" );
+
+        return parts.Count == 0 ? string.Empty : Path.Combine( parts.ToArray() );
+    }
+
+    protected abstract T GetTypeFromExtension( string? ext );
+    protected abstract string GetExtensionFromType( T type );
 }

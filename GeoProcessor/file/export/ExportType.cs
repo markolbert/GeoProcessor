@@ -17,12 +17,11 @@
 
 #endregion
 
-namespace J4JSoftware.GeoProcessor
+namespace J4JSoftware.GeoProcessor;
+
+public enum ExportType
 {
-    public enum ExportType
-    {
-        KML,
-        KMZ,
-        Unknown
-    }
+    KML,
+    KMZ,
+    Unknown
 }

@@ -19,16 +19,15 @@
 
 using System;
 
-namespace J4JSoftware.GeoProcessor
-{
-    [ AttributeUsage( AttributeTargets.Class, Inherited = false ) ]
-    public class ExporterAttribute : Attribute
-    {
-        public ExporterAttribute( ExportType type )
-        {
-            Type = type;
-        }
+namespace J4JSoftware.GeoProcessor;
 
-        public ExportType Type { get; }
+[ AttributeUsage( AttributeTargets.Class, Inherited = false ) ]
+public class ExporterAttribute : Attribute
+{
+    public ExporterAttribute( ExportType type )
+    {
+        Type = type;
     }
+
+    public ExportType Type { get; }
 }

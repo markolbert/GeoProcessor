@@ -22,39 +22,38 @@ using System.Drawing;
 using J4JSoftware.GeoProcessor;
 #pragma warning disable 8618
 
-namespace Test.GeoProcessor
+namespace Test.GeoProcessor;
+
+public class GeoConfig : IExportConfig, IImportConfig
 {
-    public class GeoConfig : IExportConfig, IImportConfig
+    public Dictionary<ProcessorType, APIKeyValue> APIKeys { get; set; }
+
+    public ProcessorType ProcessorType { get; set; } = ProcessorType.Google;
+
+    public ProcessorInfo ProcessorInfo { get; } = new()
     {
-        public Dictionary<ProcessorType, APIKeyValue> APIKeys { get; set; }
+        MaxSeparation = new Distance( UnitTypes.km, 2 ),
+        MaxDistanceMultiplier = 3
+    };
 
-        public ProcessorType ProcessorType { get; set; } = ProcessorType.Google;
+    public OutputFileInfo OutputFile { get; } = new();
+    public int RouteWidth { get; set; } = 4;
+    public Color RouteColor { get; set; } = Color.Red;
+    public Color RouteHighlightColor { get; set; } = Color.DarkTurquoise;
 
-        public ProcessorInfo ProcessorInfo { get; } = new()
+    public string APIKey
+    {
+        get => APIKeys.ContainsKey( ProcessorType ) ? APIKeys[ ProcessorType ].Value : string.Empty;
+
+        set
         {
-            MaxSeparation = new Distance( UnitTypes.km, 2 ),
-            MaxDistanceMultiplier = 3
-        };
-
-        public OutputFileInfo OutputFile { get; } = new();
-        public int RouteWidth { get; set; } = 4;
-        public Color RouteColor { get; set; } = Color.Red;
-        public Color RouteHighlightColor { get; set; } = Color.DarkTurquoise;
-
-        public string APIKey
-        {
-            get => APIKeys.ContainsKey( ProcessorType ) ? APIKeys[ ProcessorType ].Value : string.Empty;
-
-            set
-            {
-                if( APIKeys.TryGetValue( ProcessorType, out var apiKey ) )
-                    apiKey.Value = value;
-            }
+            if( APIKeys.TryGetValue( ProcessorType, out var apiKey ) )
+                apiKey.Value = value;
         }
+    }
 
-        public class APIKeyValue
-        {
-            public string Value { get; set; }
-        }
+    public class APIKeyValue
+    {
+        public string Value { get; set; }
     }
 }

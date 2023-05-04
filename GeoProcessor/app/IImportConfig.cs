@@ -17,10 +17,9 @@
 
 #endregion
 
-namespace J4JSoftware.GeoProcessor
+namespace J4JSoftware.GeoProcessor;
+
+public interface IImportConfig : IGeoConfig
 {
-    public interface IImportConfig : IGeoConfig
-    {
-        public string APIKey { get; set; }
-    }
+    public string APIKey { get; set; }
 }

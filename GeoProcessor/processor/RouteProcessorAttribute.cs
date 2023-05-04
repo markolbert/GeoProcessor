@@ -19,16 +19,15 @@
 
 using System;
 
-namespace J4JSoftware.GeoProcessor
-{
-    [ AttributeUsage( AttributeTargets.Class, Inherited = false ) ]
-    public class RouteProcessorAttribute : Attribute
-    {
-        public RouteProcessorAttribute( ProcessorType type )
-        {
-            Type = type;
-        }
+namespace J4JSoftware.GeoProcessor;
 
-        public ProcessorType Type { get; }
+[ AttributeUsage( AttributeTargets.Class, Inherited = false ) ]
+public class RouteProcessorAttribute : Attribute
+{
+    public RouteProcessorAttribute( ProcessorType type )
+    {
+        Type = type;
     }
+
+    public ProcessorType Type { get; }
 }

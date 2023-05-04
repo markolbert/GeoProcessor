@@ -22,12 +22,11 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace J4JSoftware.GeoProcessor
+namespace J4JSoftware.GeoProcessor;
+
+public interface IRouteProcessor
 {
-    public interface IRouteProcessor
-    {
-        int ReportingInterval { get; set; }
-        event EventHandler<int>? PointsProcessed;
-        Task<LinkedList<Coordinate>?> ProcessAsync( LinkedList<Coordinate> nodes, CancellationToken cancellationToken );
-    }
+    int ReportingInterval { get; set; }
+    event EventHandler<int>? PointsProcessed;
+    Task<LinkedList<Coordinate>?> ProcessAsync( LinkedList<Coordinate> nodes, CancellationToken cancellationToken );
 }

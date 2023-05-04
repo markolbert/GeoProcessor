@@ -19,28 +19,27 @@
 
 using System;
 
-namespace J4JSoftware.GeoProcessor
+namespace J4JSoftware.GeoProcessor;
+
+public class InputFileInfo : FileInfo<ImportType>
 {
-    public class InputFileInfo : FileInfo<ImportType>
+    protected override ImportType GetTypeFromExtension( string? ext )
     {
-        protected override ImportType GetTypeFromExtension( string? ext )
-        {
-            if( ext?.Length > 0
-                && Enum.TryParse( typeof(ImportType), ext[ 1.. ], true, out var parsed ) )
-                return (ImportType) parsed!;
+        if( ext?.Length > 0
+        && Enum.TryParse( typeof(ImportType), ext[ 1.. ], true, out var parsed ) )
+            return (ImportType) parsed!;
 
-            return ImportType.Unknown;
-        }
+        return ImportType.Unknown;
+    }
 
-        protected override string GetExtensionFromType( ImportType type )
+    protected override string GetExtensionFromType( ImportType type )
+    {
+        return type switch
         {
-            return type switch
-            {
-                ImportType.GPX => ".gpx",
-                ImportType.KML => ".kml",
-                ImportType.KMZ => ".kmz",
-                _ => string.Empty
-            };
-        }
+            ImportType.GPX => ".gpx",
+            ImportType.KML => ".kml",
+            ImportType.KMZ => ".kmz",
+            _ => string.Empty
+        };
     }
 }

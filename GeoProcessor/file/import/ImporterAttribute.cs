@@ -19,16 +19,15 @@
 
 using System;
 
-namespace J4JSoftware.GeoProcessor
-{
-    [ AttributeUsage( AttributeTargets.Class, Inherited = false ) ]
-    public class ImporterAttribute : Attribute
-    {
-        public ImporterAttribute( ImportType type )
-        {
-            Type = type;
-        }
+namespace J4JSoftware.GeoProcessor;
 
-        public ImportType Type { get; }
+[ AttributeUsage( AttributeTargets.Class, Inherited = false ) ]
+public class ImporterAttribute : Attribute
+{
+    public ImporterAttribute( ImportType type )
+    {
+        Type = type;
     }
+
+    public ImportType Type { get; }
 }

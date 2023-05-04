@@ -19,11 +19,10 @@
 
 using System.Collections.Generic;
 
-namespace J4JSoftware.GeoProcessor
+namespace J4JSoftware.GeoProcessor;
+
+public class PointSet
 {
-    public class PointSet
-    {
-        public LinkedList<Coordinate> Points { get; set; } = new();
-        public string RouteName { get; set; } = "Unnamed Route";
-    }
+    public LinkedList<Coordinate> Points { get; set; } = new();
+    public string RouteName { get; set; } = "Unnamed Route";
 }

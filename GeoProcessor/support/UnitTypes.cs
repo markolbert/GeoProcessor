@@ -17,13 +17,12 @@
 
 #endregion
 
-namespace J4JSoftware.GeoProcessor
+namespace J4JSoftware.GeoProcessor;
+
+public enum UnitTypes
 {
-    public enum UnitTypes
-    {
-        ft,
-        mi,
-        m,
-        km
-    }
+    ft,
+    mi,
+    m,
+    km
 }

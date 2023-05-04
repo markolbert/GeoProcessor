@@ -17,18 +17,17 @@
 
 #endregion
 
-namespace J4JSoftware.GeoProcessor
+namespace J4JSoftware.GeoProcessor;
+
+public enum ProcessorType
 {
-    public enum ProcessorType
-    {
-        [ ProcessorTypeInfo( true, true, 100 ) ]
-        Bing,
+    [ ProcessorTypeInfo( true, true, 100 ) ]
+    Bing,
 
-        [ ProcessorTypeInfo( false, false ) ] Distance,
+    [ ProcessorTypeInfo( false, false ) ] Distance,
 
-        [ ProcessorTypeInfo( true, true, 100 ) ]
-        Google,
+    [ ProcessorTypeInfo( true, true, 100 ) ]
+    Google,
 
-        [ ProcessorTypeInfo( false, false ) ] None
-    }
+    [ ProcessorTypeInfo( false, false ) ] None
 }

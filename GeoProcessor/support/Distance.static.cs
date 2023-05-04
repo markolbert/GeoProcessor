@@ -18,39 +18,38 @@
 #endregion
 
 using System;
-using J4JSoftware.Logging;
+using Microsoft.Extensions.Logging;
 
-namespace J4JSoftware.GeoProcessor
+namespace J4JSoftware.GeoProcessor;
+
+public partial class Distance
 {
-    public partial class Distance
+    public static bool TryParse( string text, out Distance? result, ILogger? logger = null )
     {
-        public static bool TryParse( string text, out Distance? result, IJ4JLogger? logger = null )
+        result = null;
+
+        var parts = text.Split( " ", StringSplitOptions.RemoveEmptyEntries );
+
+        if( parts.Length != 2 )
         {
-            result = null;
-
-            var parts = text.Split( " ", StringSplitOptions.RemoveEmptyEntries );
-
-            if( parts.Length != 2 )
-            {
-                logger?.Error<int, string>( "Found {0} tokens when parsing '{1}' instead of 2", parts.Length, text );
-                return false;
-            }
-
-            if( !double.TryParse( parts[ 0 ], out var distValue ) )
-            {
-                logger?.Error<string>( "Could not parse '{0}' as a double", parts[ 0 ] );
-                return false;
-            }
-
-            if( !Enum.TryParse( typeof(UnitTypes), parts[ 1 ], true, out var unitType ) )
-            {
-                logger?.Error( "Could not parse '{0}' as a {1}", parts[ 1 ], typeof(UnitTypes) );
-                return false;
-            }
-
-            result = new Distance( (UnitTypes) unitType!, distValue );
-
-            return true;
+            logger?.LogError( "Found {tokens} tokens when parsing '{text}' instead of 2", parts.Length, text );
+            return false;
         }
+
+        if( !double.TryParse( parts[ 0 ], out var distValue ) )
+        {
+            logger?.LogError( "Could not parse '{value}' as a double", parts[ 0 ] );
+            return false;
+        }
+
+        if( !Enum.TryParse( typeof(UnitTypes), parts[ 1 ], true, out var unitType ) )
+        {
+            logger?.LogError( "Could not parse '{value}' as a {type}", parts[ 1 ], typeof(UnitTypes) );
+            return false;
+        }
+
+        result = new Distance( (UnitTypes) unitType, distValue );
+
+        return true;
     }
 }

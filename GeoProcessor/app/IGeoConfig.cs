@@ -17,11 +17,10 @@
 
 #endregion
 
-namespace J4JSoftware.GeoProcessor
+namespace J4JSoftware.GeoProcessor;
+
+public interface IGeoConfig
 {
-    public interface IGeoConfig
-    {
-        public ProcessorType ProcessorType { get; set; }
-        public ProcessorInfo? ProcessorInfo { get; }
-    }
+    public ProcessorType ProcessorType { get; set; }
+    public ProcessorInfo? ProcessorInfo { get; }
 }

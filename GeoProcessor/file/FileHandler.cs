@@ -17,24 +17,22 @@
 
 #endregion
 
-using J4JSoftware.Logging;
+using Microsoft.Extensions.Logging;
 
-namespace J4JSoftware.GeoProcessor
+namespace J4JSoftware.GeoProcessor;
+
+public class FileHandler
 {
-    public class FileHandler
+    protected FileHandler( 
+        IGeoConfig config, 
+        ILoggerFactory? loggerFactory = null 
+    )
     {
-        protected FileHandler( 
-            IGeoConfig config, 
-            IJ4JLogger? logger 
-            )
-        {
-            Configuration = config;
+        Configuration = config;
 
-            Logger = logger;
-            Logger?.SetLoggedType( GetType() );
-        }
-
-        protected IJ4JLogger? Logger { get; }
-        protected IGeoConfig Configuration { get; }
+        Logger = loggerFactory?.CreateLogger( GetType() );
     }
+
+    protected ILogger? Logger { get; }
+    protected IGeoConfig Configuration { get; }
 }

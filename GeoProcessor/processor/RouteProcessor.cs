@@ -21,92 +21,90 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using J4JSoftware.Logging;
+using Microsoft.Extensions.Logging;
 
-namespace J4JSoftware.GeoProcessor
+namespace J4JSoftware.GeoProcessor;
+
+public class RouteProcessor : IRouteProcessor
 {
-    public class RouteProcessor : IRouteProcessor
+    private int _reportingInterval;
+
+    protected RouteProcessor(
+        IGeoConfig config,
+        ProcessorType processorType,
+        ILoggerFactory? loggerFactory )
     {
-        private int _reportingInterval;
+        Configuration = config.ProcessorInfo!;
+        Processor = config.ProcessorType;
+        ProcessorType = processorType;
 
-        protected RouteProcessor(
-            IGeoConfig config,
-            ProcessorType processorType,
-            IJ4JLogger? logger )
+        ReportingInterval = ProcessorType.MaxPointsPerRequest() == int.MaxValue
+            ? 500
+            : ProcessorType.MaxPointsPerRequest() * 5;
+
+        Logger = loggerFactory?.CreateLogger( GetType() );
+    }
+
+    protected ILogger? Logger { get; }
+    protected ProcessorType ProcessorType { get; }
+
+    protected ProcessorInfo Configuration { get; }
+    protected ProcessorType Processor { get; }
+
+    public event EventHandler<int>? PointsProcessed;
+
+    public int ReportingInterval
+    {
+        get => _reportingInterval;
+
+        set
         {
-            Configuration = config.ProcessorInfo!;
-            Processor = config.ProcessorType;
-            ProcessorType = processorType;
-
-            ReportingInterval = ProcessorType.MaxPointsPerRequest() == int.MaxValue
-                ? 500
-                : ProcessorType.MaxPointsPerRequest() * 5;
-
-            Logger = logger;
-            Logger?.SetLoggedType( GetType() );
-        }
-
-        protected IJ4JLogger? Logger { get; }
-        protected ProcessorType ProcessorType { get; }
-
-        protected ProcessorInfo Configuration { get; }
-        protected ProcessorType Processor { get; }
-
-        public event EventHandler<int>? PointsProcessed;
-
-        public int ReportingInterval
-        {
-            get => _reportingInterval;
-
-            set
+            if( value <= 0 )
             {
-                if( value <= 0 )
-                {
-                    var temp = ProcessorType.MaxPointsPerRequest() == int.MaxValue
-                        ? 500
-                        : ProcessorType.MaxPointsPerRequest() * 5;
+                var temp = ProcessorType.MaxPointsPerRequest() == int.MaxValue
+                    ? 500
+                    : ProcessorType.MaxPointsPerRequest() * 5;
 
-                    _reportingInterval = temp;
+                _reportingInterval = temp;
 
-                    Logger?.Error( "ReportingInterval must be >= 0, defaulting to {0}", temp );
-                }
-                else
-                {
-                    _reportingInterval = value;
-                }
+                Logger?.LogError( "ReportingInterval must be >= 0, defaulting to {temp}", temp );
+            }
+            else
+            {
+                _reportingInterval = value;
             }
         }
+    }
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-        public virtual async Task<LinkedList<Coordinate>?> ProcessAsync( LinkedList<Coordinate> nodes,
-            CancellationToken cancellationToken )
+    public virtual async Task<LinkedList<Coordinate>?> ProcessAsync( LinkedList<Coordinate> nodes,
+        CancellationToken cancellationToken )
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
-        {
-            return null;
-        }
+    {
+        return null;
+    }
 
-        protected void OnReportingInterval( int points )
-        {
-            PointsProcessed?.Invoke( this, points );
-        }
+    protected void OnReportingInterval( int points )
+    {
+        PointsProcessed?.Invoke( this, points );
+    }
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-        protected virtual async Task<List<Coordinate>?> ExecuteRequestAsync(
+    protected virtual async Task<List<Coordinate>?> ExecuteRequestAsync(
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
-            List<Coordinate> coordinates,
-            CancellationToken cancellationToken )
-        {
-            return null;
-        }
+        List<Coordinate> coordinates,
+        CancellationToken cancellationToken = default )
+    {
+        return null;
+    }
 
-        protected virtual void UpdateOutputList( List<Coordinate> snappedPts, LinkedList<Coordinate> linkedList )
-        {
-            var prevNode = linkedList.Count == 0 ? null : linkedList.Last;
+    protected virtual void UpdateOutputList( List<Coordinate> snappedPts, LinkedList<Coordinate> linkedList )
+    {
+        var prevNode = linkedList.Count == 0 ? null : linkedList.Last;
 
-            foreach( var snappedPt in snappedPts )
-                prevNode = prevNode == null
-                    ? linkedList.AddFirst( snappedPt )
-                    : linkedList.AddAfter( prevNode, snappedPt );
-        }
+        foreach( var snappedPt in snappedPts )
+            prevNode = prevNode == null
+                ? linkedList.AddFirst( snappedPt )
+                : linkedList.AddAfter( prevNode, snappedPt );
     }
 }

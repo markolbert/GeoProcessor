@@ -17,13 +17,12 @@
 
 #endregion
 
-namespace J4JSoftware.GeoProcessor
+namespace J4JSoftware.GeoProcessor;
+
+public enum ImportType
 {
-    public enum ImportType
-    {
-        GPX,
-        KML,
-        KMZ,
-        Unknown
-    }
+    GPX,
+    KML,
+    KMZ,
+    Unknown
 }
