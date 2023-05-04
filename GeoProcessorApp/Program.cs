@@ -26,12 +26,9 @@ using System.Threading.Tasks;
 using Autofac;
 using J4JSoftware.Configuration.CommandLine;
 using J4JSoftware.ConsoleUtilities;
-using J4JSoftware.DependencyInjection;
-using J4JSoftware.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Serilog;
 
 namespace J4JSoftware.GeoProcessor
 {
@@ -164,7 +161,7 @@ namespace J4JSoftware.GeoProcessor
                 .OnActivating( x =>
                 {
                     x.Instance.Property( c => c.ProcessorType, new ProcessorTypeUpdater( _buildLogger ) );
-                    x.Instance.Property( c => c.APIKey, new APIKeyUpdater( _buildLogger ) );
+                    x.Instance.Property( c => c.APIKey, new ApiKeyUpdater( _buildLogger ) );
                 } )
                 .Named<IConfigurationUpdater>( StoreKeyApp.AutofacKey )
                 .SingleInstance();
@@ -173,7 +170,7 @@ namespace J4JSoftware.GeoProcessor
                 .OnActivating( x =>
                 {
                     x.Instance.Property( c => c.ProcessorType, new ProcessorTypeUpdater( _buildLogger ) );
-                    x.Instance.Property( c => c.APIKey, new APIKeyUpdater( _buildLogger ) );
+                    x.Instance.Property( c => c.APIKey, new ApiKeyUpdater( _buildLogger ) );
                     x.Instance.Property( c => c.InputFile, new InputFileUpdater( _buildLogger ) );
                 } )
                 .Named<IConfigurationUpdater>( RouteApp.AutofacKey )

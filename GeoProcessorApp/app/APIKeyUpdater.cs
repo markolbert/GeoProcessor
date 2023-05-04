@@ -19,14 +19,14 @@
 
 using System;
 using J4JSoftware.ConsoleUtilities;
-using J4JSoftware.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace J4JSoftware.GeoProcessor
 {
-    public class APIKeyUpdater : PropertyUpdater<string?>
+    public class ApiKeyUpdater : PropertyUpdater<string?>
     {
-        public APIKeyUpdater( IJ4JLogger? logger )
-            : base( logger )
+        public ApiKeyUpdater( ILoggerFactory? loggerFactory )
+            : base( loggerFactory )
         {
         }
 
