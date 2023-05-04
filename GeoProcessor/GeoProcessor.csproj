@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net7.0</TargetFramework>
 		<RootNamespace>J4JSoftware.GeoProcessor</RootNamespace>
 		<AssemblyName>J4JSoftware.GeoProcessor</AssemblyName>
 		<Nullable>enable</Nullable>
@@ -12,33 +12,13 @@
 		<Copyright>© Mark A. Olbert all rights reserved</Copyright>
 		<RepositoryUrl>https://github.com/markolbert/GeoProcessor</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<Version>1.2.1.0</Version>
-		<AssemblyVersion>1.2.1.0</AssemblyVersion>
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<PackageDescription>a library for processing GPX, KML and KMZ files, and snapping GPS tracks to roadways</PackageDescription>
-		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-		<PackageIcon>Diego nuspec.png</PackageIcon>
-		<PackageReleaseNotes>added nuget readme</PackageReleaseNotes>
-		<PackageReadmeFile>nuget-geo.md</PackageReadmeFile>
+		<VersionPrefix>1.2.1</VersionPrefix>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="BingMapsRESTToolkit" Version="1.1.4" />
-		<PackageReference Include="GoogleApi" Version="4.2.2" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\..\J4JLogging\J4JLogging\J4JLogging.csproj" />
-		<ProjectReference Include="..\..\ProgrammingUtilities\DependencyInjection\DependencyInjection.csproj" />
-		<ProjectReference Include="..\..\ProgrammingUtilities\VisualUtilities\VisualUtilities.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<None Include="..\..\Media\JumpForJoy\Diego nuspec.png">
-			<Pack>True</Pack>
-			<PackagePath></PackagePath>
-		</None>
-		<None Include="../docs/nuget-geo.md" Pack="true" PackagePath="/" />
+		<PackageReference Include="GoogleApi" Version="4.5.4" />
+		<PackageReference Include="J4JSoftware.VisualUtilities" Version="2.1.1" />
 	</ItemGroup>
 
 </Project>

@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net6.0-windows</TargetFramework>
+		<TargetFramework>net7.0-windows</TargetFramework>
 		<AssemblyName>J4JSoftware.GeoProcessorWPF</AssemblyName>
 		<UseWPF>true</UseWPF>
 		<RootNamespace>J4JSoftware.GeoProcessor</RootNamespace>
@@ -26,26 +26,23 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="FluentValidation" Version="11.1.0" />
+		<PackageReference Include="FluentValidation" Version="11.5.2" />
 		<PackageReference Include="MahApps.Metro" Version="2.4.9" />
-		<PackageReference Include="MaterialDesignThemes" Version="4.5.0" />
-		<PackageReference Include="MaterialDesignThemes.MahApps" Version="0.2.2" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
-		<PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.2" />
+		<PackageReference Include="MaterialDesignThemes" Version="4.8.0" />
+		<PackageReference Include="MaterialDesignThemes.MahApps" Version="0.2.8" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
-		<PackageReference Include="Serilog.Settings.Configuration" Version="3.3.0" />
-		<PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
+		<PackageReference Include="Serilog.Settings.Configuration" Version="3.4.0" />
+		<PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
 		<PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
 		<PackageReference Update="Microsoft.VCRTForwarders.140" Version="1.0.7" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="\Programming\J4JLogging\J4JLogging\J4JLogging.csproj" />
 		<ProjectReference Include="\Programming\ProgrammingUtilities\DependencyInjection\DependencyInjection.csproj" />
 		<ProjectReference Include="\Programming\ProgrammingUtilities\VisualUtilities\VisualUtilities.csproj" />
 		<ProjectReference Include="\Programming\ProgrammingUtilities\WPFUtilities\WPFUtilities.csproj" />
-		<ProjectReference Include="..\AutofacGeoProcessor\AutofacGeoProcessor.csproj" />
 		<ProjectReference Include="..\GeoProcessor\GeoProcessor.csproj" />
 	</ItemGroup>
 
