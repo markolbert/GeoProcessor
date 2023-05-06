@@ -1,102 +1,98 @@
-#region copyright
-// Copyright (c) 2021, 2022, 2023 Mark A. Olbert 
-// https://www.JumpForJoySoftware.com
-// TestBase.cs
-//
-// This file is part of JumpForJoy Software's Test.GeoProcessor.
-// 
-// Test.GeoProcessor is free software: you can redistribute it and/or modify it 
-// under the terms of the GNU General Public License as published by the 
-// Free Software Foundation, either version 3 of the License, or 
-// (at your option) any later version.
-// 
-// Test.GeoProcessor is distributed in the hope that it will be useful, but 
-// WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
-// or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
-// for more details.
-// 
-// You should have received a copy of the GNU General Public License along 
-// with Test.GeoProcessor. If not, see <https://www.gnu.org/licenses/>.
-#endregion
-
-using Autofac;
-using Autofac.Features.Indexed;
+﻿using System;
+using System.Threading.Tasks;
 using FluentAssertions;
-using J4JSoftware.DependencyInjection;
 using J4JSoftware.GeoProcessor;
+using J4JSoftware.GeoProcessor.RouteBuilder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Serilog;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Test.GeoProcessor;
 
 public class TestBase
 {
-    private readonly IHost _host;
-
     protected TestBase()
     {
-        _host = CreateHost();
+        Services = CreateHost();
+        Logger = Services.GetService<ILoggerFactory>()?.CreateLogger( GetType() );
+
+        var config = Services.GetService<TestConfig>();
+        config.Should().NotBeNull();
+        Config = config!;
     }
 
-    protected IImporter GetImporter(ImportType type)
-    {
-        var importers = _host.Services.GetRequiredService<IIndex<ImportType, IImporter>>();
-        importers.Should().NotBeNull();
+    protected ILogger? Logger { get; }
+    protected IServiceProvider Services { get; }
+    protected TestConfig Config { get; }
 
-        importers.TryGetValue(type, out var retVal).Should().BeTrue();
+    private IServiceProvider CreateHost() =>
+        new HostBuilder()
+           .ConfigureAppConfiguration(ConfigureApp)
+           .ConfigureServices( CreateServices )
+                         .Build()
+                         .Services;
 
-        return retVal;
-    }
-
-    protected IExporter GetExporter(ExportType type)
-    {
-        var exporters = _host.Services.GetRequiredService<IIndex<ExportType, IExporter>>();
-        exporters.Should().NotBeNull();
-
-        exporters.TryGetValue(type, out var retVal).Should().BeTrue();
-
-        return retVal;
-    }
-
-    protected IExportConfig GetExportConfig()
-    {
-        return _host.Services.GetRequiredService<IExportConfig>();
-    }
-
-    private IHost CreateHost()
-    {
-        var hostConfig = new J4JHostConfiguration(AppEnvironment.Console)
-                        .Publisher("J4JSoftware")
-                        .ApplicationName("Tests.GeoProcessor")
-                        .AddApplicationConfigurationFile("appConfig.json")
-                        .LoggerInitializer(LoggerInitializer)
-                        .AddConfigurationInitializers(SetupConfigurationEnvironment)
-                        .AddDependencyInjectionInitializers(SetupDependencyInjection);
-
-        hostConfig.MissingRequirements.Should().Be( J4JHostRequirements.AllMet );
-
-        var retVal = hostConfig.Build();
-        retVal.Should().NotBeNull();
-
-        return retVal!;
-    }
-
-    private ILogger LoggerInitializer( IConfiguration config, J4JHostConfiguration hostConfig ) =>
-        new LoggerConfiguration()
-           .WriteTo.Debug()
-           .CreateLogger();
-
-    private void SetupConfigurationEnvironment( IConfigurationBuilder builder )
+    private void ConfigureApp( HostBuilderContext hbc, IConfigurationBuilder builder )
     {
         builder.AddUserSecrets<TestBase>();
     }
 
-    private void SetupDependencyInjection( HostBuilderContext hbc, ContainerBuilder builder )
+    private void CreateServices( HostBuilderContext hbc, IServiceCollection services )
     {
-        builder.Register( _ => hbc.Configuration.Get<GeoConfig>() ?? new GeoConfig() )
-               .AsImplementedInterfaces()
-               .SingleInstance();
+        services.AddSingleton<TestConfig>( hbc.Configuration.Get<TestConfig>() ?? new TestConfig() );
+
+        var seriLogger = new LoggerConfiguration()
+                        .MinimumLevel.Verbose()
+                        .WriteTo.Debug()
+                        .CreateLogger();
+
+        services.AddSingleton( new LoggerFactory().AddSerilog( seriLogger ) );
+        
+        services.AddTransient<GpxImporter2>( s => new GpxImporter2( s.GetRequiredService<ILoggerFactory>() ) );
+
+        services.AddSingleton<FileImporterFactory>( s =>
+        {
+            var retVal = new FileImporterFactory( s.GetService<ILoggerFactory>() );
+            retVal.InitializeFactory();
+
+            return retVal;
+        } );
+
+        services.AddSingleton<RouteProcessorFactory>(
+            s =>
+            {
+                var retVal = new RouteProcessorFactory( s.GetService<ILoggerFactory>() );
+                retVal.InitializeFactory();
+
+                return retVal;
+            } );
+
+        services.AddTransient<RouteBuilder>( s => new RouteBuilder( s.GetRequiredService<FileImporterFactory>(),
+                                                                    s.GetRequiredService<RouteProcessorFactory>(),
+                                                                    s.GetService<ILoggerFactory>() ) );
+
+    }
+
+    protected Task LogMessage( ProcessingMessage mesg )
+    {
+        Logger?.LogInformation("{phase} {mesg}", mesg.Phase, mesg.Message );
+
+        return Task.CompletedTask;
+    }
+
+    protected Task LogStatus( StatusInformation info )
+    {
+        if( info.TotalToProcess <= 0 )
+            Logger?.LogInformation( "{phase} processed {items} items", info.Phase, info.Processed );
+        else
+            Logger?.LogInformation( "{phase} processed {items} of {total} items",
+                                    info.Phase,
+                                    info.Processed,
+                                    info.TotalToProcess );
+
+        return Task.CompletedTask;
     }
 }
