@@ -3,9 +3,9 @@
 namespace J4JSoftware.GeoProcessor;
 
 [AttributeUsage(AttributeTargets.Class, Inherited=false)]
-public class FileTypeAttribute : Attribute
+public class ImportFileTypeAttribute : Attribute
 {
-    public FileTypeAttribute(
+    public ImportFileTypeAttribute(
         string fileType
     )
     {
