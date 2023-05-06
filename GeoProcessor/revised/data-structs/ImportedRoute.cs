@@ -2,4 +2,4 @@
 
 namespace J4JSoftware.GeoProcessor;
 
-public record ImportedRoute( string FolderName, List<Coordinate2> Coordinates );
+public record ImportedRoute( string RouteName, List<Coordinate2> Coordinates );
