@@ -23,14 +23,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Xml.Linq;
 
 namespace J4JSoftware.GeoProcessor;
 
 public static class GeoExtensions
 {
-    public const double RadiansPerDegree = Math.PI / 180;
-    public const double DegreesPerRadian = 180 / Math.PI;
-
     public static bool SnapsToRoute( this ProcessorType procType )
     {
         var memInfo = typeof( ProcessorType ).GetField( procType.ToString() );
@@ -70,36 +68,55 @@ public static class GeoExtensions
         return handlerType.GetCustomAttribute<TAttr>();
     }
 
+    public static double GetDistance( double lat1, double long1, double lat2, double long2 )
+    {
+        var ptPair = new PointPair( new Coordinate2( lat1, long1 ), new Coordinate2( lat2, long2 ) );
+        return ptPair.GetDistance();
+    }
+
     public static Distance GetDistance( Coordinate c1, Coordinate c2 )
     {
-        var deltaLat = ( c2.Latitude - c1.Latitude ) * RadiansPerDegree;
-        var deltaLong = ( c2.Longitude - c1.Longitude ) * RadiansPerDegree;
+        var miles = GetDistance( new PointPair( new Coordinate2( c1.Latitude, c1.Longitude ),
+                                                new Coordinate2( c2.Latitude, c2.Longitude ) ) );
+
+        return new Distance( UnitTypes.mi, miles );
+    }
+
+    public static double GetDistance( this PointPair pointPair, bool inKilometers = true )
+    {
+        var deltaLat = ( pointPair.Second.Latitude - pointPair.First.Latitude ) * GeoConstants.RadiansPerDegree;
+        var deltaLong = ( pointPair.Second.Longitude - pointPair.First.Longitude ) * GeoConstants.RadiansPerDegree;
 
         var h1 = Math.Sin( deltaLat / 2 ) * Math.Sin( deltaLat / 2 )
-          + Math.Cos( c1.Latitude * RadiansPerDegree )
-          * Math.Cos( c2.Latitude * RadiansPerDegree )
+          + Math.Cos( pointPair.First.Latitude * GeoConstants.RadiansPerDegree )
+          * Math.Cos( pointPair.Second.Latitude * GeoConstants.RadiansPerDegree )
           * Math.Sin( deltaLong / 2 )
           * Math.Sin( deltaLong / 2 );
 
         var h2 = 2 * Math.Asin( Math.Min( 1, Math.Sqrt( h1 ) ) );
 
-        return new Distance( UnitTypes.mi, h2 * 3958.8 );
+        return h2 * ( inKilometers ? GeoConstants.EarthRadiusInKilometers : GeoConstants.EarthRadiusInMiles );
     }
 
-    public static double GetBearing( Coordinate c1, Coordinate c2 )
+    public static double GetBearing(Coordinate c1, Coordinate c2) =>
+        GetBearing(new PointPair(new Coordinate2(c1.Latitude, c1.Longitude),
+                                  new Coordinate2(c2.Latitude, c2.Longitude)));
+
+    public static double GetBearing( this PointPair pointPair )
     {
-        var deltaLongitude = ( c2.Longitude - c1.Longitude ) * RadiansPerDegree;
+        var deltaLongitude = ( pointPair.Second.Longitude - pointPair.First.Longitude ) * GeoConstants.RadiansPerDegree;
 
-        var y = Math.Sin( deltaLongitude ) * Math.Cos( c2.Latitude * RadiansPerDegree );
+        var y = Math.Sin( deltaLongitude ) * Math.Cos( pointPair.Second.Latitude * GeoConstants.RadiansPerDegree );
 
-        var x = Math.Cos( c1.Latitude * RadiansPerDegree ) * Math.Sin( c2.Latitude * RadiansPerDegree )
-          - Math.Sin( c1.Latitude * RadiansPerDegree )
-          * Math.Cos( c2.Latitude * RadiansPerDegree )
+        var x = Math.Cos( pointPair.First.Latitude * GeoConstants.RadiansPerDegree )
+          * Math.Sin( pointPair.Second.Latitude * GeoConstants.RadiansPerDegree )
+          - Math.Sin( pointPair.First.Latitude * GeoConstants.RadiansPerDegree )
+          * Math.Cos( pointPair.Second.Latitude * GeoConstants.RadiansPerDegree )
           * Math.Cos( deltaLongitude );
 
         var theta = Math.Atan2( y, x );
 
-        return ( theta * DegreesPerRadian + 360 ) % 360;
+        return ( theta * GeoConstants.DegreesPerRadian + 360 ) % 360;
     }
 
     public static (double avg, double stdev) GetBearingStatistics(
@@ -139,5 +156,70 @@ public static class GeoExtensions
             Latitude = coordinate.Latitude,
             Longitude = coordinate.Longitude
         };
+    }
+
+    public static bool IsNamedElement( this XElement element, string elementName ) =>
+        element.Name.LocalName.Equals( elementName, StringComparison.OrdinalIgnoreCase );
+
+    public static string? GetFirstDescendantValue( this XElement element, string elementName ) =>
+        element.Descendants()
+               .FirstOrDefault( x => x.Name.LocalName.Equals( elementName, StringComparison.OrdinalIgnoreCase ) )
+              ?.Value;
+
+    public static List<XElement> GetNamedDescendants( this XElement element, string descendantName ) =>
+        element.Descendants()
+               .Where( x => x.Name.LocalName.Equals( descendantName, StringComparison.OrdinalIgnoreCase ) )
+               .ToList();
+
+    public static IEnumerable<XElement> GetNamedDescendants( this List<XElement> element, string descendantName ) =>
+        element.SelectMany( x => x.Descendants()
+                                  .Where( y => y.Name.LocalName.Equals( descendantName,
+                                                                        StringComparison.OrdinalIgnoreCase ) ) );
+
+    public static bool TryParseAttribute<T>( this XElement element, string attributeName, out T value )
+    where T : struct
+    {
+        value = default;
+
+        var text = element.Attributes()
+                          .FirstOrDefault(
+                               x => x.Name.LocalName.Equals( attributeName, StringComparison.OrdinalIgnoreCase ) )
+                         ?.Value;
+
+        if( string.IsNullOrEmpty( text ) )
+            return false;
+
+        try
+        {
+            value = (T) Convert.ChangeType( text, typeof( T ) );
+        }
+        catch
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    public static bool TryParseFirstDescendantValue<T>(this XElement parent, string descendentName, out T value)
+        where T : struct
+    {
+        value = default;
+
+        var text = parent.GetFirstDescendantValue(descendentName);
+
+        if (string.IsNullOrEmpty(text))
+            return false;
+
+        try
+        {
+            value = (T)Convert.ChangeType(text, typeof(T));
+        }
+        catch
+        {
+            return false;
+        }
+
+        return true;
     }
 }
