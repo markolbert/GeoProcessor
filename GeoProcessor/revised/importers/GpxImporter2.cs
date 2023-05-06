@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace J4JSoftware.GeoProcessor;
 
-[FileType("gpx")]
+[ImportFileType("gpx")]
 public class GpxImporter2 : FileImporter
 {
     private int _ptNum;

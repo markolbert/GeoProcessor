@@ -18,11 +18,11 @@ public abstract class FileImporter : Importer, IFileImporter
     {
         var type = GetType();
 
-        var fileType = type.GetCustomAttribute<FileTypeAttribute>();
+        var fileType = type.GetCustomAttribute<ImportFileTypeAttribute>();
         if( fileType == null || string.IsNullOrEmpty(fileType.FileType  ) )
         {
-            Logger?.LogCritical( "{type} is not decorated with a valid {fileType}", type, typeof( FileTypeAttribute ) );
-            throw new ArgumentException( $"{type} is not decorated with a valid {typeof( FileTypeAttribute )}" );
+            Logger?.LogCritical( "{type} is not decorated with a valid {fileType}", type, typeof( ImportFileTypeAttribute ) );
+            throw new ArgumentException( $"{type} is not decorated with a valid {typeof( ImportFileTypeAttribute )}" );
         }
 
         FileType = fileType.FileType;

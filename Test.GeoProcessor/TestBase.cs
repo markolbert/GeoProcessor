@@ -70,8 +70,18 @@ public class TestBase
                 return retVal;
             } );
 
+        services.AddSingleton<ImportFilterFactory>(
+            s =>
+            {
+                var retVal = new ImportFilterFactory(s.GetService<ILoggerFactory>());
+                retVal.InitializeFactory();
+
+                return retVal;
+            });
+
         services.AddTransient<RouteBuilder>( s => new RouteBuilder( s.GetRequiredService<FileImporterFactory>(),
                                                                     s.GetRequiredService<RouteProcessorFactory>(),
+                                                                    s.GetRequiredService<ImportFilterFactory>(),
                                                                     s.GetService<ILoggerFactory>() ) );
 
     }
