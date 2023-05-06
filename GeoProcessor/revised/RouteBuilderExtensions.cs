@@ -44,6 +44,18 @@ public static class RouteBuilderExtensions
         return builder;
     }
 
+    public static RouteBuilder.RouteBuilder MergeImportedData( this RouteBuilder.RouteBuilder builder )
+    {
+        builder.MergeImportedData = true;
+        return builder;
+    }
+
+    public static RouteBuilder.RouteBuilder DoNotMergeImportedData(this RouteBuilder.RouteBuilder builder)
+    {
+        builder.MergeImportedData = false;
+        return builder;
+    }
+
     public static RouteBuilder.RouteBuilder AddCoordinates(
         this RouteBuilder.RouteBuilder builder,
         string name,

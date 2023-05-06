@@ -19,6 +19,7 @@ public class RouteBuilder
     private readonly DataImporter _dataImporter;
     private readonly RouteProcessorFactory _processorFactory;
     private readonly List<IImportFilter> _importFilters = new();
+    private readonly ILoggerFactory? _loggerFactory;
     private readonly ILogger? _logger;
 
     private IRouteProcessor2? _processor;
@@ -35,6 +36,8 @@ public class RouteBuilder
         _filterFactory = filterFactory;
         _dataImporter = new DataImporter( loggerFactory );
         _processorFactory = processorFactory;
+
+        _loggerFactory = loggerFactory;
         _logger = loggerFactory?.CreateLogger<RouteBuilder>();
     }
 
@@ -86,12 +89,23 @@ public class RouteBuilder
         if(  filter == null ) 
             return false;
 
+        if( filter is AssembleRoute )
+        {
+            _logger?.LogWarning( "Trying to add {filter}, ignoring (call {method}() instead)",
+                                 typeof( AssembleRoute ),
+                                 nameof( RouteBuilderExtensions.MergeImportedData ) );
+
+            return false;
+        }
+
         if( _importFilters.Any( x => x.FilterName.Equals( filterName, StringComparison.OrdinalIgnoreCase ) ) )
             _logger?.LogWarning( "Ignoring attempt to add additional import filter '{filter}'", filterName );
         else _importFilters.Add( filter );
 
         return true;
     }
+
+    public bool MergeImportedData { get; internal set; }
 
     internal void AddCoordinates(
         string name,
@@ -143,6 +157,15 @@ public class RouteBuilder
 
             importedRoutes.AddRange( await curImport.Importer.ImportAsync( curImport, ctx ) );
         }
+
+        _processor.ImportFilters.AddRange( _importFilters );
+
+        if( !MergeImportedData )
+            return await _processor.ProcessRoute( importedRoutes, ctx );
+
+        if (_processor.ImportFilters.Any())
+            _processor.ImportFilters.Insert(0, new AssembleRoute(_loggerFactory));
+        else _processor.ImportFilters.Add(new AssembleRoute(_loggerFactory));
 
         return await _processor.ProcessRoute( importedRoutes, ctx );
     }
