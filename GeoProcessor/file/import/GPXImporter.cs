@@ -33,13 +33,6 @@ namespace J4JSoftware.GeoProcessor;
 [ Importer( ImportType.GPX ) ]
 public class GpxImporter : FileHandler, IImporter
 {
-    private const string TrackName = "trk";
-    private const string RouteName = "name";
-    private const string TrackSegmentName = "trkSeg";
-    private const string TrackPointName = "trkpt";
-    private const string LongitudeName = "lon";
-    private const string LatitudeName = "lat";
-
     public GpxImporter( 
         IImportConfig config, 
         ILoggerFactory? loggerFactory = null 
@@ -78,15 +71,15 @@ public class GpxImporter : FileHandler, IImporter
         var segNum = 0;
 
         foreach( var track in xDoc.Descendants()
-                                  .Where( x => x.Name.LocalName.Equals( TrackName, StringComparison.OrdinalIgnoreCase ) ) )
+                                  .Where( x => x.Name.LocalName.Equals( GeoConstants.TrackName, StringComparison.OrdinalIgnoreCase ) ) )
         {
             var trkName =
                 track.Descendants().SingleOrDefault(
-                    x => x.Name.LocalName.Equals( RouteName, StringComparison.OrdinalIgnoreCase ) )?.Value
+                    x => x.Name.LocalName.Equals( GeoConstants.RouteName, StringComparison.OrdinalIgnoreCase ) )?.Value
              ?? "Unnamed Route";
 
             foreach( var trackSeg in track.Descendants()
-                                          .Where( x => x.Name.LocalName.Equals( TrackSegmentName, StringComparison.OrdinalIgnoreCase ) ) )
+                                          .Where( x => x.Name.LocalName.Equals( GeoConstants.TrackSegmentName, StringComparison.OrdinalIgnoreCase ) ) )
             {
                 var curDoc = new PointSet
                 {
@@ -99,10 +92,10 @@ public class GpxImporter : FileHandler, IImporter
 
                 foreach( var point in trackSeg.Descendants()
                                               .Where( x =>
-                                                          x.Name.LocalName.Equals( TrackPointName, StringComparison.OrdinalIgnoreCase ) ) )
+                                                          x.Name.LocalName.Equals( GeoConstants.TrackPointName, StringComparison.OrdinalIgnoreCase ) ) )
                 {
-                    if( !ValidateDouble( point, LongitudeName, "longitude", out var longitude )
-                    || !ValidateDouble( point, LatitudeName, "latitude", out var latitude ) )
+                    if( !ValidateDouble( point, GeoConstants.LongitudeName, "longitude", out var longitude )
+                    || !ValidateDouble( point, GeoConstants.LatitudeName, "latitude", out var latitude ) )
                         continue;
 
                     prevPoint = curDoc.Points.Count == 0
