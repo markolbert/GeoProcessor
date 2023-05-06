@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Xml.Linq;
 
 namespace J4JSoftware.GeoProcessor;
@@ -81,6 +82,9 @@ public static class GeoExtensions
 
         return new Distance( UnitTypes.mi, miles );
     }
+
+    public static double GetDistance( this Coordinate2 start, Coordinate2 end, bool inKilometers = true ) =>
+        GetDistance( new PointPair( start, end ), inKilometers );
 
     public static double GetDistance( this PointPair pointPair, bool inKilometers = true )
     {

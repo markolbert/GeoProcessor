@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,10 +12,13 @@ public abstract class RouteProcessor2 : MessageBasedTask, IRouteProcessor2
 {
     protected RouteProcessor2(
         string? mesgPrefix = null,
-        ILoggerFactory? loggerFactory = null
+        ILoggerFactory? loggerFactory = null,
+        params IImportFilter[] requiredImportFilters
     )
         : base( mesgPrefix, loggerFactory )
     {
+        ImportFilters = requiredImportFilters.ToList();
+
         var type = GetType();
         var procAttr = type.GetCustomAttribute<RouteProcessorAttribute2>();
 
@@ -32,6 +36,7 @@ public abstract class RouteProcessor2 : MessageBasedTask, IRouteProcessor2
     }
 
     public string ProcessorName { get; }
+    public List<IImportFilter> ImportFilters { get; }
     public string ApiKey { get; set; } = string.Empty;
     public TimeSpan RequestTimeout { get; set; } = GeoConstants.DefaultRequestTimeout;
 
@@ -43,6 +48,11 @@ public abstract class RouteProcessor2 : MessageBasedTask, IRouteProcessor2
     )
     {
         await OnProcessingStarted();
+
+        foreach( var filter in ImportFilters.Distinct())
+        {
+            toProcess = filter.Filter( toProcess );
+        }
 
         var retVal = await ProcessRouteInternalAsync( toProcess, ctx );
 

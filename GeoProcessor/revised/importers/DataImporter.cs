@@ -33,29 +33,9 @@ public class DataImporter : Importer
             return retVal;
         }
 
-        var folder = new ImportedRoute( dataToImport.Name, new List<Coordinate2>() );
+        var route = new ImportedRoute( dataToImport.Name, new List<Coordinate2>( dataToImport.Coordinates ) );
+        retVal.Add( route );
 
-        Coordinate2? prevPt = null;
-        Coordinate2? curStartPt = null;
-
-        foreach( var curPt in dataToImport.Coordinates )
-        {
-            var curPair = prevPt == null ? null : new PointPair( prevPt, curPt );
-            var distanceFromPrevPt = curPair?.GetDistance() ?? double.MaxValue;
-
-            var startPair = curStartPt == null ? null : new PointPair( curStartPt, curPt );
-            var distanceFromStartPt = startPair?.GetDistance() ?? double.MaxValue;
-
-            prevPt = curPt;
-
-            if( distanceFromPrevPt <= dataToImport.MinPointGap
-            && distanceFromStartPt <= dataToImport.MinOverallGap )
-                continue;
-
-            folder.Coordinates.Add( curPt );
-        }
-
-        retVal.Add( folder );
         return retVal;
     }
 }

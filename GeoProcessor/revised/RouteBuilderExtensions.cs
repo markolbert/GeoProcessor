@@ -12,15 +12,10 @@ public static class RouteBuilderExtensions
         string filePath,
         string fileType,
         bool lineStringsOnly = true,
-        double minPointGap = GeoConstants.DefaultMinimumPointGapMeters,
-        double minOverallGap = GeoConstants.DefaultMinimumOverallGapMeters,
         bool throwOnFailure = false
     )
     {
-        minPointGap = minPointGap < 0 ? 0 : minPointGap;
-        minOverallGap = minOverallGap < 0 ? 0 : minOverallGap;
-
-        if ( builder.AddSourceFile( fileType, filePath, lineStringsOnly, minPointGap, minOverallGap )
+        if ( builder.AddSourceFile(fileType, filePath, lineStringsOnly)
          || !throwOnFailure )
             return builder;
 
@@ -31,17 +26,22 @@ public static class RouteBuilderExtensions
         this RouteBuilder.RouteBuilder builder,
         string processor,
         string apiKey,
-        double maxPtSeparation = GeoConstants.DefaultMaxPointSeparationKm,
         TimeSpan? requestTimeout = null,
         bool throwOnFailure = false
     )
     {
         requestTimeout ??= GeoConstants.DefaultRequestTimeout;
 
-        if( builder.UseProcessor( processor, apiKey, maxPtSeparation, requestTimeout.Value ) || !throwOnFailure )
+        if( builder.UseProcessor( processor, apiKey, requestTimeout.Value ) || !throwOnFailure )
             return builder;
 
         throw new ArgumentException( $"Unknown processor" );
+    }
+
+    public static RouteBuilder.RouteBuilder AddImportFilter( this RouteBuilder.RouteBuilder builder, string filterName )
+    {
+        builder.AddImportFilter( filterName );
+        return builder;
     }
 
     public static RouteBuilder.RouteBuilder AddCoordinates(

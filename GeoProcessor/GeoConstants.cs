@@ -10,8 +10,10 @@ public class GeoConstants
     public const double EarthRadiusInKilometers = 6371;
 
     public const double DefaultMaxPointSeparationKm = 2.5;
+    public const double DefaultMaxRouteGapMeters = 500;
+    public const double DefaultSegmentMinimumGapMeters = 10;
     public const double DefaultMinimumPointGapMeters = 200;
-    public const double DefaultMinimumOverallGapMeters = DefaultMinimumPointGapMeters * 5;
+    public const double DefaultMaximumOverallGapMeters = DefaultMinimumPointGapMeters * 5;
 
     public static TimeSpan DefaultRequestTimeout { get; } = TimeSpan.FromSeconds(20);
 

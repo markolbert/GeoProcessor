@@ -17,7 +17,7 @@ public class BingProcessor2 : RouteProcessor2
     public BingProcessor2(
         ILoggerFactory? loggerFactory
     )
-        : base( null, loggerFactory )
+        : base( null, loggerFactory, new InterpolatePoints( loggerFactory ) { MaximumPointGap = 2.5 } )
     {
     }
 
@@ -30,7 +30,7 @@ public class BingProcessor2 : RouteProcessor2
 
         foreach( var importedRoute in importedRoutes )
         {
-            _folderName = importedRoute.FolderName;
+            _folderName = importedRoute.RouteName;
 
             var request = new SnapToRoadRequest
             {
