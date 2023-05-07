@@ -9,9 +9,11 @@ public class GeoConstants
     public const double EarthRadiusInMiles = 3958.8;
     public const double EarthRadiusInKilometers = 6371;
 
+    public const double RouteGapEqualityTolerance = 0.01;
+
     public const double DefaultMaxPointSeparationKm = 2.5;
     public const double DefaultMaxRouteGapMeters = 500;
-    public const double DefaultSegmentMinimumGapMeters = 10;
+    public const double DefaultMaxClusterDiameterMeters = 500;
     public const double DefaultMinimumPointGapMeters = 200;
     public const double DefaultMaximumOverallGapMeters = DefaultMinimumPointGapMeters * 5;
 
