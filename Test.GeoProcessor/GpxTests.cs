@@ -13,7 +13,7 @@ namespace Test.GeoProcessor;
 public class GpxTests : TestBase
 {
     [ Theory ]
-    [ InlineData( "Stinson Beach 2023-4-27.gpx" ) ]
+    [ InlineData( "Sherman Pass.gpx" ) ]
     public async Task CreateBuilder( string fileName )
     {
         var path = Path.Combine( Environment.CurrentDirectory, "gpx", fileName );
@@ -23,11 +23,13 @@ public class GpxTests : TestBase
         routeBuilder.Should().NotBeNull();
 
         routeBuilder!.UseProcessor( "Bing", Config.BingKey )
+                     .AddImportFilter( "Merge Routes" )
+                     .AddImportFilter( "Remove Clusters" )
                      .AddSourceFile( path, "gpx" )
                      .SendStatusReportsTo( LogStatus )
                      .SendMessagesTo( LogMessage );
 
-        var result = await routeBuilder!.BuildAsync( "Test Route" );
+        var result = await routeBuilder!.BuildAsync();
 
         result.Status.Should().NotBe( ProcessRouteStatus.NoResults );
         result.Status.Should().NotBe( ProcessRouteStatus.AllFailed );
