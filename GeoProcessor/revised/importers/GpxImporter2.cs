@@ -11,8 +11,6 @@ namespace J4JSoftware.GeoProcessor;
 [ImportFileType("gpx")]
 public class GpxImporter2 : FileImporter
 {
-    private int _ptNum;
-
     public GpxImporter2(
         ILoggerFactory? loggerFactory = null
     )
@@ -88,9 +86,6 @@ public class GpxImporter2 : FileImporter
                 if (trackPoints.Count < 2)
                     continue;
 
-                Coordinate2? prevPoint = null;
-                _ptNum = 0;
-
                 foreach ( var trackPoint in trackPoints )
                 {
                     if( !trackPoint.TryParseAttribute<double>( GeoConstants.LatitudeName, out var latitude )
@@ -108,16 +103,7 @@ public class GpxImporter2 : FileImporter
                     if (trackPoint.TryParseFirstDescendantValue<DateTime>( GeoConstants.TimeName, out var timestamp))
                         coordinate.Timestamp= timestamp;
 
-                    // we have to respect the maximum allowed separation between
-                    // points, and interpolate when necessary
-                    if( prevPoint != null )
-                        InterpolatePoints( folder, new PointPair(prevPoint, coordinate));
-                    else folder.Coordinates.Add( coordinate );
-
-                    await OnItemProcessed();
-
-                    prevPoint = coordinate;
-                    _ptNum++;
+                    folder.Coordinates.Add( coordinate );
                 }
 
                 if (folder.Coordinates.Any())
@@ -126,34 +112,5 @@ public class GpxImporter2 : FileImporter
         }
 
         return retVal;
-    }
-
-    private void InterpolatePoints( ImportedRoute importedRoute, PointPair ptPair )
-    {
-        var separation = ptPair.GetDistance();
-
-        if( separation < MaxPointSeparation )
-            importedRoute.Coordinates.Add( ptPair.Second );
-        else
-        {
-            var steps = (int) Math.Ceiling( separation / MaxPointSeparation );
-
-            var deltaLat = ( ptPair.Second.Latitude - ptPair.First.Latitude ) / steps;
-            var deltaLong = (ptPair.Second.Longitude - ptPair.First.Longitude) / steps;
-            var deltaElevation = (ptPair.Second.Elevation - ptPair.First.Elevation ) / steps;
-            var deltaTime = (ptPair.Second.Timestamp - ptPair.First.Timestamp ) / steps;
-
-            for( var idx = 0; idx <= steps; idx++ )
-            {
-                var interpolated = new Coordinate2( ptPair.First.Latitude + idx * deltaLat,
-                                                    ptPair.First.Longitude + idx * deltaLong, true )
-                {
-                    Elevation = ptPair.First.Elevation + idx * deltaElevation,
-                    Timestamp = ptPair.First.Timestamp + idx * deltaTime
-                };
-
-                importedRoute.Coordinates.Add( interpolated );
-            }
-        }
     }
 }
