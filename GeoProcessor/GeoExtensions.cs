@@ -226,4 +226,23 @@ public static class GeoExtensions
 
         return true;
     }
+
+    public static Coordinate2 Start( this ImportedRoute route ) =>
+        route.Coordinates.FirstOrDefault() ?? new Coordinate2( 0, 0 );
+
+    public static Coordinate2 End(this ImportedRoute route) =>
+        route.Coordinates.LastOrDefault() ?? new Coordinate2(0, 0);
+
+    public static double StartToStart( this ImportedRoute route1, ImportedRoute route2, bool inKilometers = true ) =>
+        new PointPair( route1.Start(), route2.Start() ).GetDistance( inKilometers );
+
+    public static double StartToEnd(this ImportedRoute route1, ImportedRoute route2, bool inKilometers = true) =>
+        new PointPair(route1.Start(), route2.End()).GetDistance(inKilometers);
+
+    public static double EndToStart(this ImportedRoute route1, ImportedRoute route2, bool inKilometers = true) =>
+        new PointPair(route1.End(), route2.Start()).GetDistance(inKilometers);
+
+    public static double EndToEnd(this ImportedRoute route1, ImportedRoute route2, bool inKilometers = true) =>
+        new PointPair(route1.End(), route2.End()).GetDistance(inKilometers);
+
 }
