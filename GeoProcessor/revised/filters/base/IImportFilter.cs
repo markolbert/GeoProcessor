@@ -2,7 +2,7 @@
 
 namespace J4JSoftware.GeoProcessor;
 
-public interface IImportFilter : IEqualityComparer<IImportFilter>
+public interface IImportFilter
 {
     string FilterName { get; }
 
