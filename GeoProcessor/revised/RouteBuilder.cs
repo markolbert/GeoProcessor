@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -18,8 +19,7 @@ public class RouteBuilder
     private readonly ImportFilterFactory _filterFactory;
     private readonly DataImporter _dataImporter;
     private readonly RouteProcessorFactory _processorFactory;
-    private readonly List<IImportFilter> _importFilters = new();
-    private readonly ILoggerFactory? _loggerFactory;
+    private readonly List<ImportFilterPriority> _importFilters = new();
     private readonly ILogger? _logger;
 
     private IRouteProcessor2? _processor;
@@ -37,7 +37,6 @@ public class RouteBuilder
         _dataImporter = new DataImporter( loggerFactory );
         _processorFactory = processorFactory;
 
-        _loggerFactory = loggerFactory;
         _logger = loggerFactory?.CreateLogger<RouteBuilder>();
     }
 
@@ -86,32 +85,29 @@ public class RouteBuilder
     internal bool AddImportFilter( string filterName )
     {
         var filter = _filterFactory[ filterName ];
-        if(  filter == null ) 
+        var filterAttr = _filterFactory.GetAttribute(filterName);
+
+        if ( filter == null || filterAttr == null ) 
             return false;
 
-        if( filter is AssembleRoute )
+        var (category, priority) = filterAttr switch
         {
-            _logger?.LogWarning( "Trying to add {filter}, ignoring (call {method}() instead)",
-                                 typeof( AssembleRoute ),
-                                 nameof( RouteBuilderExtensions.MergeImportedData ) );
-
-            return false;
-        }
+            BeforeAllImportFilterAttribute before => ( ImportFilterCategory.BeforeAll, before.Priority ),
+            ImportFilterAttribute normal => ( ImportFilterCategory.Normal, normal.Priority ),
+            AfterAllImportFilterAttribute after => ( ImportFilterCategory.AfterAll, after.Priority ),
+            _ => throw new ArgumentException( $"Unsupported filter attribute type {filterAttr.GetType()}" )
+        };
 
         if( _importFilters.Any( x => x.FilterName.Equals( filterName, StringComparison.OrdinalIgnoreCase ) ) )
             _logger?.LogWarning( "Ignoring attempt to add additional import filter '{filter}'", filterName );
-        else _importFilters.Add( filter );
+        else _importFilters.Add( new ImportFilterPriority( filterName, filter, category, priority ) );
 
         return true;
     }
 
-    public bool MergeImportedData { get; internal set; }
-
     internal void AddCoordinates(
         string name,
-        IEnumerable<Coordinate2> coordinates,
-        double minPointGap,
-        double minOverallGap
+        IEnumerable<Coordinate2> coordinates
     )
     {
         if( string.IsNullOrEmpty( name ) )
@@ -133,17 +129,17 @@ public class RouteBuilder
     public int StatusInterval { get; internal set; } = GeoConstants.DefaultStatusInterval;
     public Func<ProcessingMessage, Task>? MessageReporter { get; internal set; }
 
-    public async Task<ProcessRouteResult> BuildAsync( string routeName, CancellationToken ctx = default )
+    public async Task<ProcessRouteResult> BuildAsync( CancellationToken ctx = default )
     {
         if( !_toImport.Any() )
         {
-            await SendMessage("Startup", "Nothing to process" );
+            await SendMessage( "Startup", "Nothing to process" );
             return ProcessRouteResult.Failed;
         }
 
-        if (_processor == null)
+        if( _processor == null )
         {
-            await SendMessage("Startup", "No route processor defined");
+            await SendMessage( "Startup", "No route processor defined" );
             return ProcessRouteResult.Failed;
         }
 
@@ -159,13 +155,6 @@ public class RouteBuilder
         }
 
         _processor.ImportFilters.AddRange( _importFilters );
-
-        if( !MergeImportedData )
-            return await _processor.ProcessRoute( importedRoutes, ctx );
-
-        if (_processor.ImportFilters.Any())
-            _processor.ImportFilters.Insert(0, new AssembleRoute(_loggerFactory));
-        else _processor.ImportFilters.Add(new AssembleRoute(_loggerFactory));
 
         return await _processor.ProcessRoute( importedRoutes, ctx );
     }

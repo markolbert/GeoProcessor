@@ -44,30 +44,13 @@ public static class RouteBuilderExtensions
         return builder;
     }
 
-    public static RouteBuilder.RouteBuilder MergeImportedData( this RouteBuilder.RouteBuilder builder )
-    {
-        builder.MergeImportedData = true;
-        return builder;
-    }
-
-    public static RouteBuilder.RouteBuilder DoNotMergeImportedData(this RouteBuilder.RouteBuilder builder)
-    {
-        builder.MergeImportedData = false;
-        return builder;
-    }
-
     public static RouteBuilder.RouteBuilder AddCoordinates(
         this RouteBuilder.RouteBuilder builder,
         string name,
-        List<Coordinate2> coordinates,
-        double minPointGap = 0,
-        double minOverallGap = 0
+        List<Coordinate2> coordinates
     )
     {
-        minPointGap = minPointGap < 0 ? 0 : minPointGap;
-        minOverallGap = minOverallGap < 0 ? 0 : minOverallGap;
-
-        builder.AddCoordinates( name, coordinates, minPointGap, minOverallGap );
+        builder.AddCoordinates( name, coordinates );
         return builder;
     }
 
