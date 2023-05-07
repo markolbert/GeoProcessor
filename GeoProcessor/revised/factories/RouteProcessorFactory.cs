@@ -4,14 +4,14 @@ using Microsoft.Extensions.Logging;
 
 namespace J4JSoftware.GeoProcessor;
 
-public class RouteProcessorFactory : NamedTypeFactory<IRouteProcessor2, RouteProcessorAttribute2>
+public class RouteProcessorFactory : NamedTypeFactory<IRouteProcessor2>
 {
     private readonly ILoggerFactory? _loggerFactory;
 
     public RouteProcessorFactory(
         ILoggerFactory? loggerFactory = null
     )
-        : base( x => x.Processor, loggerFactory )
+        : base( loggerFactory )
     {
         _loggerFactory = loggerFactory;
     }
@@ -21,6 +21,12 @@ public class RouteProcessorFactory : NamedTypeFactory<IRouteProcessor2, RoutePro
         var ctorArgs = ctor.GetParameters();
 
         return ctorArgs.Length == 1 && ctorArgs[0].ParameterType == typeof(ILoggerFactory);
+    }
+
+    protected override NamedTypeAttributeInfo? GetAttributeInfo(Type itemType)
+    {
+        var attr = itemType.GetCustomAttribute<RouteProcessorAttribute2>();
+        return attr == null ? null : new NamedTypeAttributeInfo(attr.Processor, attr);
     }
 
     protected override IRouteProcessor2? CreateInstance( Type type ) =>

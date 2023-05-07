@@ -4,14 +4,14 @@ using Microsoft.Extensions.Logging;
 
 namespace J4JSoftware.GeoProcessor;
 
-public class FileImporterFactory : NamedTypeFactory<IFileImporter, ImportFileTypeAttribute>
+public class FileImporterFactory : NamedTypeFactory<IFileImporter>
 {
     private readonly ILoggerFactory? _loggerFactory;
 
     public FileImporterFactory(
         ILoggerFactory? loggerFactory = null
     )
-        : base( x => x.FileType, loggerFactory )
+        : base( loggerFactory )
     {
         _loggerFactory = loggerFactory;
     }
@@ -21,6 +21,12 @@ public class FileImporterFactory : NamedTypeFactory<IFileImporter, ImportFileTyp
         var ctorArgs = ctor.GetParameters();
 
         return ctorArgs.Length == 1 && ctorArgs[ 0 ].ParameterType == typeof( ILoggerFactory );
+    }
+
+    protected override NamedTypeAttributeInfo? GetAttributeInfo( Type itemType )
+    {
+        var attr = itemType.GetCustomAttribute<ImportFileTypeAttribute>();
+        return attr == null ? null : new NamedTypeAttributeInfo( attr.FileType, attr );
     }
 
     protected override IFileImporter? CreateInstance( Type type ) =>
