@@ -17,8 +17,21 @@ public class BingProcessor2 : RouteProcessor2
     public BingProcessor2(
         ILoggerFactory? loggerFactory
     )
-        : base( null, loggerFactory, new InterpolatePoints( loggerFactory ) { MaximumPointGap = 2.5 } )
+        : base( null, loggerFactory, CreateRequiredFilters(loggerFactory) )
     {
+    }
+
+    private static ImportFilterPriority[] CreateRequiredFilters( ILoggerFactory? loggerFactory )
+    {
+        var interpolateFilter = new InterpolatePoints( loggerFactory ) { MaximumPointGap = 2.5 };
+
+        return new[]
+        {
+            new ImportFilterPriority( interpolateFilter.FilterName,
+                                      interpolateFilter,
+                                      ImportFilterCategory.AfterAll,
+                                      100 )
+        };
     }
 
     protected override async Task<ProcessRouteResult> ProcessRouteInternalAsync(
