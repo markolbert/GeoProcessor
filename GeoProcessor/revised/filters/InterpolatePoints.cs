@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace J4JSoftware.GeoProcessor;
 
-[ImportFilter("Interpolate Points")]
+[AfterAllImportFilter("Interpolate Points", 0)]
 public class InterpolatePoints : ImportFilter
 {
     private double _maxGap = GeoConstants.DefaultMaxPointSeparationKm;

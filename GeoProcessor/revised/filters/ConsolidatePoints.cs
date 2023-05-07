@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace J4JSoftware.GeoProcessor;
 
-[ImportFilter("Consolidate Points")]
+[ImportFilter("Consolidate Points", 100)]
 public class ConsolidatePoints : ImportFilter
 {
     private double _minSep = GeoConstants.DefaultMinimumPointGapMeters;
