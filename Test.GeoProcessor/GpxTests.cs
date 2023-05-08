@@ -22,7 +22,7 @@ public class GpxTests : TestBase
         var routeBuilder = Services.GetService<RouteBuilder>();
         routeBuilder.Should().NotBeNull();
 
-        routeBuilder!.SnapWithBing()
+        routeBuilder!.SnapWithBing( Config.BingKey )
                      .MergeRoutes()
                      .RemoveClusters()
                      .AddGpxFile( path )
