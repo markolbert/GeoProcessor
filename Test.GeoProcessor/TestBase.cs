@@ -51,34 +51,6 @@ public class TestBase
 
         services.AddSingleton( new LoggerFactory().AddSerilog( seriLogger ) );
         
-        services.AddTransient<GpxImporter2>( s => new GpxImporter2( s.GetRequiredService<ILoggerFactory>() ) );
-
-        services.AddSingleton<FileImporterFactory>( s =>
-        {
-            var retVal = new FileImporterFactory( s.GetService<ILoggerFactory>() );
-            retVal.InitializeFactory();
-
-            return retVal;
-        } );
-
-        services.AddSingleton<RouteProcessorFactory>(
-            s =>
-            {
-                var retVal = new RouteProcessorFactory( s.GetService<ILoggerFactory>() );
-                retVal.InitializeFactory();
-
-                return retVal;
-            } );
-
-        services.AddSingleton<ImportFilterFactory>(
-            s =>
-            {
-                var retVal = new ImportFilterFactory(s.GetService<ILoggerFactory>());
-                retVal.InitializeFactory();
-
-                return retVal;
-            });
-
         services.AddTransient<RouteBuilder>( s => new RouteBuilder( s.GetService<ILoggerFactory>() ) );
 
     }
