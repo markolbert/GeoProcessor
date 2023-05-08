@@ -41,9 +41,9 @@ public static class RouteBuilderExtensions
         return builder;
     }
 
-    public static RouteBuilder.RouteBuilder SnapWithBing( this RouteBuilder.RouteBuilder builder )
+    public static RouteBuilder.RouteBuilder SnapWithBing( this RouteBuilder.RouteBuilder builder, string apiKey )
     {
-        builder.SnapProcessor = new BingProcessor2( builder.LoggerFactory );
+        builder.SnapProcessor = new BingProcessor2( builder.LoggerFactory ) { ApiKey = apiKey };
         return builder;
     }
 
