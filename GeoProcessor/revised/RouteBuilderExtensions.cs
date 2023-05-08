@@ -1,56 +1,107 @@
-﻿using System;
+﻿using J4JSoftware.GeoProcessor.RouteBuilder;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace J4JSoftware.GeoProcessor;
 
 public static class RouteBuilderExtensions
 {
-    public static RouteBuilder.RouteBuilder AddSourceFile(
+    public static RouteBuilder.RouteBuilder AddGpxFile(
         this RouteBuilder.RouteBuilder builder,
         string filePath,
-        string fileType,
-        bool lineStringsOnly = true,
-        bool throwOnFailure = false
+        bool lineStringsOnly = true
     )
     {
-        if ( builder.AddSourceFile(fileType, filePath, lineStringsOnly)
-         || !throwOnFailure )
-            return builder;
+        var importer = new GpxImporter2( builder.LoggerFactory ) { LineStringsOnly = lineStringsOnly };
 
-        throw new ArgumentException( $"Invalid source file or file type" );
-    }
+        if( !File.Exists( filePath ) )
+            builder.Logger?.LogError( "{filePath} does not exist", filePath );
+        else builder.AddDataSource( new FileToImport( filePath, importer ) );
 
-    public static RouteBuilder.RouteBuilder UseProcessor(
-        this RouteBuilder.RouteBuilder builder,
-        string processor,
-        string apiKey,
-        TimeSpan? requestTimeout = null,
-        bool throwOnFailure = false
-    )
-    {
-        requestTimeout ??= GeoConstants.DefaultRequestTimeout;
-
-        if( builder.UseProcessor( processor, apiKey, requestTimeout.Value ) || !throwOnFailure )
-            return builder;
-
-        throw new ArgumentException( $"Unknown processor" );
-    }
-
-    public static RouteBuilder.RouteBuilder AddImportFilter( this RouteBuilder.RouteBuilder builder, string filterName )
-    {
-        builder.AddImportFilter( filterName );
         return builder;
     }
 
     public static RouteBuilder.RouteBuilder AddCoordinates(
         this RouteBuilder.RouteBuilder builder,
-        string name,
-        List<Coordinate2> coordinates
+        string collectionName,
+        IEnumerable<Coordinate2> coordinates
     )
     {
-        builder.AddCoordinates( name, coordinates );
+        if (string.IsNullOrEmpty(collectionName))
+            collectionName = "Coordinate Collection";
+
+        builder.AddDataSource( new DataToImport( collectionName,
+                                                 coordinates,
+                                                 new DataImporter( builder.LoggerFactory ) ) );
+
+        return builder;
+    }
+
+    public static RouteBuilder.RouteBuilder SnapWithBing( this RouteBuilder.RouteBuilder builder )
+    {
+        builder.SnapProcessor = new BingProcessor2( builder.LoggerFactory );
+        return builder;
+    }
+
+    public static RouteBuilder.RouteBuilder SnapWithGoogle(this RouteBuilder.RouteBuilder builder)
+    {
+        builder.SnapProcessor = new GoogleProcessor2(builder.LoggerFactory);
+        return builder;
+    }
+
+    public static RouteBuilder.RouteBuilder ConsolidatePoints(
+        this RouteBuilder.RouteBuilder builder,
+        double minPointGap,
+        double maxOverallGap
+    )
+    {
+        var filter = new ConsolidatePoints( builder.LoggerFactory )
+        {
+            MaximumOverallGap = maxOverallGap, MinimumPointGap = minPointGap
+        };
+
+        builder.AddImportFilter( filter );
+
+        return builder;
+    }
+
+    public static RouteBuilder.RouteBuilder InterpolatePoints(
+        this RouteBuilder.RouteBuilder builder,
+        double maxSeparation = GeoConstants.DefaultMaxPointSeparationKm
+    )
+    {
+        var filter = new InterpolatePoints( builder.LoggerFactory ) { MaximumPointSeparation = maxSeparation };
+
+        builder.AddImportFilter( filter );
+
+        return builder;
+    }
+
+    public static RouteBuilder.RouteBuilder MergeRoutes(
+        this RouteBuilder.RouteBuilder builder,
+        double maxRouteGap = GeoConstants.DefaultMaxRouteGapMeters
+    )
+    {
+        var filter = new MergeRoutes( builder.LoggerFactory ) { MaximumRouteGap = maxRouteGap };
+
+        builder.AddImportFilter( filter );
+
+        return builder;
+    }
+
+    public static RouteBuilder.RouteBuilder RemoveClusters(
+        this RouteBuilder.RouteBuilder builder,
+        double maxClusterDiameter = GeoConstants.DefaultMaxClusterDiameterMeters
+    )
+    {
+        var filter = new RemoveClusters( builder.LoggerFactory ) { MaximumClusterDiameter = maxClusterDiameter };
+
+        builder.AddImportFilter( filter );
+
         return builder;
     }
 
