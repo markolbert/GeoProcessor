@@ -19,6 +19,7 @@ public class Coordinate2
     public double Longitude { get; }
     public bool Interpolated { get; }
 
-    public double Elevation { get; set; }
-    public DateTime Timestamp { get; set; }
+    public double? Elevation { get; set; }
+    public DateTime? Timestamp { get; set; }
+    public string? Description { get; set; }
 }
