@@ -7,16 +7,16 @@ namespace J4JSoftware.GeoProcessor;
 
 public abstract class ImportFilter : IImportFilter
 {
-    public static NamedTypeAttributeInfo? GetAttributeInfo(Type filterType)
+    public static ImportFilterAttributeInfo? GetAttributeInfo(Type filterType)
     {
         if( TryGetFilterAttribute<ImportFilterAttribute>( filterType, out var attr1 ) )
-            return new NamedTypeAttributeInfo( attr1!.FilterName, attr1 );
+            return new ImportFilterAttributeInfo( attr1!.FilterName, attr1 );
 
         if( TryGetFilterAttribute<BeforeAllImportFilterAttribute>( filterType, out var attr2 ) )
-            return new NamedTypeAttributeInfo( attr2!.FilterName, attr2 );
+            return new ImportFilterAttributeInfo( attr2!.FilterName, attr2 );
 
         return TryGetFilterAttribute<AfterAllImportFilterAttribute>( filterType, out var attr3 )
-            ? new NamedTypeAttributeInfo( attr3!.FilterName, attr3 )
+            ? new ImportFilterAttributeInfo( attr3!.FilterName, attr3 )
             : null;
     }
 
