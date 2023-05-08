@@ -55,19 +55,39 @@ public abstract class ImportFilter : IImportFilter
 
         FilterName = attrInfo.Name;
 
-        if( TryGetFilterAttribute( type, attrInfo.Attribute.GetType(), out var attr ) )
-            FilterDescription = attr switch
-            {
-                ImportFilterAttribute normal => normal.Description,
-                BeforeAllImportFilterAttribute before => before.Description,
-                AfterAllImportFilterAttribute after => after.Description,
-                _ => null
-            };
+        if( !TryGetFilterAttribute( type, attrInfo.Attribute.GetType(), out var attr ) )
+            return;
+
+        FilterDescription = attr switch
+        {
+            ImportFilterAttribute normal => normal.Description,
+            BeforeAllImportFilterAttribute before => before.Description,
+            AfterAllImportFilterAttribute after => after.Description,
+            _ => null
+        };
+
+        Category = attr switch
+        {
+            ImportFilterAttribute => ImportFilterCategory.Normal,
+            BeforeAllImportFilterAttribute => ImportFilterCategory.BeforeAll,
+            AfterAllImportFilterAttribute => ImportFilterCategory.AfterAll,
+            _ => throw new ArgumentException( $"Unsupported import filter attribute {attr?.GetType()}" )
+        };
+
+        Priority = attr switch
+        {
+            ImportFilterAttribute normal => normal.Priority,
+            BeforeAllImportFilterAttribute before => before.Priority,
+            AfterAllImportFilterAttribute after => after.Priority,
+            _ => throw new ArgumentException($"Unsupported import filter attribute {attr?.GetType()}")
+        };
     }
 
     protected ILogger? Logger { get; }
 
     public string FilterName { get; }
+    public ImportFilterCategory Category { get; }
+    public uint Priority { get; }
     public string? FilterDescription { get; }
 
     public abstract List<ImportedRoute> Filter( List<ImportedRoute> input );
