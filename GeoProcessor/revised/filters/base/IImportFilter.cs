@@ -8,5 +8,5 @@ public interface IImportFilter
     ImportFilterCategory Category { get; }
     uint Priority { get; }
 
-    List<ImportedRoute> Filter( List<ImportedRoute> input );
+    List<IImportedRoute> Filter( List<IImportedRoute> input );
 }

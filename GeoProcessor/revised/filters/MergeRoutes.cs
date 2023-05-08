@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 
@@ -8,7 +7,7 @@ namespace J4JSoftware.GeoProcessor;
 [BeforeAllImportFilter("Merge Routes", 1)]
 public class MergeRoutes : ImportFilter
 {
-    private double _maxRouteGap = GeoConstants.DefaultMaxRouteGapMeters;
+    private Distance2 _maxRouteGap = new( UnitType.Meters, GeoConstants.DefaultMaxRouteGapMeters );
 
     public MergeRoutes(
         ILoggerFactory? loggerFactory
@@ -17,24 +16,28 @@ public class MergeRoutes : ImportFilter
     {
     }
 
-    public double MaximumRouteGap
+    public Distance2 MaximumRouteGap
     {
         get => _maxRouteGap;
-        set => _maxRouteGap = value <= 0 ? GeoConstants.DefaultMaxRouteGapMeters : value;
+
+        set =>
+            _maxRouteGap = value.Value <= 0
+                ? new Distance2( UnitType.Meters, GeoConstants.DefaultMaxRouteGapMeters )
+                : value;
     }
 
-    public override List<ImportedRoute> Filter( List<ImportedRoute> input )
+    public override List<IImportedRoute> Filter( List<IImportedRoute> input )
     {
         if( input.Count <= 1 )
             return input;
 
-        var filteredInput = input.Where( x => x.Points.Count > 1 )
+        var filteredInput = input.Where( x => x.NumPoints > 1 )
                                  .ToList();
 
         if( filteredInput.Count != input.Count )
             Logger?.LogTrace( "Ignoring routes with less than 2 points" );
 
-        var retVal = new List<ImportedRoute>();
+        var retVal = new List<IImportedRoute>();
 
         var connections = GetConnections(filteredInput);
         var prevConnections = 0;
@@ -44,7 +47,7 @@ public class MergeRoutes : ImportFilter
         {
             var curSet = connections.First();
 
-            var adjacentRoutes = curSet.GetClosest( MaximumRouteGap, GeoConstants.RouteGapEqualityTolerance );
+            var adjacentRoutes = curSet.GetClosest( MaximumRouteGap );
 
             if( adjacentRoutes.Count == 0 )
             {
@@ -60,9 +63,9 @@ public class MergeRoutes : ImportFilter
                 var adjacent = adjacentRoutes[ 0 ];
 
                 // create a merged route using the two routes, honoring the connection
-                var mergedRoute = CreateMergedRoute( filteredInput[ curSet.RouteIndex ],
-                                                     filteredInput[ adjacent.ConnectedRouteIndex ],
-                                                     adjacent.Type );
+                var mergedRoute = new MergedImportedRoute( filteredInput[ curSet.RouteIndex ],
+                                                    filteredInput[ adjacent.ConnectedRouteIndex ],
+                                                    adjacent.Type );
 
                 // remove the two routes from the input set
                 foreach( var toRemove in new[] { curSet.RouteIndex, adjacent.ConnectedRouteIndex }
@@ -86,7 +89,7 @@ public class MergeRoutes : ImportFilter
         return retVal;
     }
 
-    private static List<RouteConnections> GetConnections( List<ImportedRoute> routes )
+    private static List<RouteConnections> GetConnections( List<IImportedRoute> routes )
     {
         var retVal = new List<RouteConnections>();
 
@@ -102,73 +105,23 @@ public class MergeRoutes : ImportFilter
                 curSet.Connections.Add( new RouteConnection( innerIdx,
                                                              RouteConnectionType.StartToStart,
                                                              routes[ outerIdx ]
-                                                                .StartToStart( routes[ innerIdx ] )
-                                                           * 1000 ) );
+                                                                .StartToStart( routes[ innerIdx ] ) ) );
 
                 curSet.Connections.Add( new RouteConnection( innerIdx,
                                                              RouteConnectionType.StartToEnd,
                                                              routes[ outerIdx ]
-                                                                .StartToEnd( routes[ innerIdx ] )
-                                                           * 1000 ) );
+                                                                .StartToEnd( routes[ innerIdx ] ) ) );
 
                 curSet.Connections.Add( new RouteConnection( innerIdx,
                                                              RouteConnectionType.EndToStart,
-                                                             routes[ outerIdx ].EndToStart( routes[ innerIdx ] )
-                                                           * 1000 ) );
+                                                             routes[ outerIdx ].EndToStart( routes[ innerIdx ] ) ) );
 
                 curSet.Connections.Add( new RouteConnection( innerIdx,
                                                              RouteConnectionType.EndToEnd,
-                                                             routes[ outerIdx ].EndToEnd( routes[ innerIdx ] )
-                                                           * 1000 ) );
+                                                             routes[ outerIdx ].EndToEnd( routes[ innerIdx ] ) ) );
             }
 
             retVal.Add( curSet );
-        }
-
-        return retVal;
-    }
-
-    private static ImportedRoute CreateMergedRoute(
-        ImportedRoute route1,
-        ImportedRoute route2,
-        RouteConnectionType connectionType
-    )
-    {
-        var retVal = new ImportedRoute( route1.Points.ToList() ) { RouteName = "Merged Route" };
-
-        // how we add the new points depends on which end of the merged route they're connected to
-        List<Coordinate2>? toAdd;
-
-        switch( connectionType )
-        {
-            case RouteConnectionType.StartToStart:
-            case RouteConnectionType.EndToEnd:
-                toAdd = route2.Points;
-                toAdd.Reverse();
-                break;
-
-            case RouteConnectionType.StartToEnd:
-            case RouteConnectionType.EndToStart:
-                toAdd = route2.Points;
-                break;
-
-            default:
-                // shouldn't ever get here
-                throw new InvalidEnumArgumentException(
-                    $"Unsupported {typeof( RouteConnectionType )} value '{connectionType}'" );
-        }
-
-        switch( connectionType )
-        {
-            case RouteConnectionType.StartToStart:
-            case RouteConnectionType.StartToEnd:
-                retVal.Points.InsertRange( 0, toAdd );
-                break;
-
-            case RouteConnectionType.EndToStart:
-            case RouteConnectionType.EndToEnd:
-                retVal.Points.AddRange( toAdd );
-                break;
         }
 
         return retVal;

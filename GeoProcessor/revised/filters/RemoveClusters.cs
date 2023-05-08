@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 
@@ -8,7 +7,7 @@ namespace J4JSoftware.GeoProcessor;
 [BeforeAllImportFilter("Remove Clusters", 0)]
 public class RemoveClusters : ImportFilter
 {
-    private double _maxClusterDiameter = GeoConstants.DefaultMaxClusterDiameterMeters;
+    private Distance2 _maxClusterDiameter = new( UnitType.Meters, GeoConstants.DefaultMaxClusterDiameterMeters );
 
     public RemoveClusters(
         ILoggerFactory? loggerFactory
@@ -17,13 +16,17 @@ public class RemoveClusters : ImportFilter
     {
     }
 
-    public double MaximumClusterDiameter
+    public Distance2 MaximumClusterDiameter
     {
         get => _maxClusterDiameter;
-        set => _maxClusterDiameter = value <= 0 ? GeoConstants.DefaultMaxClusterDiameterMeters: value;
+
+        set =>
+            _maxClusterDiameter = value.Value <= 0
+                ? new Distance2( UnitType.Meters, GeoConstants.DefaultMaxClusterDiameterMeters )
+                : value;
     }
 
-    public override List<ImportedRoute> Filter( List<ImportedRoute> input )
+    public override List<IImportedRoute> Filter( List<IImportedRoute> input )
     {
         if( !input.Any() )
         {
@@ -31,7 +34,7 @@ public class RemoveClusters : ImportFilter
             return input;
         }
 
-        var retVal = new List<ImportedRoute>();
+        var retVal = new List<IImportedRoute>();
 
         foreach( var route in input )
         {
@@ -41,13 +44,13 @@ public class RemoveClusters : ImportFilter
         return retVal;
     }
 
-    private ImportedRoute FilterRoute( ImportedRoute toFilter )
+    private IImportedRoute FilterRoute( IImportedRoute toFilter )
     {
         var retVal = new ImportedRoute() { RouteName = toFilter.RouteName };
 
         Coordinate2? clusterOrigin = null;
 
-        foreach( var coordinate in toFilter.Points )
+        foreach( var coordinate in toFilter )
         {
             if( clusterOrigin == null )
             {
@@ -58,7 +61,7 @@ public class RemoveClusters : ImportFilter
             }
 
             var ptPair = new PointPair( clusterOrigin, coordinate );
-            if( ptPair.GetDistance()*1000<= MaximumClusterDiameter)
+            if( ptPair.GetDistance() <= MaximumClusterDiameter )
                 continue;
 
             retVal.Points.Add( coordinate );

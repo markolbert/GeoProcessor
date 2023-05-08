@@ -20,12 +20,15 @@ public class BingProcessor2 : RouteProcessor2
     )
         : base( null,
                 loggerFactory,
-                new InterpolatePoints( loggerFactory ) { MaximumPointSeparation = 2.5 } )
+                new InterpolatePoints( loggerFactory )
+                {
+                    MaximumPointSeparation = new Distance2( UnitType.Kilometers, 2.5 )
+                } )
     {
     }
 
     protected override async Task<ProcessRouteResult> ProcessRouteInternalAsync(
-        List<ImportedRoute> importedRoutes,
+        List<IImportedRoute> importedRoutes,
         CancellationToken ctx
     )
     {
@@ -44,8 +47,7 @@ public class BingProcessor2 : RouteProcessor2
                 Interpolate = true,
                 SpeedUnit = SpeedUnitType.MPH,
                 TravelMode = TravelModeType.Driving,
-                Points = importedRoute.Points
-                                      .Select( p => new BingMapsRESTToolkit.Coordinate( p.Latitude, p.Longitude ) )
+                Points = importedRoute.Select( p => new BingMapsRESTToolkit.Coordinate( p.Latitude, p.Longitude ) )
                                       .ToList()
             };
 

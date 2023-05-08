@@ -58,7 +58,7 @@ public class RouteBuilder
             return ProcessRouteResult.Failed;
         }
 
-        var importedRoutes = new List<ImportedRoute>();
+        var importedRoutes = new List<IImportedRoute>();
 
         foreach( var curImport in _dataSources )
         {
@@ -73,10 +73,10 @@ public class RouteBuilder
 
         var retVal = await SnapProcessor.ProcessRoute( importedRoutes, ctx );
 
-        foreach( var exportTarget in _exportTargets )
-        {
-            await exportTarget.Exporter.ExportAsync( retVal.Results, ctx );
-        }
+        //foreach( var exportTarget in _exportTargets )
+        //{
+        //    await exportTarget.Exporter.ExportAsync( retVal.Results, ctx );
+        //}
 
         return retVal;
     }

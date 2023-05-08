@@ -26,6 +26,7 @@ public class ImportedRoute : IImportedRoute
     public string RouteName { get; set; } = "Unnamed Route";
     public string Description { get; set; } = string.Empty;
 
+    public int NumPoints => Points.Count;
     public List<Coordinate2> Points { get; }
 
     public IEnumerator<Coordinate2> GetEnumerator() => ( (IEnumerable<Coordinate2>) Points ).GetEnumerator();

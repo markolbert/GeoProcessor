@@ -43,7 +43,7 @@ public abstract class RouteProcessor2 : MessageBasedTask, IRouteProcessor2
     public double MaxPointSeparation { get; set; } = GeoConstants.DefaultMaxPointSeparationKm;
 
     public async Task<ProcessRouteResult> ProcessRoute(
-        List<ImportedRoute> toProcess,
+        List<IImportedRoute> toProcess,
         CancellationToken ctx = default
     )
     {
@@ -67,7 +67,7 @@ public abstract class RouteProcessor2 : MessageBasedTask, IRouteProcessor2
     }
 
     protected abstract Task<ProcessRouteResult> ProcessRouteInternalAsync(
-        List<ImportedRoute> importedRoutes,
+        List<IImportedRoute> importedRoutes,
         CancellationToken ctx
     );
 }

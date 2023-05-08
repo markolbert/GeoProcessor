@@ -90,5 +90,5 @@ public abstract class ImportFilter : IImportFilter
     public uint Priority { get; }
     public string? FilterDescription { get; }
 
-    public abstract List<ImportedRoute> Filter( List<ImportedRoute> input );
+    public abstract List<IImportedRoute> Filter( List<IImportedRoute> input );
 }

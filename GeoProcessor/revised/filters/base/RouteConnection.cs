@@ -1,24 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace J4JSoftware.GeoProcessor;
 
-public record RouteConnection( int ConnectedRouteIndex, RouteConnectionType Type, double Gap );
+public record RouteConnection( int ConnectedRouteIndex, RouteConnectionType Type, Distance2 Gap );
 
 public record RouteConnections( int RouteIndex, List<RouteConnection> Connections )
 {
-    public List<RouteConnection> GetClosest( double maxGap, double equalityTolerance )
+    public List<RouteConnection> GetClosest( Distance2 maxGap )
     {
         var retVal = new List<RouteConnection>();
 
-        var minGap = double.MaxValue;
+        var minGap = maxGap with { Value = double.MaxValue };
 
         foreach( var connection in Connections )
         {
             if( connection.Gap > maxGap )
                 continue;
 
-            if( Math.Abs( connection.Gap - minGap ) < equalityTolerance )
+            if( connection.Gap == minGap)
                 retVal.Add( connection );
             else
             {

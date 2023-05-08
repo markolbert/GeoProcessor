@@ -12,5 +12,5 @@ public interface IRouteProcessor2 : IMessageBasedTask
     TimeSpan RequestTimeout { get; set; }
     List<IImportFilter> ImportFilters { get; }
 
-    Task<ProcessRouteResult> ProcessRoute( List<ImportedRoute> routes, CancellationToken ctx = default );
+    Task<ProcessRouteResult> ProcessRoute( List<IImportedRoute> routes, CancellationToken ctx = default );
 }

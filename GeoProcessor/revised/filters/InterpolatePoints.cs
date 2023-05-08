@@ -7,7 +7,7 @@ namespace J4JSoftware.GeoProcessor;
 [AfterAllImportFilter("Interpolate Points", 0)]
 public class InterpolatePoints : ImportFilter
 {
-    private double _maxSeparation = GeoConstants.DefaultMaxPointSeparationKm;
+    private Distance2 _maxSeparation = new( UnitType.Kilometers, GeoConstants.DefaultMaxPointSeparationKm );
     private ImportedRoute? _filteredRoute;
 
     public InterpolatePoints(
@@ -17,16 +17,19 @@ public class InterpolatePoints : ImportFilter
     {
     }
 
-    // meters
-    public double MaximumPointSeparation
+    public Distance2 MaximumPointSeparation
     {
         get => _maxSeparation;
-        set => _maxSeparation = value <= 0 ? GeoConstants.DefaultMaxPointSeparationKm : value;
+
+        set =>
+            _maxSeparation = value.Value <= 0
+                ? new Distance2( UnitType.Kilometers, GeoConstants.DefaultMaxPointSeparationKm )
+                : value;
     }
 
-    public override List<ImportedRoute> Filter( List<ImportedRoute> input )
+    public override List<IImportedRoute> Filter( List<IImportedRoute> input )
     {
-        var retVal = new List<ImportedRoute>();
+        var retVal = new List<IImportedRoute>();
 
         foreach (var rawRoute in input)
         {
@@ -34,7 +37,7 @@ public class InterpolatePoints : ImportFilter
 
             _filteredRoute = new ImportedRoute() { RouteName = rawRoute.RouteName, Description = rawRoute.Description };
 
-            foreach (var curPoint in rawRoute.Points)
+            foreach (var curPoint in rawRoute )
             {
                 if (prevPoint == null )
                 {
@@ -80,9 +83,9 @@ public class InterpolatePoints : ImportFilter
         return retVal;
     }
 
-    private void Interpolate( PointPair ptPair, double gap )
+    private void Interpolate( PointPair ptPair, Distance2 gap )
     {
-        var steps = (int) Math.Ceiling( gap / MaximumPointSeparation );
+        var steps = (int) Math.Ceiling( ( gap / MaximumPointSeparation ).Value );
 
         var deltaLat = ( ptPair.Second.Latitude - ptPair.First.Latitude ) / steps;
         var deltaLong = ( ptPair.Second.Longitude - ptPair.First.Longitude ) / steps;

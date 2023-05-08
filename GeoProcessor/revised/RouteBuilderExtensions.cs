@@ -55,10 +55,13 @@ public static class RouteBuilderExtensions
 
     public static RouteBuilder.RouteBuilder ConsolidatePoints(
         this RouteBuilder.RouteBuilder builder,
-        double minPointGap,
-        double maxOverallGap
+        Distance2? minPointGap = null,
+        Distance2? maxOverallGap = null
     )
     {
+        minPointGap ??= new Distance2( UnitType.Meters, GeoConstants.DefaultMinimumPointGapMeters );
+        maxOverallGap ??= new Distance2( UnitType.Meters, GeoConstants.DefaultMaximumOverallGapMeters );
+
         var filter = new ConsolidatePoints( builder.LoggerFactory )
         {
             MaximumOverallGap = maxOverallGap, MinimumPointGap = minPointGap
@@ -71,9 +74,11 @@ public static class RouteBuilderExtensions
 
     public static RouteBuilder.RouteBuilder InterpolatePoints(
         this RouteBuilder.RouteBuilder builder,
-        double maxSeparation = GeoConstants.DefaultMaxPointSeparationKm
+        Distance2? maxSeparation = null
     )
     {
+        maxSeparation ??= new Distance2( UnitType.Kilometers, GeoConstants.DefaultMaxPointSeparationKm );
+
         var filter = new InterpolatePoints( builder.LoggerFactory ) { MaximumPointSeparation = maxSeparation };
 
         builder.AddImportFilter( filter );
@@ -83,9 +88,11 @@ public static class RouteBuilderExtensions
 
     public static RouteBuilder.RouteBuilder MergeRoutes(
         this RouteBuilder.RouteBuilder builder,
-        double maxRouteGap = GeoConstants.DefaultMaxRouteGapMeters
+        Distance2? maxRouteGap = null
     )
     {
+        maxRouteGap ??= new Distance2( UnitType.Meters, GeoConstants.DefaultMaxRouteGapMeters );
+
         var filter = new MergeRoutes( builder.LoggerFactory ) { MaximumRouteGap = maxRouteGap };
 
         builder.AddImportFilter( filter );
@@ -95,9 +102,11 @@ public static class RouteBuilderExtensions
 
     public static RouteBuilder.RouteBuilder RemoveClusters(
         this RouteBuilder.RouteBuilder builder,
-        double maxClusterDiameter = GeoConstants.DefaultMaxClusterDiameterMeters
+        Distance2? maxClusterDiameter = null
     )
     {
+        maxClusterDiameter ??= new Distance2( UnitType.Meters, GeoConstants.DefaultMaxClusterDiameterMeters );
+
         var filter = new RemoveClusters( builder.LoggerFactory ) { MaximumClusterDiameter = maxClusterDiameter };
 
         builder.AddImportFilter( filter );

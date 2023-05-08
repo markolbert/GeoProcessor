@@ -6,8 +6,8 @@ namespace J4JSoftware.GeoProcessor;
 [ImportFilter("Consolidate Points", 100)]
 public class ConsolidatePoints : ImportFilter
 {
-    private double _minSep = GeoConstants.DefaultMinimumPointGapMeters;
-    private double _maxOverallGap = GeoConstants.DefaultMaximumOverallGapMeters;
+    private Distance2 _minSep = new( UnitType.Meters, GeoConstants.DefaultMinimumPointGapMeters );
+    private Distance2 _maxOverallGap = new( UnitType.Meters, GeoConstants.DefaultMaximumOverallGapMeters );
 
     public ConsolidatePoints(
         ILoggerFactory? loggerFactory
@@ -16,23 +16,29 @@ public class ConsolidatePoints : ImportFilter
     {
     }
 
-    // meters
-    public double MinimumPointGap
+    public Distance2 MinimumPointGap
     {
         get => _minSep;
-        set => _minSep = value < 0 ? GeoConstants.DefaultMinimumPointGapMeters : value;
+
+        set =>
+            _minSep = value.Value < 0
+                ? new Distance2( UnitType.Meters, GeoConstants.DefaultMinimumPointGapMeters )
+                : value;
     }
 
-    // meters
-    public double MaximumOverallGap
+    public Distance2 MaximumOverallGap
     {
         get => _maxOverallGap;
-        set => _maxOverallGap = value < 0 ? GeoConstants.DefaultMaximumOverallGapMeters : value;
+
+        set =>
+            _maxOverallGap = value.Value < 0
+                ? new Distance2( UnitType.Meters, GeoConstants.DefaultMaximumOverallGapMeters )
+                : value;
     }
 
-    public override List<ImportedRoute> Filter( List<ImportedRoute> input )
+    public override List<IImportedRoute> Filter( List<IImportedRoute> input )
     {
-        var retVal = new List<ImportedRoute>();
+        var retVal = new List<IImportedRoute>();
 
         foreach( var rawRoute in input )
         {
@@ -45,7 +51,7 @@ public class ConsolidatePoints : ImportFilter
                 Description = rawRoute.Description
             };
 
-            foreach( var curPoint in rawRoute.Points )
+            foreach( var curPoint in rawRoute )
             {
                 if( prevPoint == null || originPoint == null )
                 {
@@ -54,12 +60,10 @@ public class ConsolidatePoints : ImportFilter
                 }
 
                 var curPair = new PointPair( prevPoint, curPoint );
-                // need to convert to meters
-                var curGap = curPair.GetDistance() * 1000;
+                var curGap = curPair.GetDistance();
 
                 var originPair = new PointPair( originPoint, curPoint );
-                // need to convert to meters
-                var originGap = originPair.GetDistance() * 1000;
+                var originGap = originPair.GetDistance();
                 
                 prevPoint = curPoint;
 

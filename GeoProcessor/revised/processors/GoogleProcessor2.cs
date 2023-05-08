@@ -22,7 +22,7 @@ public class GoogleProcessor2 : RouteProcessor2
     }
 
     protected override async Task<ProcessRouteResult> ProcessRouteInternalAsync(
-        List<ImportedRoute> importedRoutes,
+        List<IImportedRoute> importedRoutes,
         CancellationToken ctx
     )
     {
@@ -34,7 +34,7 @@ public class GoogleProcessor2 : RouteProcessor2
             {
                 Interpolate = true,
                 Key = ApiKey,
-                Path = importedRoute.Points.Select(c => new GoogleCoordinates.Coordinate(c.Latitude, c.Longitude))
+                Path = importedRoute.Select(c => new GoogleCoordinates.Coordinate(c.Latitude, c.Longitude))
             };
 
             SnapToRoadsResponse result;
