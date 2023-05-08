@@ -47,9 +47,9 @@ public static class RouteBuilderExtensions
         return builder;
     }
 
-    public static RouteBuilder.RouteBuilder SnapWithGoogle(this RouteBuilder.RouteBuilder builder)
+    public static RouteBuilder.RouteBuilder SnapWithGoogle(this RouteBuilder.RouteBuilder builder, string apiKey )
     {
-        builder.SnapProcessor = new GoogleProcessor2(builder.LoggerFactory);
+        builder.SnapProcessor = new GoogleProcessor2( builder.LoggerFactory ) { ApiKey = apiKey };
         return builder;
     }
 
