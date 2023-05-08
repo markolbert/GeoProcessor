@@ -7,7 +7,7 @@ namespace J4JSoftware.GeoProcessor;
 [AfterAllImportFilter("Interpolate Points", 0)]
 public class InterpolatePoints : ImportFilter
 {
-    private double _maxGap = GeoConstants.DefaultMaxPointSeparationKm;
+    private double _maxSeparation = GeoConstants.DefaultMaxPointSeparationKm;
     private ImportedRoute? _filteredRoute;
 
     public InterpolatePoints(
@@ -18,10 +18,10 @@ public class InterpolatePoints : ImportFilter
     }
 
     // meters
-    public double MaximumPointGap
+    public double MaximumPointSeparation
     {
-        get => _maxGap;
-        set => _maxGap = value <= 0 ? GeoConstants.DefaultMaxPointSeparationKm : value;
+        get => _maxSeparation;
+        set => _maxSeparation = value <= 0 ? GeoConstants.DefaultMaxPointSeparationKm : value;
     }
 
     public override List<ImportedRoute> Filter( List<ImportedRoute> input )
@@ -47,14 +47,14 @@ public class InterpolatePoints : ImportFilter
 
                 prevPoint = curPoint;
 
-                if (gap <= MaximumPointGap)
+                if (gap <= MaximumPointSeparation)
                 {
                     _filteredRoute.Coordinates.Add(curPoint);
                     continue;
                 }
 
                 Logger?.LogTrace("Points exceed maximum gap ({gap}), interpolating: ({lat1}, {long1}), ({lat2}, {long2})",
-                                  MaximumPointGap,
+                                  MaximumPointSeparation,
                                   prevPoint.Latitude,
                                   prevPoint.Longitude,
                                   curPoint.Latitude,
@@ -80,7 +80,7 @@ public class InterpolatePoints : ImportFilter
 
     private void Interpolate( PointPair ptPair, double gap )
     {
-        var steps = (int) Math.Ceiling( gap / MaximumPointGap );
+        var steps = (int) Math.Ceiling( gap / MaximumPointSeparation );
 
         var deltaLat = ( ptPair.Second.Latitude - ptPair.First.Latitude ) / steps;
         var deltaLong = ( ptPair.Second.Longitude - ptPair.First.Longitude ) / steps;
