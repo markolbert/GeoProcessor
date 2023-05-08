@@ -12,7 +12,8 @@ namespace J4JSoftware.GeoProcessor;
 public class BingProcessor2 : RouteProcessor2
 {
     private ProcessRouteResult? _result;
-    private string? _folderName;
+    private string _routeName = "Unnamed Route";
+    private string _routeDescription = string.Empty;
 
     public BingProcessor2(
         ILoggerFactory? loggerFactory
@@ -32,7 +33,8 @@ public class BingProcessor2 : RouteProcessor2
 
         foreach( var importedRoute in importedRoutes )
         {
-            _folderName = importedRoute.RouteName;
+            _routeName = importedRoute.RouteName;
+            _routeDescription = importedRoute.Description;
 
             var request = new SnapToRoadRequest
             {
@@ -42,7 +44,7 @@ public class BingProcessor2 : RouteProcessor2
                 Interpolate = true,
                 SpeedUnit = SpeedUnitType.MPH,
                 TravelMode = TravelModeType.Driving,
-                Points = importedRoute.Coordinates
+                Points = importedRoute.Points
                                       .Select( p => new BingMapsRESTToolkit.Coordinate( p.Latitude, p.Longitude ) )
                                       .ToList()
             };
@@ -82,11 +84,16 @@ public class BingProcessor2 : RouteProcessor2
     private async Task HandleTimeoutExceptionAsync()
     {
         await SendMessage( ExpandedPhase,
-                           $"Bing processing timed out after {RequestTimeout.ToString()}",
+                           $"Bing processing timed out after {RequestTimeout}",
                            true,
                            LogLevel.Error );
 
-        _result!.AddResult( new ExportedRoute( _folderName!, null, SnapProcessStatus.TimeOut ) );
+        _result!.AddResult( new ExportedRoute
+        {
+            RouteName = _routeName,
+            Description = _routeDescription,
+            Status = SnapProcessStatus.TimeOut
+        } );
     }
 
     private async Task HandleOtherRequestExceptionAsync( Exception ex )
@@ -96,7 +103,12 @@ public class BingProcessor2 : RouteProcessor2
                            true,
                            LogLevel.Error );
 
-        _result!.AddResult( new ExportedRoute( _folderName!, null, SnapProcessStatus.OtherRequestFailure ) );
+        _result!.AddResult(new ExportedRoute
+        {
+            RouteName = _routeName,
+            Description = _routeDescription,
+            Status = SnapProcessStatus.OtherRequestFailure
+        });
     }
 
     private async Task HandleInvalidStatusCodeAsync( string description )
@@ -106,7 +118,12 @@ public class BingProcessor2 : RouteProcessor2
                            true,
                            LogLevel.Error );
 
-        _result!.AddResult( new ExportedRoute( _folderName!, null, SnapProcessStatus.InvalidStatusCode ) );
+        _result!.AddResult(new ExportedRoute
+        {
+            RouteName = _routeName,
+            Description = _routeDescription,
+            Status = SnapProcessStatus.InvalidStatusCode
+        });
     }
 
     private async Task ProcessResourceSetAsync( ResourceSet resourceSet )
@@ -123,17 +140,23 @@ public class BingProcessor2 : RouteProcessor2
                                true,
                                LogLevel.Error );
 
-            _result!.AddResult( new ExportedRoute( _folderName!, null, SnapProcessStatus.NoResultsReturned ) );
+            _result!.AddResult( new ExportedRoute
+            {
+                RouteName = _routeName,
+                Description = _routeDescription,
+                Status = SnapProcessStatus.NoResultsReturned
+            } );
         }
         else
         {
-            var snapResult = new ExportedRoute( _folderName!,
-                                                snapResponses.SelectMany( x => x.SnappedPoints.Select(
+            var snapResult = new ExportedRoute( snapResponses.SelectMany( x => x.SnappedPoints.Select(
                                                                               y => new Coordinate2(
                                                                                   y.Coordinate.Latitude,
                                                                                   y.Coordinate.Longitude ) ) )
-                                                             .ToList(),
-                                                SnapProcessStatus.IsValid );
+                                                             .ToList() )
+            {
+                RouteName = _routeName, Description = _routeDescription, Status = SnapProcessStatus.IsValid
+            };
 
             _result!.AddResult( snapResult );
         }

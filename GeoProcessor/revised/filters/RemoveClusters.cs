@@ -47,12 +47,12 @@ public class RemoveClusters : ImportFilter
 
         Coordinate2? clusterOrigin = null;
 
-        foreach( var coordinate in toFilter.Coordinates )
+        foreach( var coordinate in toFilter.Points )
         {
             if( clusterOrigin == null )
             {
                 clusterOrigin = coordinate;
-                retVal.Coordinates.Add( coordinate );
+                retVal.Points.Add( coordinate );
 
                 continue;
             }
@@ -61,7 +61,7 @@ public class RemoveClusters : ImportFilter
             if( ptPair.GetDistance()*1000<= MaximumClusterDiameter)
                 continue;
 
-            retVal.Coordinates.Add( coordinate );
+            retVal.Points.Add( coordinate );
             clusterOrigin = coordinate;
         }
 

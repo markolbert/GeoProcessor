@@ -39,13 +39,17 @@ public class ConsolidatePoints : ImportFilter
             Coordinate2? prevPoint = null;
             Coordinate2? originPoint = null;
 
-            var filteredRoute = new ImportedRoute( rawRoute.RouteName, new List<Coordinate2>() );
+            var filteredRoute = new ImportedRoute()
+            {
+                RouteName = rawRoute.RouteName, 
+                Description = rawRoute.Description
+            };
 
-            foreach( var curPoint in rawRoute.Coordinates )
+            foreach( var curPoint in rawRoute.Points )
             {
                 if( prevPoint == null || originPoint == null )
                 {
-                    filteredRoute.Coordinates.Add( curPoint );
+                    filteredRoute.Points.Add( curPoint );
                     continue;
                 }
 
@@ -61,7 +65,7 @@ public class ConsolidatePoints : ImportFilter
 
                 if( curGap >= MinimumPointGap )
                 {
-                    filteredRoute.Coordinates.Add(curPoint);
+                    filteredRoute.Points.Add(curPoint);
                     originPoint = curPoint;
 
                     continue;
@@ -75,7 +79,7 @@ public class ConsolidatePoints : ImportFilter
 
                 if (originGap >= MaximumOverallGap)
                 {
-                    filteredRoute.Coordinates.Add(curPoint);
+                    filteredRoute.Points.Add(curPoint);
                     originPoint = curPoint;
                     continue;
                 }
@@ -87,12 +91,12 @@ public class ConsolidatePoints : ImportFilter
                                   curPoint.Longitude);
             }
 
-            if( filteredRoute.Coordinates.Count > 1 )
+            if( filteredRoute.Points.Count > 1 )
                 retVal.Add( filteredRoute );
             else
                 Logger?.LogInformation( "Route {name} {text}, excluding",
                                          filteredRoute.RouteName,
-                                         filteredRoute.Coordinates.Count switch
+                                         filteredRoute.Points.Count switch
                                          {
                                              0 => "has no points",
                                              _ => "has only 1 point"

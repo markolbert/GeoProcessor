@@ -2,8 +2,7 @@
 
 public enum RouteConnectionType
 {
-    None,
-    Multiple,
+    Root,
     StartToStart,
     StartToEnd,
     EndToStart,

@@ -32,13 +32,15 @@ public class InterpolatePoints : ImportFilter
         {
             Coordinate2? prevPoint = null;
 
-            _filteredRoute = new ImportedRoute(rawRoute.RouteName, new List<Coordinate2>());
+            _filteredRoute = new ImportedRoute() { RouteName = rawRoute.RouteName, Description = rawRoute.Description };
 
-            foreach (var curPoint in rawRoute.Coordinates)
+            foreach (var curPoint in rawRoute.Points)
             {
                 if (prevPoint == null )
                 {
-                    _filteredRoute.Coordinates.Add(curPoint);
+                    _filteredRoute.Points.Add(curPoint);
+                    prevPoint = curPoint;
+
                     continue;
                 }
 
@@ -49,7 +51,7 @@ public class InterpolatePoints : ImportFilter
 
                 if (gap <= MaximumPointSeparation)
                 {
-                    _filteredRoute.Coordinates.Add(curPoint);
+                    _filteredRoute.Points.Add(curPoint);
                     continue;
                 }
 
@@ -63,12 +65,12 @@ public class InterpolatePoints : ImportFilter
                 Interpolate( ptPair, gap );
             }
 
-            if( _filteredRoute.Coordinates.Count > 1 )
+            if( _filteredRoute.Points.Count > 1 )
                 retVal.Add( _filteredRoute );
             else
                 Logger?.LogInformation( "Route {name} {text}, excluding",
                                          _filteredRoute.RouteName,
-                                         _filteredRoute.Coordinates.Count switch
+                                         _filteredRoute.Points.Count switch
                                          {
                                              0 => "has no points",
                                              _ => "has only 1 point"
@@ -97,7 +99,7 @@ public class InterpolatePoints : ImportFilter
                 Timestamp = ptPair.First.Timestamp + idx * deltaTime
             };
 
-            _filteredRoute!.Coordinates.Add( interpolated );
+            _filteredRoute!.Points.Add( interpolated );
         }
     }
 }

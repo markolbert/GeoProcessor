@@ -28,7 +28,7 @@ public class MergeRoutes : ImportFilter
         if( input.Count <= 1 )
             return input;
 
-        var filteredInput = input.Where( x => x.Coordinates.Count > 1 )
+        var filteredInput = input.Where( x => x.Points.Count > 1 )
                                  .ToList();
 
         if( filteredInput.Count != input.Count )
@@ -134,7 +134,7 @@ public class MergeRoutes : ImportFilter
         RouteConnectionType connectionType
     )
     {
-        var retVal = new ImportedRoute( "Merged Route", route1.Coordinates.ToList() );
+        var retVal = new ImportedRoute( route1.Points.ToList() ) { RouteName = "Merged Route" };
 
         // how we add the new points depends on which end of the merged route they're connected to
         List<Coordinate2>? toAdd;
@@ -143,13 +143,13 @@ public class MergeRoutes : ImportFilter
         {
             case RouteConnectionType.StartToStart:
             case RouteConnectionType.EndToEnd:
-                toAdd = route2.Coordinates;
+                toAdd = route2.Points;
                 toAdd.Reverse();
                 break;
 
             case RouteConnectionType.StartToEnd:
             case RouteConnectionType.EndToStart:
-                toAdd = route2.Coordinates;
+                toAdd = route2.Points;
                 break;
 
             default:
@@ -162,12 +162,12 @@ public class MergeRoutes : ImportFilter
         {
             case RouteConnectionType.StartToStart:
             case RouteConnectionType.StartToEnd:
-                retVal.Coordinates.InsertRange( 0, toAdd );
+                retVal.Points.InsertRange( 0, toAdd );
                 break;
 
             case RouteConnectionType.EndToStart:
             case RouteConnectionType.EndToEnd:
-                retVal.Coordinates.AddRange( toAdd );
+                retVal.Points.AddRange( toAdd );
                 break;
         }
 

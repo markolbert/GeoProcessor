@@ -25,7 +25,7 @@ public class GeoConstants
     internal const string TrackName = "trk";
     internal const string RouteName = "name";
     internal const string TrackSegmentName = "trkSeg";
-    internal const string MessageName = "desc";
+    internal const string DescriptionName = "desc";
     internal const string TimeName = "time";
     internal const string ElevationName = "ele";
     internal const string TrackPointName = "trkpt";

@@ -34,7 +34,7 @@ public class GoogleProcessor2 : RouteProcessor2
             {
                 Interpolate = true,
                 Key = ApiKey,
-                Path = importedRoute.Coordinates.Select(c => new GoogleCoordinates.Coordinate(c.Latitude, c.Longitude))
+                Path = importedRoute.Points.Select(c => new GoogleCoordinates.Coordinate(c.Latitude, c.Longitude))
             };
 
             SnapToRoadsResponse result;

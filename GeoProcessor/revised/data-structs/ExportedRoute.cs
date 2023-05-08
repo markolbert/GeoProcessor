@@ -4,23 +4,16 @@ namespace J4JSoftware.GeoProcessor;
 
 public class ExportedRoute
 {
-    public ExportedRoute()
-    {
-        Coordinates = new List<Coordinate2>();
-    }
-
     public ExportedRoute( 
-        string folderName, 
-        List<Coordinate2>? coordinates, 
-        SnapProcessStatus status 
+        List<Coordinate2>? coordinates = null
         )
     {
-        FolderName = folderName;
-        Coordinates = coordinates;
-        Status = status;
+        Points = coordinates ?? new List<Coordinate2>();
     }
 
-    public string FolderName { get; set; } = "Unnamed Route";
-    public List<Coordinate2>? Coordinates { get; }
+    public string RouteName { get; set; } = "Unnamed Route";
+    public string Description { get; set; } = string.Empty;
+
+    public List<Coordinate2> Points { get; }
     public SnapProcessStatus Status { get; set; } = SnapProcessStatus.NoResultsReturned;
 }

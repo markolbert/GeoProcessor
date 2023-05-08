@@ -38,53 +38,16 @@ public class GpxImporter2 : FileImporter
         foreach (var track in doc.Descendants().Where(x => x.IsNamedElement( GeoConstants.TrackName)))
         {
             var trkName = track.GetFirstDescendantValue( GeoConstants.RouteName) ?? "Unnamed Route";
+            var trkDesc = track.GetFirstDescendantValue(GeoConstants.RouteName) ?? string.Empty;
 
-            var folder = new ImportedRoute( trkName, new List<Coordinate2>() );
+            var importedRoute = new ImportedRoute( new List<Coordinate2>() )
+            {
+                RouteName = trkName, Description = trkDesc
+            };
 
             foreach (var trackSeg in track.GetNamedDescendants( GeoConstants.TrackSegmentName))
             {
-                // Garmin seems to send a track segment composed of ancient text messages
-                // that you haven't yet deleted from the InReach device. We try to filter these
-                // out here.
-
-                // if any of the track point elements have a non-null desc field (which is where
-                // the text of a message is stored), then ignore that entire segment
-                var trackPoints = trackSeg.GetNamedDescendants( GeoConstants.TrackPointName );
-
-                // remove all the track points that contain messages
-                trackPoints = trackPoints.Where( x => string.IsNullOrEmpty( x.GetFirstDescendantValue( GeoConstants.MessageName ) ) )
-                                         .ToList();
-
-                // ignore any set of track points whose elements are widely separated in time
-                var allSeparated = true;
-                DateTime? prevDt = null;
-                var minTs = TimeSpan.FromDays( 1 );
-
-                foreach( var trackPoint in trackPoints )
-                {
-                    var curTimeValue = trackPoint.GetFirstDescendantValue( GeoConstants.TimeName );
-
-                    DateTime? curDt = null;
-
-                    if( !string.IsNullOrEmpty( curTimeValue ) && DateTime.TryParse( curTimeValue, out var temp ) )
-                        curDt = temp;
-
-                    if( prevDt != null )
-                    {
-                        allSeparated &= curDt == null || curDt - prevDt >= minTs;
-                        if( !allSeparated )
-                            break;
-                    }
-                    
-                    prevDt = curDt;
-                }
-
-                if( allSeparated )
-                    trackPoints.Clear();
-
-                // ignore any set of track points which is empty or has only one member
-                if (trackPoints.Count < 2)
-                    continue;
+                var trackPoints = trackSeg.GetNamedDescendants(GeoConstants.TrackPointName);
 
                 foreach ( var trackPoint in trackPoints )
                 {
@@ -103,11 +66,13 @@ public class GpxImporter2 : FileImporter
                     if (trackPoint.TryParseFirstDescendantValue<DateTime>( GeoConstants.TimeName, out var timestamp))
                         coordinate.Timestamp= timestamp;
 
-                    folder.Coordinates.Add( coordinate );
+                    coordinate.Description = trackPoint.GetFirstDescendantValue( GeoConstants.DescriptionName );
+
+                    importedRoute.Points.Add( coordinate );
                 }
 
-                if (folder.Coordinates.Any())
-                    retVal.Add(folder);
+                if (importedRoute.Points.Any())
+                    retVal.Add(importedRoute);
             }
         }
 

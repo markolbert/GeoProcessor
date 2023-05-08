@@ -33,7 +33,11 @@ public class DataImporter : Importer
             return retVal;
         }
 
-        var route = new ImportedRoute( dataToImport.Name, new List<Coordinate2>( dataToImport.Coordinates ) );
+        var route = new ImportedRoute( new List<Coordinate2>( dataToImport.Coordinates ) )
+        {
+            RouteName = dataToImport.Name
+        };
+
         retVal.Add( route );
 
         return retVal;
