@@ -132,6 +132,17 @@ public static class RouteBuilderExtensions
         return builder;
     }
 
+    public static RouteBuilder.RouteBuilder ExportToGpx(
+        this RouteBuilder.RouteBuilder builder,
+        string filePath
+    )
+    {
+        if( !string.IsNullOrEmpty( filePath ) )
+            builder.AddExportTarget( new ExportToFile( filePath, new GpxExporter( builder.LoggerFactory ) ) );
+
+        return builder;
+    }
+
     public static RouteBuilder.RouteBuilder SendStatusReportsTo(
         this RouteBuilder.RouteBuilder builder,
         Func<StatusInformation, Task> statusReporter

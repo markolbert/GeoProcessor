@@ -22,10 +22,16 @@ public class GpxTests : TestBase
         var routeBuilder = Services.GetService<RouteBuilder>();
         routeBuilder.Should().NotBeNull();
 
+        var exportFile = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.Desktop ), "TestGpx.gpx" );
+
+        if( File.Exists( exportFile ) )
+            File.Delete( exportFile );
+
         routeBuilder!.SnapWithBing( Config.BingKey )
                      .MergeRoutes()
                      .RemoveClusters()
                      .AddGpxFile( path )
+                     .ExportToGpx( "TestGpx.gpx" )
                      .SendStatusReportsTo( LogStatus )
                      .SendMessagesTo( LogMessage );
 
