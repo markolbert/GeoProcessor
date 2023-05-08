@@ -79,10 +79,7 @@ public class TestBase
                 return retVal;
             });
 
-        services.AddTransient<RouteBuilder>( s => new RouteBuilder( s.GetRequiredService<FileImporterFactory>(),
-                                                                    s.GetRequiredService<RouteProcessorFactory>(),
-                                                                    s.GetRequiredService<ImportFilterFactory>(),
-                                                                    s.GetService<ILoggerFactory>() ) );
+        services.AddTransient<RouteBuilder>( s => new RouteBuilder( s.GetService<ILoggerFactory>() ) );
 
     }
 

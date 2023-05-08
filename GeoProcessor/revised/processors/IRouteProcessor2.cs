@@ -10,8 +10,7 @@ public interface IRouteProcessor2 : IMessageBasedTask
     string ProcessorName { get; }
     string ApiKey { get; set; }
     TimeSpan RequestTimeout { get; set; }
-    List<ImportFilterPriority> ImportFilters { get; }
-
+    List<IImportFilter> ImportFilters { get; }
 
     Task<ProcessRouteResult> ProcessRoute( List<ImportedRoute> routes, CancellationToken ctx = default );
 }

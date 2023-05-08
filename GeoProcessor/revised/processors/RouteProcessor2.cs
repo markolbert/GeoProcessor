@@ -14,7 +14,7 @@ public abstract class RouteProcessor2 : MessageBasedTask, IRouteProcessor2
     protected RouteProcessor2(
         string? mesgPrefix = null,
         ILoggerFactory? loggerFactory = null,
-        params ImportFilterPriority[] requiredImportFilters
+        params IImportFilter[] requiredImportFilters
     )
         : base( mesgPrefix, loggerFactory )
     {
@@ -37,7 +37,7 @@ public abstract class RouteProcessor2 : MessageBasedTask, IRouteProcessor2
     }
 
     public string ProcessorName { get; }
-    public List<ImportFilterPriority> ImportFilters { get; }
+    public List<IImportFilter> ImportFilters { get; }
     public string ApiKey { get; set; } = string.Empty;
     public TimeSpan RequestTimeout { get; set; } = GeoConstants.DefaultRequestTimeout;
 
@@ -50,12 +50,12 @@ public abstract class RouteProcessor2 : MessageBasedTask, IRouteProcessor2
     {
         await OnProcessingStarted();
 
-        foreach( var filterInfo in ImportFilters.Distinct()
+        foreach( var filter in ImportFilters.Distinct()
                                                 .OrderBy( x => x.Category )
                                                 .ThenBy( x => x.Priority ) )
         {
-            Logger?.LogInformation( "Executing {filter} filter...", filterInfo.FilterName );
-            toProcess = filterInfo.FilterAgent.Filter( toProcess );
+            Logger?.LogInformation( "Executing {filter} filter...", filter.FilterName );
+            toProcess = filter.Filter( toProcess );
         }
 
         Logger?.LogInformation( "Filtering complete" );

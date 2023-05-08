@@ -22,10 +22,10 @@ public class GpxTests : TestBase
         var routeBuilder = Services.GetService<RouteBuilder>();
         routeBuilder.Should().NotBeNull();
 
-        routeBuilder!.UseProcessor( "Bing", Config.BingKey )
-                     .AddImportFilter( "Merge Routes" )
-                     .AddImportFilter( "Remove Clusters" )
-                     .AddSourceFile( path, "gpx" )
+        routeBuilder!.SnapWithBing()
+                     .MergeRoutes()
+                     .RemoveClusters()
+                     .AddGpxFile( path )
                      .SendStatusReportsTo( LogStatus )
                      .SendMessagesTo( LogMessage );
 
