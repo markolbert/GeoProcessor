@@ -30,6 +30,7 @@ public class GpxTests : TestBase
         routeBuilder!.SnapWithBing( Config.BingKey )
                      .MergeRoutes()
                      .RemoveClusters()
+                     .RemoveGarminMessagePoints()
                      .AddGpxFile( path )
                      .ExportToGpx( exportFile )
                      .SendStatusReportsTo( LogStatus )
@@ -37,8 +38,11 @@ public class GpxTests : TestBase
 
         var result = await routeBuilder!.BuildAsync();
 
-        result.Status.Should().NotBe( ProcessRouteStatus.NoResults );
-        result.Status.Should().NotBe( ProcessRouteStatus.AllFailed );
+        result.Should().NotBeNull();
+        result!.Count.Should().BeGreaterThan( 0 );
+
+        routeBuilder.SnapProcessor.Should().NotBeNull();
+        routeBuilder.SnapProcessor!.ProblemMessages.Should().BeEmpty();
     }
 
     [ Theory ]
