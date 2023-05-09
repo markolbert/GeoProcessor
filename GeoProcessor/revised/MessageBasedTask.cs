@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
@@ -6,6 +8,8 @@ namespace J4JSoftware.GeoProcessor;
 
 public abstract class MessageBasedTask : IMessageBasedTask
 {
+    private readonly List<string> _problems = new();
+
     private int _statusInterval = GeoConstants.DefaultStatusInterval;
     private int _itemsProcessedSinceLastUpdate;
     private int _itemsProcessed;
@@ -40,8 +44,11 @@ public abstract class MessageBasedTask : IMessageBasedTask
         set => _statusInterval = value < 0 ? GeoConstants.DefaultStatusInterval : value;
     }
 
+    public ReadOnlyCollection<string> ProblemMessages => _problems.AsReadOnly();
+
     protected virtual async Task OnProcessingStarted(
         string? mesg = null,
+        int itemsToProcess = 0,
         bool log = false,
         LogLevel level = LogLevel.Information
     )
@@ -51,8 +58,9 @@ public abstract class MessageBasedTask : IMessageBasedTask
 
         _itemsProcessed = 0;
         _itemsProcessedSinceLastUpdate = 0;
+        _problems.Clear();
 
-        await SendMessage( ExpandedPhase, mesg, log, level );
+        await SendStatus( ExpandedPhase, mesg, itemsToProcess, 0, log, level );
     }
 
     protected virtual async Task OnItemProcessed( string? mesg = null )
@@ -81,6 +89,7 @@ public abstract class MessageBasedTask : IMessageBasedTask
     protected async Task SendMessage(
         string phase,
         string message,
+        bool isProblem = false,
         bool log = true,
         LogLevel logLevel = LogLevel.Warning
     )
@@ -90,6 +99,9 @@ public abstract class MessageBasedTask : IMessageBasedTask
 
         if( log )
             Logger?.Log( logLevel, message );
+
+        if( isProblem )
+            _problems.Add( $"{ExpandedPhase} {message}" );
     }
 
     private async Task SendStatus(
