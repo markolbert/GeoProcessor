@@ -13,7 +13,7 @@ public class GpxExporter : FileExporter<GpxDoc>
     {
     }
 
-    protected override GpxDoc GetDocumentObject(IEnumerable<ExportedRoute> routes)
+    protected override GpxDoc GetDocumentObject(IEnumerable<ImportedRoute> routes)
     {
         var retVal = new GpxDoc()
         {
