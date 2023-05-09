@@ -4,7 +4,6 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
-using System.Xml.Linq;
 using System.Xml.Serialization;
 using Microsoft.Extensions.Logging;
 
@@ -25,7 +24,9 @@ public abstract class FileExporter<TDoc> : Exporter, IFileExporter
     public string FileType { get; }
     public string FilePath { get; set; } = string.Empty;
 
+#pragma warning disable CS1998
     public override async Task<bool> ExportAsync( IEnumerable<ExportedRoute> routes, CancellationToken ctx = default )
+#pragma warning restore CS1998
     {
         var docObject = GetDocumentObject( routes );
         var serializer = new XmlSerializer( typeof( TDoc ) );
@@ -40,8 +41,6 @@ public abstract class FileExporter<TDoc> : Exporter, IFileExporter
                                            } );
 
             serializer.Serialize( writer, docObject );
-            //await writer.FlushAsync();
-            //writer.Close();
         }
         catch( Exception ex )
         {
@@ -53,7 +52,4 @@ public abstract class FileExporter<TDoc> : Exporter, IFileExporter
     }
 
     protected abstract TDoc GetDocumentObject( IEnumerable<ExportedRoute> routes );
-    protected abstract XDeclaration GetXDeclaration();
-    protected abstract XElement GetXmlRoot();
-    protected abstract XElement GetRouteElement( ExportedRoute route );
 }
