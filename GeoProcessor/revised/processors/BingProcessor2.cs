@@ -12,8 +12,8 @@ namespace J4JSoftware.GeoProcessor;
 public class BingProcessor2 : RouteProcessor2
 {
     private ProcessRouteResult? _result;
-    private string _routeName = "Unnamed Route";
-    private string _routeDescription = string.Empty;
+    private string? _routeName;
+    private string? _routeDescription;
 
     public BingProcessor2(
         ILoggerFactory? loggerFactory
@@ -36,7 +36,7 @@ public class BingProcessor2 : RouteProcessor2
 
         foreach( var importedRoute in importedRoutes )
         {
-            _routeName = importedRoute.RouteName;
+            _routeName = importedRoute.RouteName ?? "Unnamed Route";
             _routeDescription = importedRoute.Description;
 
             var request = new SnapToRoadRequest
