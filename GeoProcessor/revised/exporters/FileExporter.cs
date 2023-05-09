@@ -5,11 +5,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
+using System.Xml.Serialization;
 using Microsoft.Extensions.Logging;
 
 namespace J4JSoftware.GeoProcessor;
 
-public abstract class FileExporter : Exporter, IFileExporter
+public abstract class FileExporter<TDoc> : Exporter, IFileExporter
+    where TDoc : class
 {
     protected FileExporter(
         string fileType,
@@ -25,22 +27,21 @@ public abstract class FileExporter : Exporter, IFileExporter
 
     public override async Task<bool> ExportAsync( IEnumerable<ExportedRoute> routes, CancellationToken ctx = default )
     {
-        var xDoc = new XDocument( GetXDeclaration() );
-        xDoc.Add( GetXmlRoot() );
+        var docObject = GetDocumentObject( routes );
+        var serializer = new XmlSerializer( typeof( TDoc ) );
         
-        foreach( var route in routes )
-        {
-            xDoc.Root!.Add(GetRouteElement(route));
-        }
-
         try
         {
             var fs = new StreamWriter( FilePath );
-            var writer = new XmlTextWriter( fs );
+            var writer = XmlWriter.Create( fs,
+                                           new XmlWriterSettings()
+                                           {
+                                               Indent = true, NamespaceHandling = NamespaceHandling.OmitDuplicates
+                                           } );
 
-            await xDoc.WriteToAsync( writer, ctx );
-            await writer.FlushAsync();
-            writer.Close();
+            serializer.Serialize( writer, docObject );
+            //await writer.FlushAsync();
+            //writer.Close();
         }
         catch( Exception ex )
         {
@@ -51,6 +52,7 @@ public abstract class FileExporter : Exporter, IFileExporter
         return true;
     }
 
+    protected abstract TDoc GetDocumentObject( IEnumerable<ExportedRoute> routes );
     protected abstract XDeclaration GetXDeclaration();
     protected abstract XElement GetXmlRoot();
     protected abstract XElement GetRouteElement( ExportedRoute route );
