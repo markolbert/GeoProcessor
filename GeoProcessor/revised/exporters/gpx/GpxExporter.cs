@@ -1,15 +1,43 @@
-﻿using System.Xml.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
 using Microsoft.Extensions.Logging;
 
 namespace J4JSoftware.GeoProcessor;
 
-public class GpxExporter : FileExporter
+public class GpxExporter : FileExporter<GpxDoc>
 {
     public GpxExporter( 
         ILoggerFactory? loggerFactory 
     )
         : base( "gpx", loggerFactory )
     {
+    }
+
+    protected override GpxDoc GetDocumentObject(IEnumerable<ExportedRoute> routes)
+    {
+        var retVal = new GpxDoc();
+        var tracks = new List<GpxTrack>();
+
+        foreach( var route in routes )
+        {
+            var track = new GpxTrack { Description = route.Description, Name = route.RouteName };
+            tracks.Add( track );
+
+            track.TrackPoints = route.Points.Select( x => new GpxTrackPoint
+                                      {
+                                          Latitude = x.Latitude,
+                                          Longitude = x.Longitude,
+                                          Timestamp = x.Timestamp,
+                                          Description = x.Description,
+                                          Elevation = x.Elevation
+                                      } )
+                                     .ToArray();
+        }
+
+        retVal.Tracks = tracks.ToArray();
+
+        return retVal;
     }
 
     protected override XDeclaration GetXDeclaration() => new( "1.0", null, "yes" );
@@ -23,10 +51,10 @@ public class GpxExporter : FileExporter
 
         var content = new object[]
         {
-            new XAttribute( XNamespace.Xmlns + string.Empty, ns ),
+            //new XAttribute( XNamespace.Xmlns.ToString(), ns ),
             new XAttribute( XNamespace.Xmlns + "xsd", nsXsd ),
             new XAttribute( XNamespace.Xmlns + "xsi", nsXsi ),
-            new XAttribute( "xsi:schemaLocation", nsSchemaLocation ),
+            //new XAttribute( "xsi:schemaLocation", nsSchemaLocation ),
             new XAttribute( "version", "1.1" )
         };
 
