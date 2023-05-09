@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Serialization;
 using J4JSoftware.GeoProcessor.RouteBuilder;
 using Microsoft.Extensions.Logging;
 
@@ -18,7 +21,9 @@ public class GpxImporter2 : FileImporter
     {
     }
 
+#pragma warning disable CS1998
     protected override async Task<List<ImportedRoute>> ImportInternalAsync( DataToImportBase toImport, CancellationToken ctx )
+#pragma warning restore CS1998
     {
         var retVal = new List<ImportedRoute>();
 
@@ -31,49 +36,53 @@ public class GpxImporter2 : FileImporter
             return retVal;
         }
 
-        var doc = await OpenXmlFileAsync( fileToImport.FilePath, ctx );
-        if( doc == null )
-            return retVal;
+        GpxDoc? test;
 
-        foreach (var track in doc.Descendants().Where(x => x.IsNamedElement( GeoConstants.TrackName)))
+        try
         {
-            var trkName = track.GetFirstDescendantValue( GeoConstants.RouteName) ?? "Unnamed Route";
-            var trkDesc = track.GetFirstDescendantValue(GeoConstants.RouteName) ?? string.Empty;
+            var fs = new StreamReader( fileToImport.FilePath );
+            var reader = XmlReader.Create( fs );
+            var serializer = new XmlSerializer( typeof( GpxDoc ) );
+            test = serializer.Deserialize( reader ) as GpxDoc;
+        }
+        catch( Exception ex )
+        {
+            Logger?.LogError( "Exception encountered deserializing '{file}', message was {mesg}",
+                              fileToImport.FilePath,
+                              ex.Message );
+            return retVal;
+        }
+
+        if ( test == null )
+        {
+            Logger?.LogError( "Could not deserialize '{file}'", fileToImport.FilePath );
+            return retVal;
+        }
+
+        foreach( var track in test.Tracks )
+        {
+            var trkName = track.Name;
+            var trkDesc = track.Description;
 
             var importedRoute = new ImportedRoute( new List<Coordinate2>() )
             {
                 RouteName = trkName, Description = trkDesc
             };
 
-            foreach (var trackSeg in track.GetNamedDescendants( GeoConstants.TrackSegmentName))
+            foreach( var trackPoint in track.TrackPoints )
             {
-                var trackPoints = trackSeg.GetNamedDescendants(GeoConstants.TrackPointName);
-
-                foreach ( var trackPoint in trackPoints )
+                var coordinate = new Coordinate2( trackPoint.Latitude, trackPoint.Longitude )
                 {
-                    if( !trackPoint.TryParseAttribute<double>( GeoConstants.LatitudeName, out var latitude )
-                    || !trackPoint.TryParseAttribute<double>( GeoConstants.LongitudeName, out var longitude ) )
-                    {
-                        Logger?.LogWarning("Couldn't parse latitude or longitude text");
-                        continue;
-                    }
+                    Elevation = trackPoint.Elevation,
+                    Timestamp = trackPoint.Timestamp,
+                    Description = trackPoint.Description
+                };
 
-                    var coordinate = new Coordinate2( latitude, longitude );
-
-                    if( trackPoint.TryParseFirstDescendantValue<double>( GeoConstants.ElevationName, out var elevation ) )
-                        coordinate.Elevation = elevation;
-
-                    if (trackPoint.TryParseFirstDescendantValue<DateTime>( GeoConstants.TimeName, out var timestamp))
-                        coordinate.Timestamp= timestamp;
-
-                    coordinate.Description = trackPoint.GetFirstDescendantValue( GeoConstants.DescriptionName );
-
-                    importedRoute.Points.Add( coordinate );
-                }
-
-                if (importedRoute.Points.Any())
-                    retVal.Add(importedRoute);
+                importedRoute.Points.Add( coordinate );
             }
+
+            if (importedRoute.Points.Any())
+                retVal.Add(importedRoute);
         }
 
         return retVal;
