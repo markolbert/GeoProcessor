@@ -11,8 +11,8 @@ public class ExportedRoute
         Points = coordinates ?? new List<Coordinate2>();
     }
 
-    public string RouteName { get; set; } = "Unnamed Route";
-    public string Description { get; set; } = string.Empty;
+    public string? RouteName { get; set; }
+    public string? Description { get; set; }
 
     public List<Coordinate2> Points { get; }
     public SnapProcessStatus Status { get; set; } = SnapProcessStatus.NoResultsReturned;

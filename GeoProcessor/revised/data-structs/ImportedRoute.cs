@@ -23,8 +23,8 @@ public class ImportedRoute : IImportedRoute
 
     public ImportedRoute Copy() => new( new List<Coordinate2>( Points ) ) { RouteName = RouteName };
 
-    public string RouteName { get; set; } = "Unnamed Route";
-    public string Description { get; set; } = string.Empty;
+    public string? RouteName { get; set; }
+    public string? Description { get; set; }
 
     public int NumPoints => Points.Count;
     public List<Coordinate2> Points { get; }
