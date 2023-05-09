@@ -75,7 +75,7 @@ public class GpxImporter2 : FileImporter
                 {
                     Elevation = trackPoint.Elevation,
                     Timestamp = trackPoint.Timestamp,
-                    Description = trackPoint.Description
+                    Description = string.IsNullOrEmpty( trackPoint.Description ) ? null : trackPoint.Description
                 };
 
                 importedRoute.Points.Add( coordinate );
