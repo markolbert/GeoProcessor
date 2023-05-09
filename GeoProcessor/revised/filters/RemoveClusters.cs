@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace J4JSoftware.GeoProcessor;
 
-[BeforeAllImportFilter("Remove Clusters", 0)]
+[BeforeAllImportFilter("Remove Clusters", 5)]
 public class RemoveClusters : ImportFilter
 {
     private Distance2 _maxClusterDiameter = new( UnitType.Meters, GeoConstants.DefaultMaxClusterDiameterMeters );
