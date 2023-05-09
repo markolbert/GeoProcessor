@@ -94,9 +94,15 @@ public class InterpolatePoints : ImportFilter
 
         for( var idx = 0; idx <= steps; idx++ )
         {
+            var interpolationState = idx == 0
+                ? InterpolationState.Start
+                : idx == steps
+                    ? InterpolationState.End
+                    : InterpolationState.Intermediate;
+
             var interpolated = new Coordinate2( ptPair.First.Latitude + idx * deltaLat,
                                                 ptPair.First.Longitude + idx * deltaLong,
-                                                true )
+                                                interpolationState )
             {
                 Elevation = ptPair.First.Elevation + idx * deltaElevation,
                 Timestamp = ptPair.First.Timestamp + idx * deltaTime
