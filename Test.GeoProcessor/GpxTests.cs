@@ -31,7 +31,7 @@ public class GpxTests : TestBase
                      .MergeRoutes()
                      .RemoveClusters()
                      .AddGpxFile( path )
-                     .ExportToGpx( "TestGpx.gpx" )
+                     .ExportToGpx( exportFile )
                      .SendStatusReportsTo( LogStatus )
                      .SendMessagesTo( LogMessage );
 
