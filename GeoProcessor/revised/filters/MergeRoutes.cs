@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace J4JSoftware.GeoProcessor;
 
-[BeforeAllImportFilter("Merge Routes", 1)]
+[BeforeAllImportFilter("Merge Routes", 20)]
 public class MergeRoutes : ImportFilter
 {
     private Distance2 _maxRouteGap = new( UnitType.Meters, GeoConstants.DefaultMaxRouteGapMeters );
@@ -62,6 +62,12 @@ public class MergeRoutes : ImportFilter
             {
                 var adjacent = adjacentRoutes[ 0 ];
 
+                //var match1 = FoundMatch( filteredInput[ curSet.RouteIndex ], "Having a lunch break" );
+                //match1 |= FoundMatch( filteredInput[ adjacent.ConnectedRouteIndex ],"Having a lunch break" );
+
+                //var match2 = FoundMatch(filteredInput[curSet.RouteIndex], "Took a short hike");
+                //match2 |= FoundMatch(filteredInput[adjacent.ConnectedRouteIndex], "Took a short hike");
+
                 // create a merged route using the two routes, honoring the connection
                 var mergedRoute = new MergedImportedRoute( filteredInput[ curSet.RouteIndex ],
                                                     filteredInput[ adjacent.ConnectedRouteIndex ],
@@ -88,6 +94,9 @@ public class MergeRoutes : ImportFilter
 
         return retVal;
     }
+
+    //private bool FoundMatch( IImportedRoute route, string toMatch ) =>
+    //    route.Any( x => x.Description?.Contains( toMatch ) ?? false );
 
     private static List<RouteConnections> GetConnections( List<IImportedRoute> routes )
     {
