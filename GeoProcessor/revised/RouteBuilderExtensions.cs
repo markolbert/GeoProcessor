@@ -41,15 +41,13 @@ public static class RouteBuilderExtensions
         return builder;
     }
 
-    public static RouteBuilder.RouteBuilder SnapWithBing( this RouteBuilder.RouteBuilder builder, string apiKey )
+    public static RouteBuilder.RouteBuilder SnapWithBing(
+        this RouteBuilder.RouteBuilder builder,
+        string apiKey,
+        int maxPtsPerRequest = 100
+    )
     {
-        builder.SnapProcessor = new BingProcessor2( builder.LoggerFactory ) { ApiKey = apiKey };
-        return builder;
-    }
-
-    public static RouteBuilder.RouteBuilder SnapWithGoogle(this RouteBuilder.RouteBuilder builder, string apiKey )
-    {
-        builder.SnapProcessor = new GoogleProcessor2( builder.LoggerFactory ) { ApiKey = apiKey };
+        builder.SnapProcessor = new BingProcessor2( maxPtsPerRequest, builder.LoggerFactory ) { ApiKey = apiKey };
         return builder;
     }
 
@@ -111,6 +109,14 @@ public static class RouteBuilderExtensions
 
         builder.AddImportFilter( filter );
 
+        return builder;
+    }
+
+    public static RouteBuilder.RouteBuilder RemoveGarminMessagePoints(
+        this RouteBuilder.RouteBuilder builder
+    )
+    {
+        builder.AddImportFilter( new RemoveGarminMessagePoints( builder.LoggerFactory ) );
         return builder;
     }
 

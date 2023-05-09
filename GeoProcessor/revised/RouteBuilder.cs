@@ -20,6 +20,9 @@ public class RouteBuilder
     {
         LoggerFactory = loggerFactory;
         Logger = loggerFactory?.CreateLogger<RouteBuilder>();
+
+        // add default filters
+        _importFilters.Add( new RemoveSinglePointRoutes( loggerFactory ) );
     }
 
     public ILoggerFactory? LoggerFactory { get; }
@@ -44,18 +47,18 @@ public class RouteBuilder
     public int StatusInterval { get; internal set; } = GeoConstants.DefaultStatusInterval;
     public Func<ProcessingMessage, Task>? MessageReporter { get; internal set; }
 
-    public async Task<ProcessRouteResult> BuildAsync( CancellationToken ctx = default )
+    public async Task<List<ImportedRoute>?> BuildAsync( CancellationToken ctx = default )
     {
         if( !_dataSources.Any() )
         {
             await SendMessage( "Startup", "Nothing to process" );
-            return ProcessRouteResult.Failed;
+            return null;
         }
 
         if( SnapProcessor == null )
         {
             await SendMessage( "Startup", "No route processor defined" );
-            return ProcessRouteResult.Failed;
+            return null;
         }
 
         var importedRoutes = new List<IImportedRoute>();
@@ -75,7 +78,7 @@ public class RouteBuilder
 
         foreach (var exportTarget in _exportTargets)
         {
-            await exportTarget.ExportAsync(retVal.Results, ctx);
+            await exportTarget.ExportAsync(retVal, ctx);
         }
 
         return retVal;

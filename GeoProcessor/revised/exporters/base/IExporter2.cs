@@ -6,5 +6,5 @@ namespace J4JSoftware.GeoProcessor;
 
 public interface IExporter2 : IMessageBasedTask
 {
-    Task<bool> ExportAsync( IEnumerable<ExportedRoute> routes, CancellationToken ctx = default );
+    Task<bool> ExportAsync( IEnumerable<ImportedRoute> routes, CancellationToken ctx = default );
 }

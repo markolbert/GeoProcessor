@@ -6,20 +6,14 @@ using Microsoft.Extensions.Logging;
 
 namespace J4JSoftware.GeoProcessor;
 
-public abstract class Exporter : IExporter2
+public abstract class Exporter : MessageBasedTask, IExporter2
 {
     protected Exporter(
         ILoggerFactory? loggerFactory
     )
+        : base( null, loggerFactory )
     {
-        Logger = loggerFactory?.CreateLogger( GetType() );
     }
 
-    protected ILogger? Logger { get; }
-
-    public abstract Task<bool> ExportAsync( IEnumerable<ExportedRoute> routes, CancellationToken ctx = default );
-
-    public Func<StatusInformation, Task>? StatusReporter { get; set; }
-    public Func<ProcessingMessage, Task>? MessageReporter { get; set; }
-    public int StatusInterval { get; set; }
+    public abstract Task<bool> ExportAsync( IEnumerable<ImportedRoute> routes, CancellationToken ctx = default );
 }
