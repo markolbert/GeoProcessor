@@ -7,17 +7,17 @@ public class Coordinate2
     public Coordinate2(
         double latitude,
         double longitude,
-        bool interpolated = false
+        InterpolationState interpolationState = InterpolationState.NotInterpolated
     )
     {
         Latitude = latitude;
         Longitude = longitude;
-        Interpolated = interpolated;
+        InterpolationState = interpolationState;
     }
 
     public double Latitude { get; }
     public double Longitude { get; }
-    public bool Interpolated { get; }
+    public InterpolationState InterpolationState { get; }
 
     public double? Elevation { get; set; }
     public DateTime? Timestamp { get; set; }
