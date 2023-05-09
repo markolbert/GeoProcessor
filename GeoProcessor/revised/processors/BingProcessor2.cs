@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using BingMapsRESTToolkit;
@@ -9,16 +10,19 @@ using Microsoft.Extensions.Logging;
 namespace J4JSoftware.GeoProcessor;
 
 [ RouteProcessorAttribute2( "Bing" ) ]
-public class BingProcessor2 : RouteProcessor2
+public partial class BingProcessor2 : RouteProcessor2
 {
-    private ProcessRouteResult? _result;
-    private string? _routeName;
-    private string? _routeDescription;
+    [ GeneratedRegex( @"[^\d]*(\d+)[^\d]*(\d+)[^\d]*(\d+\.*\d*)([^\.]*)" ) ]
+    private static partial Regex MaxGapRegEx();
+
+    private List<SnappedImportedRoute>? _processedChunks;
 
     public BingProcessor2(
-        ILoggerFactory? loggerFactory
+        int maxPointsPerRequest = 100,
+        ILoggerFactory? loggerFactory = null
     )
-        : base( null,
+        : base( maxPointsPerRequest,
+                null,
                 loggerFactory,
                 new InterpolatePoints( loggerFactory )
                 {
@@ -27,18 +31,15 @@ public class BingProcessor2 : RouteProcessor2
     {
     }
 
-    protected override async Task<ProcessRouteResult> ProcessRouteInternalAsync(
-        List<IImportedRoute> importedRoutes,
+    protected override async Task<List<SnappedImportedRoute>> ProcessRouteChunksAsync(
+        List<ImportedRouteChunk> routeChunks,
         CancellationToken ctx
     )
     {
-        _result = new ProcessRouteResult();
+        _processedChunks = new List<SnappedImportedRoute>();
 
-        foreach( var importedRoute in importedRoutes )
+        foreach( var routeChunk in routeChunks )
         {
-            _routeName = importedRoute.RouteName ?? "Unnamed Route";
-            _routeDescription = importedRoute.Description;
-
             var request = new SnapToRoadRequest
             {
                 BingMapsKey = ApiKey,
@@ -47,8 +48,8 @@ public class BingProcessor2 : RouteProcessor2
                 Interpolate = true,
                 SpeedUnit = SpeedUnitType.MPH,
                 TravelMode = TravelModeType.Driving,
-                Points = importedRoute.Select( p => new BingMapsRESTToolkit.Coordinate( p.Latitude, p.Longitude ) )
-                                      .ToList()
+                Points = routeChunk.Select( p => new BingMapsRESTToolkit.Coordinate( p.Latitude, p.Longitude ) )
+                                   .ToList()
             };
 
             Response? result;
@@ -64,7 +65,11 @@ public class BingProcessor2 : RouteProcessor2
             }
             catch( Exception ex )
             {
-                await HandleOtherRequestExceptionAsync( ex );
+                var mesg = ex.Message.Contains( "distance between point" )
+                    ? ParseGapException( routeChunk.ToList(), ex.Message )
+                    : ex.Message;
+
+                await HandleOtherRequestExceptionAsync( mesg );
                 continue;
             }
 
@@ -76,11 +81,31 @@ public class BingProcessor2 : RouteProcessor2
 
             foreach( var resourceSet in result.ResourceSets )
             {
-                await ProcessResourceSetAsync( resourceSet );
+                await ProcessResourceSetAsync( resourceSet, routeChunk );
             }
         }
 
-        return _result;
+        return _processedChunks;
+    }
+
+    private string ParseGapException( List<Coordinate2> points, string mesg )
+    {
+        var matches = MaxGapRegEx().Matches( mesg );
+
+        var match = matches.FirstOrDefault();
+        if( match == null || match.Groups.Count < 5 )
+            return mesg;
+
+        if( !int.TryParse( match.Groups[ 1 ].Value, out var pt1Idx ) || pt1Idx >= points.Count - 1 )
+            return mesg;
+
+        if( !int.TryParse( match.Groups[ 2 ].Value, out var pt2Idx ) || pt2Idx >= points.Count - 1 )
+            return mesg;
+
+        var gap = points[ pt1Idx ].GetDistance( points[ pt2Idx ] );
+
+        return
+            $"The gap ({gap.Value}) between point {pt1Idx:n0} ({points[ pt1Idx ].Latitude}, {points[ pt1Idx ].Longitude}) and {pt2Idx:n0} ({points[ pt2Idx ].Latitude}, {points[ pt2Idx ].Longitude}) exceeds {match.Groups[ 3 ].Value} {match.Groups[ 4 ].Value.Trim()}";
     }
 
     private async Task HandleTimeoutExceptionAsync()
@@ -88,29 +113,17 @@ public class BingProcessor2 : RouteProcessor2
         await SendMessage( ExpandedPhase,
                            $"Bing processing timed out after {RequestTimeout}",
                            true,
-                           LogLevel.Error );
-
-        _result!.AddResult( new ExportedRoute
-        {
-            RouteName = _routeName,
-            Description = _routeDescription,
-            Status = SnapProcessStatus.TimeOut
-        } );
-    }
-
-    private async Task HandleOtherRequestExceptionAsync( Exception ex )
-    {
-        await SendMessage( ExpandedPhase,
-                           $"Bing processing failed, reply was {ex.Message}",
                            true,
                            LogLevel.Error );
+    }
 
-        _result!.AddResult(new ExportedRoute
-        {
-            RouteName = _routeName,
-            Description = _routeDescription,
-            Status = SnapProcessStatus.OtherRequestFailure
-        });
+    private async Task HandleOtherRequestExceptionAsync( string mesg )
+    {
+        await SendMessage( ExpandedPhase,
+                           $"Bing processing failed, reply was {mesg}",
+                           true,
+                           true,
+                           LogLevel.Error );
     }
 
     private async Task HandleInvalidStatusCodeAsync( string description )
@@ -118,17 +131,11 @@ public class BingProcessor2 : RouteProcessor2
         await SendMessage( ExpandedPhase,
                            $"Snap to road request failed, message was '{description}'",
                            true,
+                           true,
                            LogLevel.Error );
-
-        _result!.AddResult(new ExportedRoute
-        {
-            RouteName = _routeName,
-            Description = _routeDescription,
-            Status = SnapProcessStatus.InvalidStatusCode
-        });
     }
 
-    private async Task ProcessResourceSetAsync( ResourceSet resourceSet )
+    private async Task ProcessResourceSetAsync( ResourceSet resourceSet, ImportedRouteChunk routeChunk )
     {
         var snapResponses = resourceSet.Resources
                                        .Where( r => r is SnapToRoadResponse )
@@ -136,31 +143,21 @@ public class BingProcessor2 : RouteProcessor2
                                        .ToList();
 
         if( !snapResponses.Any() )
-        {
             await SendMessage( ExpandedPhase,
                                "Snap to request did not return usable results",
+                               false,
                                true,
                                LogLevel.Error );
-
-            _result!.AddResult( new ExportedRoute
-            {
-                RouteName = _routeName,
-                Description = _routeDescription,
-                Status = SnapProcessStatus.NoResultsReturned
-            } );
-        }
         else
         {
-            var snapResult = new ExportedRoute( snapResponses.SelectMany( x => x.SnappedPoints.Select(
-                                                                              y => new Coordinate2(
-                                                                                  y.Coordinate.Latitude,
-                                                                                  y.Coordinate.Longitude ) ) )
-                                                             .ToList() )
-            {
-                RouteName = _routeName, Description = _routeDescription, Status = SnapProcessStatus.IsValid
-            };
+            var snapResult = new SnappedImportedRoute( routeChunk,
+                                                       snapResponses.SelectMany( x => x.SnappedPoints.Select(
+                                                                         y => new Coordinate2(
+                                                                             y.Coordinate.Latitude,
+                                                                             y.Coordinate.Longitude ) ) )
+                                                                    .ToList() );
 
-            _result!.AddResult( snapResult );
+            _processedChunks!.Add( snapResult );
         }
     }
 }
