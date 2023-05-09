@@ -146,8 +146,10 @@ public static class RouteBuilderExtensions
         string filePath
     )
     {
-        if( !string.IsNullOrEmpty( filePath ) )
-            builder.AddExportTarget( new ExportToFile( filePath, new GpxExporter( builder.LoggerFactory ) ) );
+        if( string.IsNullOrEmpty( filePath ) )
+            return builder;
+
+        builder.AddExportTarget( new GpxExporter( builder.LoggerFactory ) { FilePath = filePath } );
 
         return builder;
     }
