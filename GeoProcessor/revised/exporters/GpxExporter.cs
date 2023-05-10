@@ -13,11 +13,11 @@ public class GpxExporter : FileExporter<GpxDoc>
     {
     }
 
-    protected override GpxDoc GetDocumentObject(IEnumerable<ImportedRoute> routes)
+    protected override GpxDoc GetDocumentObject(List<IImportedRoute> routes)
     {
         var retVal = new GpxDoc()
         {
-            Xsi = "http://www.w3.org/2001/XMLSchema-instance",
+            Creator = "https://www.jumpforjoysoftware.com",
             SchemaLocation = "http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd",
             Version = "1.1"
         };
@@ -29,7 +29,7 @@ public class GpxExporter : FileExporter<GpxDoc>
             var track = new GpxTrack { Description = route.Description, Name = route.RouteName };
             tracks.Add( track );
 
-            track.TrackPoints = route.Points.Select( x => new GpxTrackPoint
+            track.TrackPoints = route.Select( x => new GpxTrackPoint
                                       {
                                           Latitude = x.Latitude,
                                           Longitude = x.Longitude,
