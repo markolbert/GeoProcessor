@@ -7,7 +7,7 @@ namespace J4JSoftware.GeoProcessor;
 
 public abstract class ImportFilter : IImportFilter
 {
-    public static ImportFilterAttributeInfo? GetAttributeInfo(Type filterType)
+    public static ImportFilterAttributeInfo? GetAttributeInfo( Type filterType )
     {
         if( TryGetFilterAttribute<ImportFilterAttribute>( filterType, out var attr1 ) )
             return new ImportFilterAttributeInfo( attr1!.FilterName, attr1 );
@@ -15,8 +15,11 @@ public abstract class ImportFilter : IImportFilter
         if( TryGetFilterAttribute<BeforeUserFiltersAttribute>( filterType, out var attr2 ) )
             return new ImportFilterAttributeInfo( attr2!.FilterName, attr2 );
 
-        return TryGetFilterAttribute<AfterUserFiltersAttribute>( filterType, out var attr3 )
-            ? new ImportFilterAttributeInfo( attr3!.FilterName, attr3 )
+        if( TryGetFilterAttribute<AfterUserFiltersAttribute>( filterType, out var attr3 ) )
+            return new ImportFilterAttributeInfo( attr3!.FilterName, attr3 );
+
+        return TryGetFilterAttribute<PostSnappingFilterAttribute>( filterType, out var attr4 )
+            ? new ImportFilterAttributeInfo( attr4!.FilterName, attr4 )
             : null;
     }
 
@@ -63,15 +66,17 @@ public abstract class ImportFilter : IImportFilter
             ImportFilterAttribute normal => normal.Description,
             BeforeUserFiltersAttribute before => before.Description,
             AfterUserFiltersAttribute after => after.Description,
+            PostSnappingFilterAttribute post => post.Description,
             _ => null
         };
 
         Category = attr switch
         {
-            ImportFilterAttribute => ImportFilterCategory.Normal,
-            BeforeUserFiltersAttribute => ImportFilterCategory.BeforeAll,
-            AfterUserFiltersAttribute => ImportFilterCategory.AfterAll,
-            _ => throw new ArgumentException( $"Unsupported import filter attribute {attr?.GetType()}" )
+            ImportFilterAttribute normal => normal.Category,
+            BeforeUserFiltersAttribute before => before.Category,
+            AfterUserFiltersAttribute after => after.Category,
+            PostSnappingFilterAttribute post=> post.Category,
+            _ => throw new ArgumentException( $"Unsupported import filter attribute {attr!.GetType()}" )
         };
 
         Priority = attr switch
@@ -79,7 +84,8 @@ public abstract class ImportFilter : IImportFilter
             ImportFilterAttribute normal => normal.Priority,
             BeforeUserFiltersAttribute before => before.Priority,
             AfterUserFiltersAttribute after => after.Priority,
-            _ => throw new ArgumentException($"Unsupported import filter attribute {attr?.GetType()}")
+            PostSnappingFilterAttribute post => post.Priority,
+            _ => throw new ArgumentException($"Unsupported import filter attribute {attr.GetType()}")
         };
     }
 

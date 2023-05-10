@@ -2,7 +2,8 @@
 
 public enum ImportFilterCategory
 {
-    BeforeAll,
-    Normal,
-    AfterAll
+    BeforeUserDefined,
+    UserDefined,
+    AfterUserDefined,
+    PostSnapping
 }
