@@ -3,9 +3,11 @@ using Microsoft.Extensions.Logging;
 
 namespace J4JSoftware.GeoProcessor;
 
-[ImportFilter("Consolidate Points", 100)]
+[BeforeUserFilters(DefaultFilterName, 50)]
 public class ConsolidatePoints : ImportFilter
 {
+    public const string DefaultFilterName = "Consolidate Points";
+
     private Distance2 _minSep = new( UnitType.Meters, GeoConstants.DefaultMinimumPointGapMeters );
     private Distance2 _maxOverallGap = new( UnitType.Meters, GeoConstants.DefaultMaximumOverallGapMeters );
 
@@ -67,7 +69,7 @@ public class ConsolidatePoints : ImportFilter
                 
                 prevPoint = curPoint;
 
-                if( curGap >= MinimumPointGap )
+                if( curGap > MinimumPointGap )
                 {
                     filteredRoute.Points.Add(curPoint);
                     originPoint = curPoint;

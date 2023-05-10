@@ -12,10 +12,10 @@ public abstract class ImportFilter : IImportFilter
         if( TryGetFilterAttribute<ImportFilterAttribute>( filterType, out var attr1 ) )
             return new ImportFilterAttributeInfo( attr1!.FilterName, attr1 );
 
-        if( TryGetFilterAttribute<BeforeAllImportFilterAttribute>( filterType, out var attr2 ) )
+        if( TryGetFilterAttribute<BeforeUserFiltersAttribute>( filterType, out var attr2 ) )
             return new ImportFilterAttributeInfo( attr2!.FilterName, attr2 );
 
-        return TryGetFilterAttribute<AfterAllImportFilterAttribute>( filterType, out var attr3 )
+        return TryGetFilterAttribute<AfterUserFiltersAttribute>( filterType, out var attr3 )
             ? new ImportFilterAttributeInfo( attr3!.FilterName, attr3 )
             : null;
     }
@@ -61,24 +61,24 @@ public abstract class ImportFilter : IImportFilter
         FilterDescription = attr switch
         {
             ImportFilterAttribute normal => normal.Description,
-            BeforeAllImportFilterAttribute before => before.Description,
-            AfterAllImportFilterAttribute after => after.Description,
+            BeforeUserFiltersAttribute before => before.Description,
+            AfterUserFiltersAttribute after => after.Description,
             _ => null
         };
 
         Category = attr switch
         {
             ImportFilterAttribute => ImportFilterCategory.Normal,
-            BeforeAllImportFilterAttribute => ImportFilterCategory.BeforeAll,
-            AfterAllImportFilterAttribute => ImportFilterCategory.AfterAll,
+            BeforeUserFiltersAttribute => ImportFilterCategory.BeforeAll,
+            AfterUserFiltersAttribute => ImportFilterCategory.AfterAll,
             _ => throw new ArgumentException( $"Unsupported import filter attribute {attr?.GetType()}" )
         };
 
         Priority = attr switch
         {
             ImportFilterAttribute normal => normal.Priority,
-            BeforeAllImportFilterAttribute before => before.Priority,
-            AfterAllImportFilterAttribute after => after.Priority,
+            BeforeUserFiltersAttribute before => before.Priority,
+            AfterUserFiltersAttribute after => after.Priority,
             _ => throw new ArgumentException($"Unsupported import filter attribute {attr?.GetType()}")
         };
     }

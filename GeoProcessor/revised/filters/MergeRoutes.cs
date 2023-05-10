@@ -4,9 +4,11 @@ using Microsoft.Extensions.Logging;
 
 namespace J4JSoftware.GeoProcessor;
 
-[BeforeAllImportFilter("Merge Routes", 20)]
+[BeforeUserFilters(DefaultFilterName, 30)]
 public class MergeRoutes : ImportFilter
 {
+    public const string DefaultFilterName = "Merge Routes";
+
     private Distance2 _maxRouteGap = new( UnitType.Meters, GeoConstants.DefaultMaxRouteGapMeters );
 
     public MergeRoutes(

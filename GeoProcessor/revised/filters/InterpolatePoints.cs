@@ -4,9 +4,11 @@ using Microsoft.Extensions.Logging;
 
 namespace J4JSoftware.GeoProcessor;
 
-[AfterAllImportFilter("Interpolate Points", 0)]
+[AfterUserFilters(DefaultFilterName, 0)]
 public class InterpolatePoints : ImportFilter
 {
+    public const string DefaultFilterName = "Interpolate Points";
+
     private Distance2 _maxSeparation = new( UnitType.Kilometers, GeoConstants.DefaultMaxPointSeparationKm );
     private ImportedRoute? _filteredRoute;
 

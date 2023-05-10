@@ -25,9 +25,9 @@ public class ImportFilterAttribute : Attribute
 }
 
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-internal class BeforeAllImportFilterAttribute : Attribute
+internal class BeforeUserFiltersAttribute : Attribute
 {
-    public BeforeAllImportFilterAttribute(
+    public BeforeUserFiltersAttribute(
         string filterName,
         uint priority,
         string? description = null
@@ -45,9 +45,9 @@ internal class BeforeAllImportFilterAttribute : Attribute
 
 
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-internal class AfterAllImportFilterAttribute : Attribute
+internal class AfterUserFiltersAttribute : Attribute
 {
-    public AfterAllImportFilterAttribute(
+    public AfterUserFiltersAttribute(
         string filterName,
         uint priority,
         string? description = null
