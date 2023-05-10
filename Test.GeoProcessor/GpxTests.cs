@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Metrics;
 using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -33,7 +34,7 @@ public class GpxTests : TestBase
                      .ConsolidateAlongBearing()
                      .RemoveGarminMessagePoints()
                      .AddGpxFile( path )
-                     .ExportToGpx( exportFile )
+                     .ExportToGpx( exportFile, new Distance2(UnitType.Meters, 500) )
                      .SendStatusReportsTo( LogStatus )
                      .SendMessagesTo( LogMessage );
 
