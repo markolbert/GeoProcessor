@@ -12,11 +12,6 @@ public class GpxDoc
 
     // thanx to Shweta Lodha for this!!
     // https://www.c-sharpcorner.com/article/generating-xml-root-node-having-colon-via-serialization2/
-    [ XmlAttribute( AttributeName = "xsi",
-                    Form = System.Xml.Schema.XmlSchemaForm.Qualified,
-                    Namespace = "http://www.w3.org/2001/XMLSchema-instance" ) ]
-    public string Xsi { get; set; }
-
     [XmlAttribute(AttributeName = "schemaLocation", 
                   Form = System.Xml.Schema.XmlSchemaForm.Qualified,
                   Namespace = "http://www.w3.org/2001/XMLSchema-instance" ) ]
@@ -24,4 +19,7 @@ public class GpxDoc
 
     [XmlAttribute("version")]
     public string Version { get; set; }
+
+    [XmlAttribute("creator")]
+    public string Creator { get; set; }
 }
