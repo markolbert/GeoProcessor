@@ -10,8 +10,6 @@ namespace J4JSoftware.GeoProcessor;
 
 public abstract class RouteProcessor2 : MessageBasedTask, IRouteProcessor2
 {
-    private int _maxPtsInRequest;
-
     protected RouteProcessor2(
         int maxPtsPerRequest,
         string? mesgPrefix = null,
@@ -40,7 +38,7 @@ public abstract class RouteProcessor2 : MessageBasedTask, IRouteProcessor2
     }
 
     public string ProcessorName { get; }
-    public List<IImportFilter> ImportFilters { get; }
+    public List<IImportFilter> ImportFilters { get; private set; }
     public string ApiKey { get; set; } = string.Empty;
     public TimeSpan RequestTimeout { get; set; } = GeoConstants.DefaultRequestTimeout;
 
@@ -53,12 +51,13 @@ public abstract class RouteProcessor2 : MessageBasedTask, IRouteProcessor2
     {
         await OnProcessingStarted();
 
-        foreach (var filter in ImportFilters.Distinct()
-                                                .OrderBy(x => x.Category)
-                                                .ThenBy(x => x.Priority))
+        ImportFilters = AdjustImportFilters();
+
+        foreach( var filter in ImportFilters.OrderBy( x => x.Category )
+                                            .ThenBy( x => x.Priority ) )
         {
-            Logger?.LogInformation("Executing {filter} filter...", filter.FilterName);
-            toProcess = filter.Filter(toProcess);
+            Logger?.LogInformation( "Executing {filter} filter...", filter.FilterName );
+            toProcess = filter.Filter( toProcess );
         }
 
         Logger?.LogInformation("Filtering complete");
@@ -69,6 +68,11 @@ public abstract class RouteProcessor2 : MessageBasedTask, IRouteProcessor2
         await OnProcessingEnded();
 
         return processedChunks.MergeProcessedRouteChunks( Logger );
+    }
+
+    protected virtual List<IImportFilter> AdjustImportFilters()
+    {
+        return ImportFilters.Distinct().ToList();
     }
 
     private List<ImportedRouteChunk> GetRouteChunks( List<IImportedRoute> routes )

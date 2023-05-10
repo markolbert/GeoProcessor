@@ -31,6 +31,35 @@ public partial class BingProcessor2 : RouteProcessor2
     {
     }
 
+    protected override List<IImportFilter> AdjustImportFilters()
+    {
+        var currentFilters = base.AdjustImportFilters();
+
+        // ensure max gap values are consistent
+        var interpolateFilter = currentFilters.FirstOrDefault( x => x.FilterName == InterpolatePoints.DefaultFilterName )
+            as InterpolatePoints;
+
+        var consolBearingFilter = currentFilters.FirstOrDefault( x => x.FilterName == ConsolidateAlongBearing.DefaultFilterName ) 
+            as ConsolidateAlongBearing;
+
+        if( interpolateFilter == null || consolBearingFilter == null )
+            return currentFilters;
+
+        var gap = interpolateFilter.MaximumPointSeparation;
+
+        gap = consolBearingFilter.MaximumConsolidationDistance > gap
+            ? gap
+            : consolBearingFilter.MaximumConsolidationDistance;
+
+        if( gap.Value > 2.5 )
+            gap = gap with { Value = 2.5 };
+
+        interpolateFilter.MaximumPointSeparation = gap;
+        consolBearingFilter.MaximumConsolidationDistance = gap;
+
+        return currentFilters;
+    }
+
     protected override async Task<List<SnappedImportedRoute>> ProcessRouteChunksAsync(
         List<ImportedRouteChunk> routeChunks,
         CancellationToken ctx
