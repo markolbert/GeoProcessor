@@ -53,7 +53,8 @@ public abstract class RouteProcessor2 : MessageBasedTask, IRouteProcessor2
 
         ImportFilters = AdjustImportFilters();
 
-        foreach( var filter in ImportFilters.OrderBy( x => x.Category )
+        foreach( var filter in ImportFilters.Where( x => x.Category != ImportFilterCategory.PostSnapping )
+                                            .OrderBy( x => x.Category )
                                             .ThenBy( x => x.Priority ) )
         {
             Logger?.LogInformation( "Executing {filter} filter...", filter.FilterName );

@@ -78,6 +78,8 @@ public class RouteBuilder
 
         foreach (var exportTarget in _exportTargets)
         {
+            exportTarget.AddFilters( _importFilters.Where( x => x.Category == ImportFilterCategory.PostSnapping ) );
+
             await exportTarget.ExportAsync(retVal, ctx);
         }
 

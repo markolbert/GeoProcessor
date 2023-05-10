@@ -25,7 +25,7 @@ public abstract class FileExporter<TDoc> : Exporter, IFileExporter
     public string FilePath { get; set; } = string.Empty;
 
 #pragma warning disable CS1998
-    public override async Task<bool> ExportAsync( IEnumerable<ImportedRoute> routes, CancellationToken ctx = default )
+    protected override async Task<bool> ExportInternalAsync( List<IImportedRoute> routes, CancellationToken ctx )
 #pragma warning restore CS1998
     {
         var docObject = GetDocumentObject( routes );
@@ -51,5 +51,5 @@ public abstract class FileExporter<TDoc> : Exporter, IFileExporter
         return true;
     }
 
-    protected abstract TDoc GetDocumentObject( IEnumerable<ImportedRoute> routes );
+    protected abstract TDoc GetDocumentObject( List<IImportedRoute> routes );
 }

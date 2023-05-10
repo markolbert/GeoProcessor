@@ -169,13 +169,23 @@ public static class RouteBuilderExtensions
 
     public static RouteBuilder.RouteBuilder ExportToGpx(
         this RouteBuilder.RouteBuilder builder,
-        string filePath
+        string filePath,
+        Distance2? maxGap = null
     )
     {
         if( string.IsNullOrEmpty( filePath ) )
             return builder;
 
-        builder.AddExportTarget( new GpxExporter( builder.LoggerFactory ) { FilePath = filePath } );
+        if( maxGap != null )
+            builder.AddImportFilter( new SkipPoints( builder.LoggerFactory )
+            {
+                MaximumGap = maxGap
+            } );
+
+        builder.AddExportTarget( new GpxExporter( builder.LoggerFactory )
+        {
+            FilePath = filePath,
+        } );
 
         return builder;
     }
