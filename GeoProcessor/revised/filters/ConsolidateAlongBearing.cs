@@ -41,13 +41,6 @@ public class ConsolidateAlongBearing : ImportFilter
     {
         var retVal = new List<IImportedRoute>();
 
-        var totalPts = 0;
-
-        foreach( var route in input )
-        {
-            totalPts += route.NumPoints;
-        }
-
         foreach( var rawRoute in input )
         {
             var filteredRoute = new ImportedRoute()
@@ -122,13 +115,6 @@ public class ConsolidateAlongBearing : ImportFilter
             }
 
             retVal.Add( filteredRoute );
-        }
-
-        var newPts = 0;
-
-        foreach (var route in retVal)
-        {
-            newPts += route.NumPoints;
         }
 
         return retVal;
