@@ -30,6 +30,7 @@ public class GpxTests : TestBase
         routeBuilder!.SnapWithBing( Config.BingKey )
                      .MergeRoutes()
                      .RemoveClusters()
+                     .ConsolidateAlongBearing()
                      .RemoveGarminMessagePoints()
                      .AddGpxFile( path )
                      .ExportToGpx( exportFile )

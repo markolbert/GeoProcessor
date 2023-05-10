@@ -73,7 +73,7 @@ public static partial class GeoExtensions
         GetBearing( new PointPair( new Coordinate2( c1.Latitude, c1.Longitude ),
                                    new Coordinate2( c2.Latitude, c2.Longitude ) ) );
 
-    public static double GetBearing( this PointPair pointPair )
+    public static double GetBearing( this PointPair pointPair, bool absolute = false )
     {
         var deltaLongitude = ( pointPair.Second.Longitude - pointPair.First.Longitude ) * GeoConstants.RadiansPerDegree;
 
@@ -87,7 +87,9 @@ public static partial class GeoExtensions
 
         var theta = Math.Atan2( y, x );
 
-        return ( theta * GeoConstants.DegreesPerRadian + 360 ) % 360;
+        return absolute
+            ? Math.Abs( ( theta * GeoConstants.DegreesPerRadian + 360 ) % 360 )
+            : ( theta * GeoConstants.DegreesPerRadian + 360 ) % 360;
     }
 
     public static (double avg, double stdev) GetBearingStatistics(

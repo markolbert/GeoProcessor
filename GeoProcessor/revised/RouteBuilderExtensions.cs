@@ -70,6 +70,26 @@ public static class RouteBuilderExtensions
         return builder;
     }
 
+    public static RouteBuilder.RouteBuilder ConsolidateAlongBearing(
+        this RouteBuilder.RouteBuilder builder,
+        double bearingToleranceDegrees = GeoConstants.DefaultBearingToleranceDegrees,
+        Distance2? maxConsolDist = null
+    )
+    {
+        // 2.5 km is the max distance between points for Bing
+        maxConsolDist ??= new Distance2( UnitType.Kilometers, 2.5 );
+
+        var filter = new ConsolidateAlongBearing( builder.LoggerFactory )
+        {
+            BearingToleranceDegrees = Math.Abs( bearingToleranceDegrees ),
+            MaximumConsolidationDistance = maxConsolDist
+        };
+
+        builder.AddImportFilter(filter);
+
+        return builder;
+    }
+
     public static RouteBuilder.RouteBuilder InterpolatePoints(
         this RouteBuilder.RouteBuilder builder,
         Distance2? maxSeparation = null
