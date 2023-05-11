@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace J4JSoftware.GeoProcessor;
 
-[AfterUserFilters(DefaultFilterName, 0)]
+[AfterImportFilters(DefaultFilterName, 0)]
 public class InterpolatePoints : ImportFilter
 {
     public const string DefaultFilterName = "Interpolate Points";

@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace J4JSoftware.GeoProcessor;
 
-[BeforeUserFilters(DefaultFilterName, 30)]
+[BeforeImportFilters(DefaultFilterName, 30)]
 public class MergeRoutes : ImportFilter
 {
     public const string DefaultFilterName = "Merge Routes";

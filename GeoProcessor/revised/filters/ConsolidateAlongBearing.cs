@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace J4JSoftware.GeoProcessor;
 
-[BeforeUserFilters(DefaultFilterName, 40)]
+[BeforeImportFilters(DefaultFilterName, 40)]
 public class ConsolidateAlongBearing : ImportFilter
 {
     public const string DefaultFilterName = "Consolidate Along Bearing";

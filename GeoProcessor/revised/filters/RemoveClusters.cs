@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace J4JSoftware.GeoProcessor;
 
-[BeforeUserFilters(DefaultFilterName, 10)]
+[BeforeImportFilters(DefaultFilterName, 10)]
 public class RemoveClusters : ImportFilter
 {
     public const string DefaultFilterName = "Remove Clusters";

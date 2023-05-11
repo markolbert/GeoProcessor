@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace J4JSoftware.GeoProcessor;
 
-[BeforeUserFilters(DefaultFilterName, 0)]
+[BeforeImportFilters(DefaultFilterName, 0)]
 public class RemoveGarminMessagePoints : ImportFilter
 {
     public const string DefaultFilterName = "Remove Garmin Message Points";

@@ -12,10 +12,10 @@ public abstract class ImportFilter : IImportFilter
         if( TryGetFilterAttribute<ImportFilterAttribute>( filterType, out var attr1 ) )
             return new ImportFilterAttributeInfo( attr1!.FilterName, attr1 );
 
-        if( TryGetFilterAttribute<BeforeUserFiltersAttribute>( filterType, out var attr2 ) )
+        if( TryGetFilterAttribute<BeforeImportFiltersAttribute>( filterType, out var attr2 ) )
             return new ImportFilterAttributeInfo( attr2!.FilterName, attr2 );
 
-        if( TryGetFilterAttribute<AfterUserFiltersAttribute>( filterType, out var attr3 ) )
+        if( TryGetFilterAttribute<AfterImportFiltersAttribute>( filterType, out var attr3 ) )
             return new ImportFilterAttributeInfo( attr3!.FilterName, attr3 );
 
         return TryGetFilterAttribute<PostSnappingFilterAttribute>( filterType, out var attr4 )
@@ -64,8 +64,8 @@ public abstract class ImportFilter : IImportFilter
         FilterDescription = attr switch
         {
             ImportFilterAttribute normal => normal.Description,
-            BeforeUserFiltersAttribute before => before.Description,
-            AfterUserFiltersAttribute after => after.Description,
+            BeforeImportFiltersAttribute before => before.Description,
+            AfterImportFiltersAttribute after => after.Description,
             PostSnappingFilterAttribute post => post.Description,
             _ => null
         };
@@ -73,8 +73,8 @@ public abstract class ImportFilter : IImportFilter
         Category = attr switch
         {
             ImportFilterAttribute normal => normal.Category,
-            BeforeUserFiltersAttribute before => before.Category,
-            AfterUserFiltersAttribute after => after.Category,
+            BeforeImportFiltersAttribute before => before.Category,
+            AfterImportFiltersAttribute after => after.Category,
             PostSnappingFilterAttribute post=> post.Category,
             _ => throw new ArgumentException( $"Unsupported import filter attribute {attr!.GetType()}" )
         };
@@ -82,8 +82,8 @@ public abstract class ImportFilter : IImportFilter
         Priority = attr switch
         {
             ImportFilterAttribute normal => normal.Priority,
-            BeforeUserFiltersAttribute before => before.Priority,
-            AfterUserFiltersAttribute after => after.Priority,
+            BeforeImportFiltersAttribute before => before.Priority,
+            AfterImportFiltersAttribute after => after.Priority,
             PostSnappingFilterAttribute post => post.Priority,
             _ => throw new ArgumentException($"Unsupported import filter attribute {attr.GetType()}")
         };

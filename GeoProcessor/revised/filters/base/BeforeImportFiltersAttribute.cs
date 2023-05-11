@@ -3,9 +3,9 @@
 namespace J4JSoftware.GeoProcessor;
 
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-internal class AfterUserFiltersAttribute : Attribute
+internal class BeforeImportFiltersAttribute : Attribute
 {
-    public AfterUserFiltersAttribute(
+    public BeforeImportFiltersAttribute(
         string filterName,
         uint priority,
         string? description = null
@@ -17,7 +17,7 @@ internal class AfterUserFiltersAttribute : Attribute
     }
 
     public string FilterName { get; }
+    public ImportFilterCategory Category => ImportFilterCategory.BeforeUserDefined;
     public uint Priority { get; }
-    public ImportFilterCategory Category => ImportFilterCategory.AfterUserDefined;
     public string? Description { get; }
 }

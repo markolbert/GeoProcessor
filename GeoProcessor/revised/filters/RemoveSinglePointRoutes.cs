@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace J4JSoftware.GeoProcessor;
 
-[BeforeUserFilters(DefaultFilterName, 20)]
+[BeforeImportFilters(DefaultFilterName, 20)]
 public class RemoveSinglePointRoutes : ImportFilter
 {
     public const string DefaultFilterName = "Remove Single Point Routes";

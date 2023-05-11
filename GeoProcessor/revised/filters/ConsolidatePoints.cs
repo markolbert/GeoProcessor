@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace J4JSoftware.GeoProcessor;
 
-[BeforeUserFilters(DefaultFilterName, 50)]
+[BeforeImportFilters(DefaultFilterName, 50)]
 public class ConsolidatePoints : ImportFilter
 {
     public const string DefaultFilterName = "Consolidate Points";
