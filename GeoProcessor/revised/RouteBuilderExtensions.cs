@@ -185,19 +185,51 @@ public static class RouteBuilderExtensions
         Distance2? maxGap = null
     )
     {
-        if( string.IsNullOrEmpty( filePath ) )
+        if( !builder.TryCreateExporter<GpxExporter>( filePath, out var exporter, maxGap ))
             return builder;
 
-        if( maxGap != null )
-            builder.AddImportFilter( new SkipPoints( builder.LoggerFactory )
-            {
-                MaximumGap = maxGap
-            } );
+        builder.AddExportTarget( exporter! );
 
-        builder.AddExportTarget( new GpxExporter( builder.LoggerFactory )
-        {
-            FilePath = filePath,
-        } );
+        return builder;
+    }
+
+    private static bool TryCreateExporter<TExporter>(
+        this RouteBuilder.RouteBuilder builder,
+        string filePath,
+        out IFileExporter? exporter,
+        Distance2? maxGap = null
+    )
+        where TExporter : class, IFileExporter
+    {
+        exporter = null;
+
+        if( string.IsNullOrEmpty( filePath ) )
+            return false;
+
+        exporter = Activator.CreateInstance( typeof( TExporter ),
+                                             new object?[] { builder.LoggerFactory } ) as TExporter;
+
+        if( exporter == null )
+            return false;
+
+        exporter.FilePath = filePath;
+
+        if( maxGap != null )
+            exporter.AddFilter( new SkipPoints( builder.LoggerFactory ) { MaximumGap = maxGap } );
+
+        return true;
+    }
+
+    public static RouteBuilder.RouteBuilder ExportToKml(
+        this RouteBuilder.RouteBuilder builder,
+        string filePath,
+        Distance2? maxGap = null
+    )
+    {
+        if (!builder.TryCreateExporter<KmlExporter2>(filePath, out var exporter, maxGap))
+            return builder;
+
+        builder.AddExportTarget(exporter!);
 
         return builder;
     }

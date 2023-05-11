@@ -3,5 +3,5 @@
 public interface IFileExporter : IExporter2
 {
     string FileType { get; }
-    string FilePath { get; }
+    string FilePath { get; set; }
 }
