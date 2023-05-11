@@ -107,4 +107,31 @@ public abstract class RouteProcessor2 : MessageBasedTask, IRouteProcessor2
         List<ImportedRouteChunk> routeChunks,
         CancellationToken ctx
     );
+
+    protected async Task HandleTimeoutExceptionAsync()
+    {
+        await SendMessage(ExpandedPhase,
+                          $"Bing processing timed out after {RequestTimeout}",
+                          true,
+                          true,
+                          LogLevel.Error);
+    }
+
+    protected async Task HandleOtherRequestExceptionAsync(string mesg)
+    {
+        await SendMessage(ExpandedPhase,
+                          $"Bing processing failed, reply was {mesg}",
+                          true,
+                          true,
+                          LogLevel.Error);
+    }
+
+    protected async Task HandleInvalidStatusCodeAsync(string description)
+    {
+        await SendMessage(ExpandedPhase,
+                          $"Snap to road request failed, message was '{description}'",
+                          true,
+                          true,
+                          LogLevel.Error);
+    }
 }
