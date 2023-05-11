@@ -51,6 +51,18 @@ public static class RouteBuilderExtensions
         return builder;
     }
 
+    public static RouteBuilder.RouteBuilder SnapWithGoogle(
+        this RouteBuilder.RouteBuilder builder,
+        string apiKey,
+        int maxPtsPerRequest = 100
+    )
+    {
+        builder.SnapProcessor =
+            new GoogleProcessor2( maxPtsPerRequest, builder.LoggerFactory ) { ApiKey = apiKey };
+
+        return builder;
+    }
+
     public static RouteBuilder.RouteBuilder ConsolidatePoints(
         this RouteBuilder.RouteBuilder builder,
         Distance2? minPointGap = null,
