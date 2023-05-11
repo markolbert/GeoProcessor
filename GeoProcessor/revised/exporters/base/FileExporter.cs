@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,12 +24,19 @@ public abstract class FileExporter<TDoc> : Exporter, IFileExporter
 
     public string FileType { get; }
     public string FilePath { get; set; } = string.Empty;
+    public Color RouteColor { get; set; } = Color.Blue;
 
 #pragma warning disable CS1998
     protected override async Task<bool> ExportInternalAsync( List<IImportedRoute> routes, CancellationToken ctx )
 #pragma warning restore CS1998
     {
-        var docObject = GetDocumentObject( routes );
+        if( string.IsNullOrEmpty( FilePath ) )
+        {
+            Logger?.LogError("Export file is undefined");
+            return false;
+        }
+
+        var docObject = GetRootObject( routes );
         var serializer = new XmlSerializer( typeof( TDoc ) );
         
         try
@@ -51,5 +59,5 @@ public abstract class FileExporter<TDoc> : Exporter, IFileExporter
         return true;
     }
 
-    protected abstract TDoc GetDocumentObject( List<IImportedRoute> routes );
+    protected abstract TDoc GetRootObject( List<IImportedRoute> routes );
 }
