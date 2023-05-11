@@ -12,7 +12,7 @@ namespace J4JSoftware.GeoProcessor;
 [ RouteProcessorAttribute2( "Bing" ) ]
 public partial class BingProcessor2 : RouteProcessor2
 {
-    [ GeneratedRegex( @"[^\d]*(\d+)[^\d]*(\d+)[^\d]*(\d+\.*\d*)([^\.]*)" ) ]
+    [GeneratedRegex(@"[^\d]*(\d+)[^\d]*(\d+)[^\d]*(\d+\.*\d*)([^\.]*)")]
     private static partial Regex MaxGapRegEx();
 
     private List<SnappedImportedRoute>? _processedChunks;
@@ -51,8 +51,10 @@ public partial class BingProcessor2 : RouteProcessor2
             ? gap
             : consolBearingFilter.MaximumConsolidationDistance;
 
-        if( gap.Value > 2.5 )
-            gap = gap with { Value = 2.5 };
+        var maxGap = new Distance2( UnitType.Kilometers, 2.5 );
+
+        if( gap > maxGap )
+            gap = maxGap;
 
         interpolateFilter.MaximumPointSeparation = gap;
         consolBearingFilter.MaximumConsolidationDistance = gap;
@@ -77,91 +79,76 @@ public partial class BingProcessor2 : RouteProcessor2
                 Interpolate = true,
                 SpeedUnit = SpeedUnitType.MPH,
                 TravelMode = TravelModeType.Driving,
-                Points = routeChunk.Select( p => new BingMapsRESTToolkit.Coordinate( p.Latitude, p.Longitude ) )
+                Points = routeChunk.Select(p => new BingMapsRESTToolkit.Coordinate(p.Latitude, p.Longitude))
                                    .ToList()
             };
 
-            Response? result;
+            Response? result = null;
 
             try
             {
-                result = await request.Execute().WaitAsync( RequestTimeout, ctx );
+                result = await request.Execute().WaitAsync(RequestTimeout, ctx);
             }
-            catch( TimeoutException )
+            catch ( TimeoutException )
             {
                 await HandleTimeoutExceptionAsync();
                 continue;
             }
             catch( Exception ex )
             {
-                var mesg = ex.Message.Contains( "distance between point" )
-                    ? ParseGapException( routeChunk.ToList(), ex.Message )
+                var mesg = ex.Message.Contains("distance between point")
+                    ? ParseGapException(routeChunk.ToList(), ex.Message)
                     : ex.Message;
 
                 await HandleOtherRequestExceptionAsync( mesg );
                 continue;
             }
 
-            if( result.StatusCode != 200 )
+            if( result == null )
             {
-                await HandleInvalidStatusCodeAsync( result.StatusDescription );
+                await HandleOtherRequestExceptionAsync( "No response received from Bing Maps" );
                 continue;
             }
 
-            foreach( var resourceSet in result.ResourceSets )
+            if (result.StatusCode != 200)
             {
-                await ProcessResourceSetAsync( resourceSet, routeChunk );
+                await HandleInvalidStatusCodeAsync(result.StatusDescription);
+
+                foreach( var error in result.ErrorDetails )
+                {
+                    await HandleInvalidStatusCodeAsync( error );
+                }
+
+                continue;
+            }
+
+            foreach (var resourceSet in result.ResourceSets)
+            {
+                await ProcessResourceSetAsync(resourceSet, routeChunk);
             }
         }
 
         return _processedChunks;
     }
 
-    private string ParseGapException( List<Coordinate2> points, string mesg )
+    private string ParseGapException(List<Coordinate2> points, string mesg)
     {
-        var matches = MaxGapRegEx().Matches( mesg );
+        var matches = MaxGapRegEx().Matches(mesg);
 
         var match = matches.FirstOrDefault();
-        if( match == null || match.Groups.Count < 5 )
+        if (match == null || match.Groups.Count < 5)
             return mesg;
 
-        if( !int.TryParse( match.Groups[ 1 ].Value, out var pt1Idx ) || pt1Idx >= points.Count - 1 )
+        if (!int.TryParse(match.Groups[1].Value, out var pt1Idx) || pt1Idx >= points.Count - 1)
             return mesg;
 
-        if( !int.TryParse( match.Groups[ 2 ].Value, out var pt2Idx ) || pt2Idx >= points.Count - 1 )
+        if (!int.TryParse(match.Groups[2].Value, out var pt2Idx) || pt2Idx >= points.Count - 1)
             return mesg;
 
-        var gap = points[ pt1Idx ].GetDistance( points[ pt2Idx ] );
+        var gap = points[pt1Idx].GetDistance(points[pt2Idx]);
 
         return
-            $"The gap ({gap.Value}) between point {pt1Idx:n0} ({points[ pt1Idx ].Latitude}, {points[ pt1Idx ].Longitude}) and {pt2Idx:n0} ({points[ pt2Idx ].Latitude}, {points[ pt2Idx ].Longitude}) exceeds {match.Groups[ 3 ].Value} {match.Groups[ 4 ].Value.Trim()}";
-    }
-
-    private async Task HandleTimeoutExceptionAsync()
-    {
-        await SendMessage( ExpandedPhase,
-                           $"Bing processing timed out after {RequestTimeout}",
-                           true,
-                           true,
-                           LogLevel.Error );
-    }
-
-    private async Task HandleOtherRequestExceptionAsync( string mesg )
-    {
-        await SendMessage( ExpandedPhase,
-                           $"Bing processing failed, reply was {mesg}",
-                           true,
-                           true,
-                           LogLevel.Error );
-    }
-
-    private async Task HandleInvalidStatusCodeAsync( string description )
-    {
-        await SendMessage( ExpandedPhase,
-                           $"Snap to road request failed, message was '{description}'",
-                           true,
-                           true,
-                           LogLevel.Error );
+            $"The gap ({gap.Value}) between point {pt1Idx:n0} ({points[pt1Idx].Latitude}, {points[pt1Idx].Longitude}) and {pt2Idx:n0} ({points[pt2Idx].Latitude}, {points[pt2Idx].Longitude}) exceeds {match.Groups[3].Value} {match.Groups[4].Value.Trim()}";
     }
 
     private async Task ProcessResourceSetAsync( ResourceSet resourceSet, ImportedRouteChunk routeChunk )
