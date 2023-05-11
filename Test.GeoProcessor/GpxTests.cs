@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Diagnostics.Metrics;
 using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions;
 using J4JSoftware.GeoProcessor;
 using Microsoft.Extensions.DependencyInjection;
 using J4JSoftware.GeoProcessor.RouteBuilder;
-using Microsoft.Extensions.Logging;
 using Xunit;
 
 namespace Test.GeoProcessor;
