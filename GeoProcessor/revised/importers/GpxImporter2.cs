@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+using J4JSoftware.GeoProcessor.Gpx;
 using J4JSoftware.GeoProcessor.RouteBuilder;
 using Microsoft.Extensions.Logging;
 
@@ -36,14 +37,14 @@ public class GpxImporter2 : FileImporter
             return retVal;
         }
 
-        GpxDoc? test;
+        Root? test;
 
         try
         {
             var fs = new StreamReader( fileToImport.FilePath );
             var reader = XmlReader.Create( fs );
-            var serializer = new XmlSerializer( typeof( GpxDoc ) );
-            test = serializer.Deserialize( reader ) as GpxDoc;
+            var serializer = new XmlSerializer( typeof( Root ) );
+            test = serializer.Deserialize( reader ) as Root;
         }
         catch( Exception ex )
         {
