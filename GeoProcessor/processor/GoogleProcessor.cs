@@ -47,14 +47,14 @@ public class GoogleProcessor : CloudRouteProcessor
     public ProcessorType Type { get; }
 
     protected override async Task<List<Coordinate>?> ExecuteRequestAsync(
-        List<Coordinate> coordinates,
+        List<Coordinate> points,
         CancellationToken cancellationToken = default )
     {
         var request = new SnapToRoadsRequest
         {
             Interpolate = true,
             Key = ApiKey,
-            Path = coordinates.Select( c => new GoogleApi.Entities.Maps.Roads.Common.Coordinate( c.Latitude, c.Longitude ) )
+            Path = points.Select( c => new GoogleApi.Entities.Maps.Roads.Common.Coordinate( c.Latitude, c.Longitude ) )
         };
 
         SnapToRoadsResponse? result;
