@@ -15,24 +15,30 @@ public class GpxTests : TestBase
     [ InlineData( "Sherman Pass.gpx" ) ]
     public async Task CreateBuilder( string fileName )
     {
-        var path = Path.Combine( Environment.CurrentDirectory, "gpx", fileName );
-        File.Exists( path ).Should().BeTrue();
+        var importPath = Path.Combine( Environment.CurrentDirectory, "gpx", fileName );
+        File.Exists( importPath ).Should().BeTrue();
 
         var routeBuilder = Services.GetService<RouteBuilder>();
         routeBuilder.Should().NotBeNull();
 
-        var exportFile = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.Desktop ), "TestGpx.gpx" );
+        var gpxExport = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.Desktop ), "TestGpx.gpx" );
 
-        if( File.Exists( exportFile ) )
-            File.Delete( exportFile );
+        if( File.Exists( gpxExport ) )
+            File.Delete( gpxExport );
+
+        var kmlExport = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.Desktop ), "TestKml.kml" );
+
+        if( File.Exists( kmlExport ) )
+            File.Delete( kmlExport );
 
         routeBuilder!.SnapWithBing( Config.BingKey )
                      .MergeRoutes()
                      .RemoveClusters()
                      .ConsolidateAlongBearing()
                      .RemoveGarminMessagePoints()
-                     .AddGpxFile( path )
-                     .ExportToGpx( exportFile, new Distance2(UnitType.Meters, 500) )
+                     .AddGpxFile( importPath )
+                     .ExportToGpx( gpxExport, new Distance2( UnitType.Meters, 500 ) )
+                     .ExportToKml( kmlExport, new Distance2( UnitType.Meters, 500 ) )
                      .SendStatusReportsTo( LogStatus )
                      .SendMessagesTo( LogMessage );
 
