@@ -1,4 +1,5 @@
-﻿namespace J4JSoftware.GeoProcessor;
+﻿#pragma warning disable CS8618
+namespace J4JSoftware.GeoProcessor;
 
 internal class GoogleSnappedPoint
 {
