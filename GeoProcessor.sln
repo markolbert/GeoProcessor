@@ -5,49 +5,11 @@ VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "extern", "extern", "{5AD3F041-D553-492B-948D-E58BDA4373CF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DependencyInjection", "..\ProgrammingUtilities\DependencyInjection\DependencyInjection.csproj", "{A80A75DD-DB4C-472D-8166-FE8F86FD7BF1}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VisualUtilities", "..\ProgrammingUtilities\VisualUtilities\VisualUtilities.csproj", "{6781EA78-CEEA-4B48-8D1E-E76CECE32A28}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoProcessor", "GeoProcessor\GeoProcessor.csproj", "{4DA0E1B4-6972-4825-87DD-41A2F3A8D808}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.GeoProcessor", "Test.GeoProcessor\Test.GeoProcessor.csproj", "{D62EA0A9-51A6-4F9B-9CBC-D5DA85F92614}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleUtilities", "..\ProgrammingUtilities\ConsoleUtilities\ConsoleUtilities.csproj", "{7F59F25F-4F4F-4361-8C6D-C52972F56269}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WPFUtilities", "..\ProgrammingUtilities\WPFUtilities\WPFUtilities.csproj", "{A1406166-3FAD-4675-8782-A48C3B63382F}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "J4JCommandLine", "..\J4JCommandLine\J4JCommandLine\J4JCommandLine.csproj", "{2D02EC8B-3FFF-4DB7-9A67-17CB90FA01A2}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{112A0C80-B0AB-4789-B8E6-896D8BCD5F78}"
-	ProjectSection(SolutionItems) = preProject
-		docs\apikeys.md = docs\apikeys.md
-		docs\cmdline.md = docs\cmdline.md
-		docs\config.md = docs\config.md
-		docs\distance.md = docs\distance.md
-		docs\library.md = docs\library.md
-		docs\nposl-3.md = docs\nposl-3.md
-		docs\nuget-consoleapp.md = docs\nuget-consoleapp.md
-		docs\nuget-wpf.md = docs\nuget-wpf.md
-		docs\win-config.md = docs\win-config.md
-		docs\win-running-the-app.md = docs\win-running-the-app.md
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{063D4109-68B1-4295-B963-ABE0E4C278BB}"
-	ProjectSection(SolutionItems) = preProject
-		docs\assets\tldr-console.png = docs\assets\tldr-console.png
-		docs\assets\win-aborted.png = docs\assets\win-aborted.png
-		docs\assets\win-completed.png = docs\assets\win-completed.png
-		docs\assets\win-existing-file.png = docs\assets\win-existing-file.png
-		docs\assets\win-good-to-go.png = docs\assets\win-good-to-go.png
-		docs\assets\win-launch.png = docs\assets\win-launch.png
-		docs\assets\win-options-changed.png = docs\assets\win-options-changed.png
-		docs\assets\win-options-unsaved.png = docs\assets\win-options-unsaved.png
-		docs\assets\win-options.png = docs\assets\win-options.png
-		docs\assets\win-processing.png = docs\assets\win-processing.png
-		docs\assets\win-processors.png = docs\assets\win-processors.png
-		docs\assets\win-ready-to-begin.png = docs\assets\win-ready-to-begin.png
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,10 +17,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A80A75DD-DB4C-472D-8166-FE8F86FD7BF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A80A75DD-DB4C-472D-8166-FE8F86FD7BF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A80A75DD-DB4C-472D-8166-FE8F86FD7BF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A80A75DD-DB4C-472D-8166-FE8F86FD7BF1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6781EA78-CEEA-4B48-8D1E-E76CECE32A28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6781EA78-CEEA-4B48-8D1E-E76CECE32A28}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6781EA78-CEEA-4B48-8D1E-E76CECE32A28}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -71,29 +29,12 @@ Global
 		{D62EA0A9-51A6-4F9B-9CBC-D5DA85F92614}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D62EA0A9-51A6-4F9B-9CBC-D5DA85F92614}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D62EA0A9-51A6-4F9B-9CBC-D5DA85F92614}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7F59F25F-4F4F-4361-8C6D-C52972F56269}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7F59F25F-4F4F-4361-8C6D-C52972F56269}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7F59F25F-4F4F-4361-8C6D-C52972F56269}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7F59F25F-4F4F-4361-8C6D-C52972F56269}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A1406166-3FAD-4675-8782-A48C3B63382F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A1406166-3FAD-4675-8782-A48C3B63382F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A1406166-3FAD-4675-8782-A48C3B63382F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A1406166-3FAD-4675-8782-A48C3B63382F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2D02EC8B-3FFF-4DB7-9A67-17CB90FA01A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2D02EC8B-3FFF-4DB7-9A67-17CB90FA01A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2D02EC8B-3FFF-4DB7-9A67-17CB90FA01A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2D02EC8B-3FFF-4DB7-9A67-17CB90FA01A2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{A80A75DD-DB4C-472D-8166-FE8F86FD7BF1} = {5AD3F041-D553-492B-948D-E58BDA4373CF}
 		{6781EA78-CEEA-4B48-8D1E-E76CECE32A28} = {5AD3F041-D553-492B-948D-E58BDA4373CF}
-		{7F59F25F-4F4F-4361-8C6D-C52972F56269} = {5AD3F041-D553-492B-948D-E58BDA4373CF}
-		{A1406166-3FAD-4675-8782-A48C3B63382F} = {5AD3F041-D553-492B-948D-E58BDA4373CF}
-		{2D02EC8B-3FFF-4DB7-9A67-17CB90FA01A2} = {5AD3F041-D553-492B-948D-E58BDA4373CF}
-		{063D4109-68B1-4295-B963-ABE0E4C278BB} = {112A0C80-B0AB-4789-B8E6-896D8BCD5F78}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FE44BCE1-11E4-4584-BACC-44570810FB77}
