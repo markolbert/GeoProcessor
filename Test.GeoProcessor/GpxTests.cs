@@ -61,9 +61,9 @@ public class GpxTests : TestBase
                      .ConsolidateAlongBearing()
                      .RemoveGarminMessagePoints()
                      .AddGpxFile( importPath )
-                     .ExportToGpx( gpxExport, new Distance2( UnitType.Meters, 500 ) )
-                     .ExportToKml( kmlExport, new Distance2( UnitType.Meters, 500 ) )
-                     .ExportToKmz( kmzExport, new Distance2( UnitType.Meters, 500 ) )
+                     .ExportToGpx( gpxExport, new Distance( UnitType.Meters, 500 ) )
+                     .ExportToKml( kmlExport, new Distance( UnitType.Meters, 500 ) )
+                     .ExportToKmz( kmzExport, new Distance( UnitType.Meters, 500 ) )
                      .SendStatusReportsTo( LogStatus )
                      .SendMessagesTo( LogMessage );
 
