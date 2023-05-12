@@ -13,6 +13,7 @@ public class GpxExporter : FileExporter<Root>
         : base( "gpx", loggerFactory )
     {
     }
+    protected override void InitializeColorPicker() => RouteColorPicker = GeoExtensions.RouteColorPicker;
 
     protected override Root GetRootObject(List<IImportedRoute> routes)
     {
