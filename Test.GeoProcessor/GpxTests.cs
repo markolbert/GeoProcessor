@@ -28,8 +28,9 @@ public class GpxTests : TestBase
 
         var kmlExport = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.Desktop ), "TestKml.kml" );
 
-        if( File.Exists( kmlExport ) )
-            File.Delete( kmlExport );
+        var kmzExport = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "TestKml.kmz");
+        if (File.Exists(kmzExport))
+            File.Delete(kmzExport);
 
         routeBuilder!.SnapWithBing( Config.BingKey )
                      .MergeRoutes()
@@ -39,6 +40,7 @@ public class GpxTests : TestBase
                      .AddGpxFile( importPath )
                      .ExportToGpx( gpxExport, new Distance2( UnitType.Meters, 500 ) )
                      .ExportToKml( kmlExport, new Distance2( UnitType.Meters, 500 ) )
+                     .ExportToKmz( kmzExport, new Distance2( UnitType.Meters, 500 ) )
                      .SendStatusReportsTo( LogStatus )
                      .SendMessagesTo( LogMessage );
 
