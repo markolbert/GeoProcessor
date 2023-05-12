@@ -1,7 +1,7 @@
 ﻿#region copyright
 // Copyright (c) 2021, 2022, 2023 Mark A. Olbert 
 // https://www.JumpForJoySoftware.com
-// GeoConstants.cs
+// RemoveGarminMessagePoints.cs
 //
 // This file is part of JumpForJoy Software's GeoProcessor.
 // 
@@ -19,16 +19,30 @@
 // with GeoProcessor. If not, see <https://www.gnu.org/licenses/>.
 #endregion
 
-using System;
-using System.Drawing;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace J4JSoftware.GeoProcessor;
 
-public partial class GeoConstants
+[BeforeImportFilters(DefaultFilterName, 0)]
+public class RemoveGarminMessagePoints : ImportFilter
 {
-    public static TimeSpan DefaultRequestTimeout { get; } = TimeSpan.FromSeconds(20);
-    public const int DefaultStatusInterval = 500;
-    public static Color DefaultRouteColor { get; }= Color.Blue;
-    public static int DefaultRouteWidth = 10;
-    public const string DefaultIconSourceHref = "http://maps.google.com/mapfiles/kml/paddle/wht-blank.png";
+    public const string DefaultFilterName = "Remove Garmin Message Points";
+
+    public RemoveGarminMessagePoints(
+        ILoggerFactory? loggerFactory
+    )
+    :base( loggerFactory)
+    {
+    }
+
+    public override List<IImportedRoute> Filter( List<IImportedRoute> input )
+    {
+        if( input.Any() )
+            return input.Where( route => route.All( x => x.Description == null ) ).ToList();
+
+        Logger?.LogInformation( "Nothing to filter" );
+        return input;
+    }
 }

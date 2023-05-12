@@ -1,7 +1,7 @@
 ﻿#region copyright
 // Copyright (c) 2021, 2022, 2023 Mark A. Olbert 
 // https://www.JumpForJoySoftware.com
-// GeoConstants.cs
+// RemoveSinglePointRoutes.cs
 //
 // This file is part of JumpForJoy Software's GeoProcessor.
 // 
@@ -19,16 +19,30 @@
 // with GeoProcessor. If not, see <https://www.gnu.org/licenses/>.
 #endregion
 
-using System;
-using System.Drawing;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace J4JSoftware.GeoProcessor;
 
-public partial class GeoConstants
+[BeforeImportFilters(DefaultFilterName, 20)]
+public class RemoveSinglePointRoutes : ImportFilter
 {
-    public static TimeSpan DefaultRequestTimeout { get; } = TimeSpan.FromSeconds(20);
-    public const int DefaultStatusInterval = 500;
-    public static Color DefaultRouteColor { get; }= Color.Blue;
-    public static int DefaultRouteWidth = 10;
-    public const string DefaultIconSourceHref = "http://maps.google.com/mapfiles/kml/paddle/wht-blank.png";
+    public const string DefaultFilterName = "Remove Single Point Routes";
+
+    public RemoveSinglePointRoutes(
+        ILoggerFactory? loggerFactory
+    )
+    :base( loggerFactory)
+    {
+    }
+
+    public override List<IImportedRoute> Filter( List<IImportedRoute> input )
+    {
+        if( input.Any() )
+            return input.Where( x => x.NumPoints > 1 ).ToList();
+
+        Logger?.LogInformation( "Nothing to filter" );
+        return input;
+    }
 }

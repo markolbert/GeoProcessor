@@ -1,7 +1,7 @@
 ﻿#region copyright
 // Copyright (c) 2021, 2022, 2023 Mark A. Olbert 
 // https://www.JumpForJoySoftware.com
-// GeoConstants.cs
+// TrackPoint.cs
 //
 // This file is part of JumpForJoy Software's GeoProcessor.
 // 
@@ -20,15 +20,27 @@
 #endregion
 
 using System;
-using System.Drawing;
+using System.Xml.Serialization;
 
-namespace J4JSoftware.GeoProcessor;
+namespace J4JSoftware.GeoProcessor.Gpx;
 
-public partial class GeoConstants
+public class TrackPoint
 {
-    public static TimeSpan DefaultRequestTimeout { get; } = TimeSpan.FromSeconds(20);
-    public const int DefaultStatusInterval = 500;
-    public static Color DefaultRouteColor { get; }= Color.Blue;
-    public static int DefaultRouteWidth = 10;
-    public const string DefaultIconSourceHref = "http://maps.google.com/mapfiles/kml/paddle/wht-blank.png";
+    [XmlAttribute("lat")]
+    public double Latitude { get; set; }
+
+    [XmlAttribute("lon")]
+    public double Longitude { get; set; }
+
+    [XmlElement("ele")]
+    public double? Elevation { get; set; }
+    public bool ShouldSerializeElevation()=> Elevation != null;
+
+    [XmlElement("time")]
+    public DateTime? Timestamp { get; set; }
+    public bool ShouldSerializeTimestamp() => Timestamp != null;
+
+    [XmlElement("desc", IsNullable = false)]
+    public string? Description { get; set; }
+    public bool ShouldSerializeDescription() => !string.IsNullOrEmpty( Description );
 }

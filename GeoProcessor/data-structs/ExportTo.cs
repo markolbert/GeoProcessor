@@ -1,7 +1,7 @@
 ﻿#region copyright
 // Copyright (c) 2021, 2022, 2023 Mark A. Olbert 
 // https://www.JumpForJoySoftware.com
-// GeoConstants.cs
+// ExportTo.cs
 //
 // This file is part of JumpForJoy Software's GeoProcessor.
 // 
@@ -19,16 +19,10 @@
 // with GeoProcessor. If not, see <https://www.gnu.org/licenses/>.
 #endregion
 
-using System;
-using System.Drawing;
+namespace J4JSoftware.GeoProcessor.RouteBuilder;
 
-namespace J4JSoftware.GeoProcessor;
+public record ExportToBase(IExporter2 Exporter);
 
-public partial class GeoConstants
-{
-    public static TimeSpan DefaultRequestTimeout { get; } = TimeSpan.FromSeconds(20);
-    public const int DefaultStatusInterval = 500;
-    public static Color DefaultRouteColor { get; }= Color.Blue;
-    public static int DefaultRouteWidth = 10;
-    public const string DefaultIconSourceHref = "http://maps.google.com/mapfiles/kml/paddle/wht-blank.png";
-}
+public record ExportTo( IExporter2 Exporter, IExportTarget Target ) : ExportToBase( Exporter );
+
+public record ExportToFile(string FilePath, IExporter2 Exporter) : ExportToBase(Exporter);

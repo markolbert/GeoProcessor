@@ -1,6 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿#region copyright
+// Copyright (c) 2021, 2022, 2023 Mark A. Olbert 
+// https://www.JumpForJoySoftware.com
+// GeoExtensions.distance.cs
+//
+// This file is part of JumpForJoy Software's GeoProcessor.
+// 
+// GeoProcessor is free software: you can redistribute it and/or modify it 
+// under the terms of the GNU General Public License as published by the 
+// Free Software Foundation, either version 3 of the License, or 
+// (at your option) any later version.
+// 
+// GeoProcessor is distributed in the hope that it will be useful, but 
+// WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+// or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+// for more details.
+// 
+// You should have received a copy of the GNU General Public License along 
+// with GeoProcessor. If not, see <https://www.gnu.org/licenses/>.
+#endregion
+
+using System;
 
 namespace J4JSoftware.GeoProcessor;
 
@@ -35,15 +54,6 @@ public static partial class GeoExtensions
         return ptPair.GetDistance( UnitType.Miles ).Value;
     }
 
-    public static Distance GetDistance( Coordinate c1, Coordinate c2 )
-    {
-        var miles = GetDistance( new PointPair( new Coordinate2( c1.Latitude, c1.Longitude ),
-                                                new Coordinate2( c2.Latitude, c2.Longitude ) ),
-                                 UnitType.Miles );
-
-        return new Distance( UnitTypes.mi, miles.Value);
-    }
-
     public static Distance2 GetDistance(
         this Coordinate2 start,
         Coordinate2 end,
@@ -69,10 +79,6 @@ public static partial class GeoExtensions
         return distance.ChangeUnits( units );
     }
 
-    public static double GetBearing( Coordinate c1, Coordinate c2 ) =>
-        GetBearing( new PointPair( new Coordinate2( c1.Latitude, c1.Longitude ),
-                                   new Coordinate2( c2.Latitude, c2.Longitude ) ) );
-
     public static double GetBearing( this PointPair pointPair, bool absolute = false )
     {
         var deltaLongitude = ( pointPair.Second.Longitude - pointPair.First.Longitude ) * GeoConstants.RadiansPerDegree;
@@ -90,35 +96,5 @@ public static partial class GeoExtensions
         return absolute
             ? Math.Abs( ( theta * GeoConstants.DegreesPerRadian + 360 ) % 360 )
             : ( theta * GeoConstants.DegreesPerRadian + 360 ) % 360;
-    }
-
-    public static (double avg, double stdev) GetBearingStatistics(
-        this LinkedListNode<Coordinate> startNode,
-        LinkedListNode<Coordinate> endNode
-    )
-    {
-        var curNode = startNode;
-
-        var bearings = new List<double>();
-
-        while( curNode != endNode )
-        {
-            bearings.Add( GetBearing( curNode!.Value, curNode.Next!.Value ) );
-
-            curNode = curNode.Next;
-        }
-
-        return ( bearings.Average(), GetStandardDeviation( bearings ) );
-    }
-
-    private static double GetStandardDeviation( List<double> values )
-    {
-        if( values.Count == 0 )
-            return 0.0;
-
-        var avg = values.Average();
-        var sum = values.Sum( d => ( d - avg ) * ( d - avg ) );
-
-        return Math.Sqrt( sum / values.Count );
     }
 }

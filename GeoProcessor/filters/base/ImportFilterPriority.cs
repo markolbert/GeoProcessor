@@ -1,7 +1,7 @@
 ﻿#region copyright
 // Copyright (c) 2021, 2022, 2023 Mark A. Olbert 
 // https://www.JumpForJoySoftware.com
-// GeoConstants.cs
+// ImportFilterPriority.cs
 //
 // This file is part of JumpForJoy Software's GeoProcessor.
 // 
@@ -20,15 +20,33 @@
 #endregion
 
 using System;
-using System.Drawing;
+using System.Collections.Generic;
 
 namespace J4JSoftware.GeoProcessor;
 
-public partial class GeoConstants
+public record ImportFilterPriority(
+    string FilterName,
+    IImportFilter FilterAgent,
+    ImportFilterCategory Category,
+    uint Priority
+) : IEqualityComparer<ImportFilterPriority>
 {
-    public static TimeSpan DefaultRequestTimeout { get; } = TimeSpan.FromSeconds(20);
-    public const int DefaultStatusInterval = 500;
-    public static Color DefaultRouteColor { get; }= Color.Blue;
-    public static int DefaultRouteWidth = 10;
-    public const string DefaultIconSourceHref = "http://maps.google.com/mapfiles/kml/paddle/wht-blank.png";
+    public bool Equals( ImportFilterPriority? x, ImportFilterPriority? y )
+    {
+        if( ReferenceEquals( x, y ) )
+            return true;
+        if( ReferenceEquals( x, null ) )
+            return false;
+        if( ReferenceEquals( y, null ) )
+            return false;
+        if( x.GetType() != y.GetType() )
+            return false;
+
+        return string.Equals( x.FilterName, y.FilterName, StringComparison.OrdinalIgnoreCase );
+    }
+
+    public int GetHashCode( ImportFilterPriority obj )
+    {
+        return StringComparer.OrdinalIgnoreCase.GetHashCode( obj.FilterName );
+    }
 }

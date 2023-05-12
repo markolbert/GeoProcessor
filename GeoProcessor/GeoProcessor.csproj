@@ -16,12 +16,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="revised\factories\**" />
-	  <EmbeddedResource Remove="revised\factories\**" />
-	  <None Remove="revised\factories\**" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="BingMapsRESTToolkit" Version="1.1.4" />
 		<PackageReference Include="GoogleApi" Version="4.5.4" />
 		<PackageReference Include="J4JSoftware.VisualUtilities" Version="2.1.1" />

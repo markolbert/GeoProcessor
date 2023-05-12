@@ -1,7 +1,7 @@
 ﻿#region copyright
 // Copyright (c) 2021, 2022, 2023 Mark A. Olbert 
 // https://www.JumpForJoySoftware.com
-// GeoConstants.cs
+// ImportFilterAttributeInfo.cs
 //
 // This file is part of JumpForJoy Software's GeoProcessor.
 // 
@@ -20,15 +20,7 @@
 #endregion
 
 using System;
-using System.Drawing;
 
 namespace J4JSoftware.GeoProcessor;
 
-public partial class GeoConstants
-{
-    public static TimeSpan DefaultRequestTimeout { get; } = TimeSpan.FromSeconds(20);
-    public const int DefaultStatusInterval = 500;
-    public static Color DefaultRouteColor { get; }= Color.Blue;
-    public static int DefaultRouteWidth = 10;
-    public const string DefaultIconSourceHref = "http://maps.google.com/mapfiles/kml/paddle/wht-blank.png";
-}
+public record ImportFilterAttributeInfo( string Name, Attribute Attribute );

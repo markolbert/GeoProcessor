@@ -1,7 +1,7 @@
 ﻿#region copyright
 // Copyright (c) 2021, 2022, 2023 Mark A. Olbert 
 // https://www.JumpForJoySoftware.com
-// GeoConstants.cs
+// Root.cs
 //
 // This file is part of JumpForJoy Software's GeoProcessor.
 // 
@@ -19,16 +19,16 @@
 // with GeoProcessor. If not, see <https://www.gnu.org/licenses/>.
 #endregion
 
-using System;
-using System.Drawing;
+using System.Xml.Serialization;
 
-namespace J4JSoftware.GeoProcessor;
+namespace J4JSoftware.GeoProcessor.Kml;
 
-public partial class GeoConstants
+#pragma warning disable CS8618
+[XmlRoot(ElementName="kml", DataType="http://www.w3.org/2001/XMLSchema",Namespace = "http://www.opengis.net/kml/2.2")]
+public class Root
 {
-    public static TimeSpan DefaultRequestTimeout { get; } = TimeSpan.FromSeconds(20);
-    public const int DefaultStatusInterval = 500;
-    public static Color DefaultRouteColor { get; }= Color.Blue;
-    public static int DefaultRouteWidth = 10;
-    public const string DefaultIconSourceHref = "http://maps.google.com/mapfiles/kml/paddle/wht-blank.png";
+    [XmlAttribute("creator")]
+    public string Creator { get; set; }
+
+    public Document Document { get; set; }
 }

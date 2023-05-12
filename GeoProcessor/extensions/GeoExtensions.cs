@@ -19,7 +19,6 @@
 // with GeoProcessor. If not, see <https://www.gnu.org/licenses/>.
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -31,54 +30,6 @@ namespace J4JSoftware.GeoProcessor;
 public static partial class GeoExtensions
 {
     private record MeasurementInfo( MeasurementSystem System, double ScaleFactor );
-
-    public static bool SnapsToRoute( this ProcessorType procType )
-    {
-        var memInfo = typeof( ProcessorType ).GetField( procType.ToString() );
-        if( memInfo == null )
-            return false;
-
-        return memInfo.GetCustomAttribute<ProcessorTypeInfoAttribute>()?.IsSnapToRoute ?? false;
-    }
-
-    public static bool RequiresApiKey( this ProcessorType procType )
-    {
-        var memInfo = typeof( ProcessorType ).GetField( procType.ToString() );
-        if( memInfo == null )
-            return false;
-
-        return memInfo.GetCustomAttribute<ProcessorTypeInfoAttribute>()?.RequiresAPIKey ?? false;
-    }
-
-    public static int MaxPointsPerRequest( this ProcessorType procType )
-    {
-        var memInfo = typeof( ProcessorType ).GetField( procType.ToString() );
-        if( memInfo == null )
-            return 100;
-
-        return memInfo.GetCustomAttribute<ProcessorTypeInfoAttribute>()?.MaxPointsPerRequest ?? 100;
-    }
-
-    public static TAttr? GetTargetType<THandler, TAttr>()
-        where TAttr : Attribute
-    {
-        return GetTargetType<TAttr>( typeof( THandler ) );
-    }
-
-    public static TAttr? GetTargetType<TAttr>( Type handlerType )
-        where TAttr : Attribute
-    {
-        return handlerType.GetCustomAttribute<TAttr>();
-    }
-
-    public static BingMapsRESTToolkit.Coordinate ToBingMapsCoordinate( this Coordinate coordinate )
-    {
-        return new BingMapsRESTToolkit.Coordinate
-        {
-            Latitude = coordinate.Latitude,
-            Longitude = coordinate.Longitude
-        };
-    }
 
     private static MeasurementInfo GetMeasurementInfo( UnitType unitType )
     {

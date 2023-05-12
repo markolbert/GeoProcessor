@@ -1,7 +1,7 @@
 ﻿#region copyright
 // Copyright (c) 2021, 2022, 2023 Mark A. Olbert 
 // https://www.JumpForJoySoftware.com
-// GeoConstants.cs
+// Point.cs
 //
 // This file is part of JumpForJoy Software's GeoProcessor.
 // 
@@ -19,16 +19,19 @@
 // with GeoProcessor. If not, see <https://www.gnu.org/licenses/>.
 #endregion
 
-using System;
-using System.Drawing;
+using System.Xml.Serialization;
 
-namespace J4JSoftware.GeoProcessor;
+namespace J4JSoftware.GeoProcessor.Kml;
 
-public partial class GeoConstants
+#pragma warning disable CS8618
+public class Point
 {
-    public static TimeSpan DefaultRequestTimeout { get; } = TimeSpan.FromSeconds(20);
-    public const int DefaultStatusInterval = 500;
-    public static Color DefaultRouteColor { get; }= Color.Blue;
-    public static int DefaultRouteWidth = 10;
-    public const string DefaultIconSourceHref = "http://maps.google.com/mapfiles/kml/paddle/wht-blank.png";
+    [XmlElement("extrude")]
+    public bool Extrude { get; set; }
+
+    [XmlElement("altitudeMode")]
+    public string AltitudeMode { get; set; } = "absolute";
+
+    [XmlElement("coordinates")]
+    public string CoordinatesText { get; set; }
 }

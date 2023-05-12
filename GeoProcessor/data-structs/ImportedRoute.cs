@@ -1,7 +1,7 @@
 ﻿#region copyright
 // Copyright (c) 2021, 2022, 2023 Mark A. Olbert 
 // https://www.JumpForJoySoftware.com
-// GeoConstants.cs
+// ImportedRoute.cs
 //
 // This file is part of JumpForJoy Software's GeoProcessor.
 // 
@@ -19,16 +19,34 @@
 // with GeoProcessor. If not, see <https://www.gnu.org/licenses/>.
 #endregion
 
-using System;
-using System.Drawing;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace J4JSoftware.GeoProcessor;
 
-public partial class GeoConstants
+public class ImportedRoute : IImportedRoute
 {
-    public static TimeSpan DefaultRequestTimeout { get; } = TimeSpan.FromSeconds(20);
-    public const int DefaultStatusInterval = 500;
-    public static Color DefaultRouteColor { get; }= Color.Blue;
-    public static int DefaultRouteWidth = 10;
-    public const string DefaultIconSourceHref = "http://maps.google.com/mapfiles/kml/paddle/wht-blank.png";
+    public ImportedRoute()
+    {
+        Points = new List<Coordinate2>();
+    }
+
+    public ImportedRoute(
+        List<Coordinate2> points
+    )
+    {
+        Points = points;
+    }
+
+    public ImportedRoute Copy() => new( new List<Coordinate2>( Points ) ) { RouteName = RouteName };
+
+    public string? RouteName { get; set; }
+    public string? Description { get; set; }
+
+    public int NumPoints => Points.Count;
+    public List<Coordinate2> Points { get; }
+
+    public IEnumerator<Coordinate2> GetEnumerator() => ( (IEnumerable<Coordinate2>) Points ).GetEnumerator();
+
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

@@ -1,7 +1,7 @@
 ﻿#region copyright
 // Copyright (c) 2021, 2022, 2023 Mark A. Olbert 
 // https://www.JumpForJoySoftware.com
-// GeoConstants.cs
+// KmzExporter2.cs
 //
 // This file is part of JumpForJoy Software's GeoProcessor.
 // 
@@ -19,16 +19,31 @@
 // with GeoProcessor. If not, see <https://www.gnu.org/licenses/>.
 #endregion
 
-using System;
-using System.Drawing;
+using System.IO;
+using System.IO.Compression;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace J4JSoftware.GeoProcessor;
 
-public partial class GeoConstants
+public class KmzExporter2 : KmlExporter2
 {
-    public static TimeSpan DefaultRequestTimeout { get; } = TimeSpan.FromSeconds(20);
-    public const int DefaultStatusInterval = 500;
-    public static Color DefaultRouteColor { get; }= Color.Blue;
-    public static int DefaultRouteWidth = 10;
-    public const string DefaultIconSourceHref = "http://maps.google.com/mapfiles/kml/paddle/wht-blank.png";
+    public KmzExporter2(
+        ILoggerFactory? loggerFactory
+    )
+        : base( "kmz", loggerFactory )
+    {
+    }
+
+    protected override async Task OutputMemoryStream( MemoryStream memoryStream )
+    {
+        var entryPath = ChangeFileExtension( FilePath, "kml" );
+
+        await using var zipFile = new FileStream( FilePath, FileMode.Create );
+        using var archive = new ZipArchive( zipFile, ZipArchiveMode.Create, true );
+        var entry = archive.CreateEntry( entryPath );
+        var zipStream = entry.Open();
+        await memoryStream.CopyToAsync( zipStream );
+        zipStream.Close();
+    }
 }

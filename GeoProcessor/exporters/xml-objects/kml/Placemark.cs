@@ -1,7 +1,7 @@
 ﻿#region copyright
 // Copyright (c) 2021, 2022, 2023 Mark A. Olbert 
 // https://www.JumpForJoySoftware.com
-// GeoConstants.cs
+// Placemark.cs
 //
 // This file is part of JumpForJoy Software's GeoProcessor.
 // 
@@ -19,16 +19,31 @@
 // with GeoProcessor. If not, see <https://www.gnu.org/licenses/>.
 #endregion
 
-using System;
-using System.Drawing;
+using System.Xml.Serialization;
 
-namespace J4JSoftware.GeoProcessor;
+namespace J4JSoftware.GeoProcessor.Kml;
 
-public partial class GeoConstants
+#pragma warning disable CS8618
+public class Placemark
 {
-    public static TimeSpan DefaultRequestTimeout { get; } = TimeSpan.FromSeconds(20);
-    public const int DefaultStatusInterval = 500;
-    public static Color DefaultRouteColor { get; }= Color.Blue;
-    public static int DefaultRouteWidth = 10;
-    public const string DefaultIconSourceHref = "http://maps.google.com/mapfiles/kml/paddle/wht-blank.png";
+    [XmlElement("name")]
+    public string? Name { get; set; }
+    private bool ShouldSerializeName() => !string.IsNullOrEmpty(Name);
+
+    [XmlElement("description")]
+    public string? Description { get; set; }
+    private bool ShouldSerializeDescription() => !string.IsNullOrEmpty( Description );
+
+    [XmlElement("styleUrl")]
+    public string StyleUrl { get; set; }
+
+    [XmlElement("visibility")]
+    public bool Visibility { get; set; }
+
+    [XmlElement("LineString")]
+    public LineString? LineString { get; set; }
+    private bool ShouldSerializeLineString() => LineString != null;
+
+    public Point? Point { get; set; }
+    private bool ShouldSerializePoint() => Point != null;
 }

@@ -1,7 +1,7 @@
 ﻿#region copyright
 // Copyright (c) 2021, 2022, 2023 Mark A. Olbert 
 // https://www.JumpForJoySoftware.com
-// GeoConstants.cs
+// MeasurementSystemAttribute.cs
 //
 // This file is part of JumpForJoy Software's GeoProcessor.
 // 
@@ -20,15 +20,21 @@
 #endregion
 
 using System;
-using System.Drawing;
 
 namespace J4JSoftware.GeoProcessor;
 
-public partial class GeoConstants
+[AttributeUsage(AttributeTargets.Field)]
+public class MeasurementSystemAttribute : Attribute
 {
-    public static TimeSpan DefaultRequestTimeout { get; } = TimeSpan.FromSeconds(20);
-    public const int DefaultStatusInterval = 500;
-    public static Color DefaultRouteColor { get; }= Color.Blue;
-    public static int DefaultRouteWidth = 10;
-    public const string DefaultIconSourceHref = "http://maps.google.com/mapfiles/kml/paddle/wht-blank.png";
+    public MeasurementSystemAttribute(
+        MeasurementSystem system,
+        uint scaleFactor
+    )
+    {
+        MeasurementSystem = system;
+        ScaleFactor = scaleFactor == 0 ? 1 : scaleFactor;
+    }
+
+    public MeasurementSystem MeasurementSystem { get; }
+    public uint ScaleFactor { get; }
 }

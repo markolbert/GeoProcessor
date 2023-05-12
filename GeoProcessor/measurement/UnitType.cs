@@ -1,7 +1,7 @@
 ﻿#region copyright
 // Copyright (c) 2021, 2022, 2023 Mark A. Olbert 
 // https://www.JumpForJoySoftware.com
-// GeoConstants.cs
+// UnitType.cs
 //
 // This file is part of JumpForJoy Software's GeoProcessor.
 // 
@@ -19,16 +19,19 @@
 // with GeoProcessor. If not, see <https://www.gnu.org/licenses/>.
 #endregion
 
-using System;
-using System.Drawing;
-
 namespace J4JSoftware.GeoProcessor;
 
-public partial class GeoConstants
+public enum UnitType
 {
-    public static TimeSpan DefaultRequestTimeout { get; } = TimeSpan.FromSeconds(20);
-    public const int DefaultStatusInterval = 500;
-    public static Color DefaultRouteColor { get; }= Color.Blue;
-    public static int DefaultRouteWidth = 10;
-    public const string DefaultIconSourceHref = "http://maps.google.com/mapfiles/kml/paddle/wht-blank.png";
+    [MeasurementSystem(MeasurementSystem.American, 1)]
+    Feet,
+
+    [MeasurementSystem(MeasurementSystem.Metric, 1)]
+    Meters,
+
+    [MeasurementSystem(MeasurementSystem.American, 5280)]
+    Miles,
+
+    [MeasurementSystem(MeasurementSystem.Metric, 1000)]
+    Kilometers
 }
