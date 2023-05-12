@@ -21,6 +21,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.Logging;
@@ -149,4 +150,25 @@ public static partial class GeoExtensions
 
         return retVal;
     }
+
+    public static Color RouteColorPicker( IImportedRoute route, int routeIndex )
+    {
+        routeIndex = routeIndex % 10;
+
+        return routeIndex switch
+        {
+            0 => Color.Blue,
+            1 => Color.Green,
+            2 => Color.Red,
+            3 => Color.Yellow,
+            4 => Color.Purple,
+            5 => Color.Orange,
+            6 => Color.Aqua,
+            7 => Color.MediumSpringGreen,
+            8 => Color.NavajoWhite,
+            _ => Color.Fuchsia
+        };
+    }
+
+    public static int RouteWidthPicker( IImportedRoute route, int routeIndex ) => GeoConstants.DefaultRouteWidth;
 }
