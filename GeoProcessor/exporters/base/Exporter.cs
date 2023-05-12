@@ -28,7 +28,7 @@ using Microsoft.Extensions.Logging;
 
 namespace J4JSoftware.GeoProcessor;
 
-public abstract class Exporter : MessageBasedTask, IExporter2
+public abstract class Exporter : MessageBasedTask, IExporter
 {
     private readonly List<IImportFilter> _importFilters = new();
 

@@ -21,7 +21,7 @@
 
 namespace J4JSoftware.GeoProcessor;
 
-public interface IFileExporter : IExporter2
+public interface IFileExporter : IExporter
 {
     string FileType { get; }
     string FilePath { get; set; }

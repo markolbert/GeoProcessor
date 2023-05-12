@@ -23,11 +23,11 @@ using System.Collections.Generic;
 
 namespace J4JSoftware.GeoProcessor;
 
-public record RouteConnection( int ConnectedRouteIndex, RouteConnectionType Type, Distance2 Gap );
+public record RouteConnection( int ConnectedRouteIndex, RouteConnectionType Type, Distance Gap );
 
 public record RouteConnections( int RouteIndex, List<RouteConnection> Connections )
 {
-    public List<RouteConnection> GetClosest( Distance2 maxGap )
+    public List<RouteConnection> GetClosest( Distance maxGap )
     {
         var retVal = new List<RouteConnection>();
 

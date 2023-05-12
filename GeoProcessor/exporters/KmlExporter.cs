@@ -1,7 +1,7 @@
 ﻿#region copyright
 // Copyright (c) 2021, 2022, 2023 Mark A. Olbert 
 // https://www.JumpForJoySoftware.com
-// KmlExporter2.cs
+// KmlExporter.cs
 //
 // This file is part of JumpForJoy Software's GeoProcessor.
 // 
@@ -29,20 +29,20 @@ using Microsoft.Extensions.Logging;
 
 namespace J4JSoftware.GeoProcessor;
 
-public class KmlExporter2 : FileExporter<Root>
+public class KmlExporter : FileExporter<Root>
 {
     private const string LineStyleName = "line-style";
 
     private readonly Dictionary<int, string> _styles = new();
 
-    public KmlExporter2(
+    public KmlExporter(
         ILoggerFactory? loggerFactory
     )
         : base( "kml", loggerFactory )
     {
     }
 
-    protected KmlExporter2(
+    protected KmlExporter(
         string fileType,
         ILoggerFactory? loggerFactory
     )

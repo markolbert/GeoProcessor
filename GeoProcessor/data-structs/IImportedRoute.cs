@@ -23,7 +23,7 @@ using System.Collections.Generic;
 
 namespace J4JSoftware.GeoProcessor;
 
-public interface IImportedRoute : IEnumerable<Coordinate2>
+public interface IImportedRoute : IEnumerable<Coordinates>
 {
     int NumPoints { get; }
     string? RouteName { get; }

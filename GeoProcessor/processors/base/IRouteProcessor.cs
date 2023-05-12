@@ -1,7 +1,7 @@
 ﻿#region copyright
 // Copyright (c) 2021, 2022, 2023 Mark A. Olbert 
 // https://www.JumpForJoySoftware.com
-// IRouteProcessor2.cs
+// IRouteProcessor.cs
 //
 // This file is part of JumpForJoy Software's GeoProcessor.
 // 
@@ -26,7 +26,7 @@ using System.Threading.Tasks;
 
 namespace J4JSoftware.GeoProcessor;
 
-public interface IRouteProcessor2 : IMessageBasedTask
+public interface IRouteProcessor : IMessageBasedTask
 {
     string ProcessorName { get; }
     string ApiKey { get; set; }

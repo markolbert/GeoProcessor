@@ -30,7 +30,7 @@ public class InterpolatePoints : ImportFilter
 {
     public const string DefaultFilterName = "Interpolate Points";
 
-    private Distance2 _maxSeparation = new( UnitType.Kilometers, GeoConstants.DefaultMaxPointSeparationKm );
+    private Distance _maxSeparation = new( UnitType.Kilometers, GeoConstants.DefaultMaxPointSeparationKm );
     private ImportedRoute? _filteredRoute;
 
     public InterpolatePoints(
@@ -40,13 +40,13 @@ public class InterpolatePoints : ImportFilter
     {
     }
 
-    public Distance2 MaximumPointSeparation
+    public Distance MaximumPointSeparation
     {
         get => _maxSeparation;
 
         set =>
             _maxSeparation = value.Value <= 0
-                ? new Distance2( UnitType.Kilometers, GeoConstants.DefaultMaxPointSeparationKm )
+                ? new Distance( UnitType.Kilometers, GeoConstants.DefaultMaxPointSeparationKm )
                 : value;
     }
 
@@ -56,7 +56,7 @@ public class InterpolatePoints : ImportFilter
 
         foreach (var rawRoute in input)
         {
-            Coordinate2? prevPoint = null;
+            Coordinates? prevPoint = null;
 
             _filteredRoute = new ImportedRoute() { RouteName = rawRoute.RouteName, Description = rawRoute.Description };
 
@@ -106,7 +106,7 @@ public class InterpolatePoints : ImportFilter
         return retVal;
     }
 
-    private void Interpolate( PointPair ptPair, Distance2 gap )
+    private void Interpolate( PointPair ptPair, Distance gap )
     {
         var steps = (int) Math.Ceiling( ( gap / MaximumPointSeparation ).Value );
 
@@ -123,7 +123,7 @@ public class InterpolatePoints : ImportFilter
                     ? InterpolationState.End
                     : InterpolationState.Intermediate;
 
-            var interpolated = new Coordinate2( ptPair.First.Latitude + idx * deltaLat,
+            var interpolated = new Coordinates( ptPair.First.Latitude + idx * deltaLat,
                                                 ptPair.First.Longitude + idx * deltaLong,
                                                 interpolationState )
             {

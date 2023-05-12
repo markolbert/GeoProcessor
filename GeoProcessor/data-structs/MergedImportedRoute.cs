@@ -58,9 +58,9 @@ public class MergedImportedRoute : IImportedRoute
 
     public int NumPoints => this.Count();
 
-    public IEnumerator<Coordinate2> GetEnumerator()
+    public IEnumerator<Coordinates> GetEnumerator()
     {
-        IEnumerable<Coordinate2>? toAdd;
+        IEnumerable<Coordinates>? toAdd;
 
         switch (ConnectionType)
         {

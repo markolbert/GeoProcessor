@@ -1,7 +1,7 @@
 ﻿#region copyright
 // Copyright (c) 2021, 2022, 2023 Mark A. Olbert 
 // https://www.JumpForJoySoftware.com
-// Coordinate2.cs
+// IExporter.cs
 //
 // This file is part of JumpForJoy Software's GeoProcessor.
 // 
@@ -19,28 +19,19 @@
 // with GeoProcessor. If not, see <https://www.gnu.org/licenses/>.
 #endregion
 
-using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace J4JSoftware.GeoProcessor;
 
-public class Coordinate2
+public interface IExporter : IMessageBasedTask
 {
-    public Coordinate2(
-        double latitude,
-        double longitude,
-        InterpolationState interpolationState = InterpolationState.NotInterpolated
-    )
-    {
-        Latitude = latitude;
-        Longitude = longitude;
-        InterpolationState = interpolationState;
-    }
+    ReadOnlyCollection<IImportFilter> ImportFilters { get; }
+    void ClearImportFilters();
+    bool AddFilter( IImportFilter filter );
+    bool AddFilters( IEnumerable<IImportFilter> filters );
 
-    public double Latitude { get; }
-    public double Longitude { get; }
-    public InterpolationState InterpolationState { get; }
-
-    public double? Elevation { get; set; }
-    public DateTime? Timestamp { get; set; }
-    public string? Description { get; set; }
+    Task<bool> ExportAsync( List<ImportedRoute> routes, CancellationToken ctx = default );
 }

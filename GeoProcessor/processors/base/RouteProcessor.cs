@@ -1,7 +1,7 @@
 ﻿#region copyright
 // Copyright (c) 2021, 2022, 2023 Mark A. Olbert 
 // https://www.JumpForJoySoftware.com
-// RouteProcessor2.cs
+// RouteProcessor.cs
 //
 // This file is part of JumpForJoy Software's GeoProcessor.
 // 
@@ -29,9 +29,9 @@ using Microsoft.Extensions.Logging;
 
 namespace J4JSoftware.GeoProcessor;
 
-public abstract class RouteProcessor2 : MessageBasedTask, IRouteProcessor2
+public abstract class RouteProcessor : MessageBasedTask, IRouteProcessor
 {
-    protected RouteProcessor2(
+    protected RouteProcessor(
         int maxPtsPerRequest,
         string? mesgPrefix = null,
         ILoggerFactory? loggerFactory = null,
@@ -43,16 +43,16 @@ public abstract class RouteProcessor2 : MessageBasedTask, IRouteProcessor2
         ImportFilters = requiredImportFilters.ToList();
 
         var type = GetType();
-        var procAttr = type.GetCustomAttribute<RouteProcessorAttribute2>();
+        var procAttr = type.GetCustomAttribute<RouteProcessorAttribute>();
 
         if( string.IsNullOrEmpty( procAttr?.Processor ) )
         {
             Logger?.LogCritical( "Route processor {type} not decorated with a valid {attr}",
                                  type,
-                                 typeof( RouteProcessorAttribute2 ) );
+                                 typeof( RouteProcessorAttribute ) );
 
             throw new NullReferenceException(
-                $"Route processor {type} not decorated with a valid {typeof( RouteProcessorAttribute2 )}" );
+                $"Route processor {type} not decorated with a valid {typeof( RouteProcessorAttribute )}" );
         }
 
         ProcessorName = procAttr.Processor;

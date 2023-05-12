@@ -1,7 +1,7 @@
 ﻿#region copyright
 // Copyright (c) 2021, 2022, 2023 Mark A. Olbert 
 // https://www.JumpForJoySoftware.com
-// GpxImporter2.cs
+// GpxImporter.cs
 //
 // This file is part of JumpForJoy Software's GeoProcessor.
 // 
@@ -34,9 +34,9 @@ using Microsoft.Extensions.Logging;
 namespace J4JSoftware.GeoProcessor;
 
 [ImportFileType("gpx")]
-public class GpxImporter2 : FileImporter
+public class GpxImporter : FileImporter
 {
-    public GpxImporter2(
+    public GpxImporter(
         ILoggerFactory? loggerFactory = null
     )
         : base( null, loggerFactory )
@@ -86,14 +86,14 @@ public class GpxImporter2 : FileImporter
             var trkName = track.Name;
             var trkDesc = track.Description;
 
-            var importedRoute = new ImportedRoute( new List<Coordinate2>() )
+            var importedRoute = new ImportedRoute( new List<Coordinates>() )
             {
                 RouteName = trkName, Description = trkDesc
             };
 
             foreach( var trackPoint in track.TrackPoints )
             {
-                var coordinate = new Coordinate2( trackPoint.Latitude, trackPoint.Longitude )
+                var coordinate = new Coordinates( trackPoint.Latitude, trackPoint.Longitude )
                 {
                     Elevation = trackPoint.Elevation,
                     Timestamp = trackPoint.Timestamp,

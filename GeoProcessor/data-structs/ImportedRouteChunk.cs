@@ -60,7 +60,7 @@ public class ImportedRouteChunk : IImportedRouteChunk
 
     public int NumPoints => SourceRoute.Count();
 
-    public IEnumerator<Coordinate2> GetEnumerator() =>
+    public IEnumerator<Coordinates> GetEnumerator() =>
         SourceRoute.Skip( ChunkNum * ChunkSize )
                     .Take( ChunkSize ).GetEnumerator();
 

@@ -29,8 +29,8 @@ public class ConsolidatePoints : ImportFilter
 {
     public const string DefaultFilterName = "Consolidate Points";
 
-    private Distance2 _minSep = new( UnitType.Meters, GeoConstants.DefaultMinimumPointGapMeters );
-    private Distance2 _maxOverallGap = new( UnitType.Meters, GeoConstants.DefaultMaximumOverallGapMeters );
+    private Distance _minSep = new( UnitType.Meters, GeoConstants.DefaultMinimumPointGapMeters );
+    private Distance _maxOverallGap = new( UnitType.Meters, GeoConstants.DefaultMaximumOverallGapMeters );
 
     public ConsolidatePoints(
         ILoggerFactory? loggerFactory
@@ -39,23 +39,23 @@ public class ConsolidatePoints : ImportFilter
     {
     }
 
-    public Distance2 MinimumPointGap
+    public Distance MinimumPointGap
     {
         get => _minSep;
 
         set =>
             _minSep = value.Value < 0
-                ? new Distance2( UnitType.Meters, GeoConstants.DefaultMinimumPointGapMeters )
+                ? new Distance( UnitType.Meters, GeoConstants.DefaultMinimumPointGapMeters )
                 : value;
     }
 
-    public Distance2 MaximumOverallGap
+    public Distance MaximumOverallGap
     {
         get => _maxOverallGap;
 
         set =>
             _maxOverallGap = value.Value < 0
-                ? new Distance2( UnitType.Meters, GeoConstants.DefaultMaximumOverallGapMeters )
+                ? new Distance( UnitType.Meters, GeoConstants.DefaultMaximumOverallGapMeters )
                 : value;
     }
 
@@ -65,8 +65,8 @@ public class ConsolidatePoints : ImportFilter
 
         foreach( var rawRoute in input )
         {
-            Coordinate2? prevPoint = null;
-            Coordinate2? originPoint = null;
+            Coordinates? prevPoint = null;
+            Coordinates? originPoint = null;
 
             var filteredRoute = new ImportedRoute()
             {

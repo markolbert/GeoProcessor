@@ -28,7 +28,7 @@ public class SnappedImportedRoute : IImportedRouteChunk
 {
     public SnappedImportedRoute(
         ImportedRouteChunk unprocessedRouteChunk,
-        List<Coordinate2> processedPoints
+        List<Coordinates> processedPoints
     )
     {
         SourceRoute = unprocessedRouteChunk;
@@ -42,9 +42,9 @@ public class SnappedImportedRoute : IImportedRouteChunk
     public int ChunkSize => ((ImportedRouteChunk)SourceRoute).ChunkSize;
     public int ChunkNum => ((ImportedRouteChunk) SourceRoute).ChunkNum;
     public IImportedRoute SourceRoute { get; }
-    public List<Coordinate2> ProcessedPoints { get; }
+    public List<Coordinates> ProcessedPoints { get; }
 
-    public IEnumerator<Coordinate2> GetEnumerator() => ProcessedPoints.GetEnumerator();
+    public IEnumerator<Coordinates> GetEnumerator() => ProcessedPoints.GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 

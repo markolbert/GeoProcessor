@@ -1,7 +1,7 @@
 ﻿#region copyright
 // Copyright (c) 2021, 2022, 2023 Mark A. Olbert 
 // https://www.JumpForJoySoftware.com
-// KmzExporter2.cs
+// KmzExporter.cs
 //
 // This file is part of JumpForJoy Software's GeoProcessor.
 // 
@@ -26,9 +26,9 @@ using Microsoft.Extensions.Logging;
 
 namespace J4JSoftware.GeoProcessor;
 
-public class KmzExporter2 : KmlExporter2
+public class KmzExporter : KmlExporter
 {
-    public KmzExporter2(
+    public KmzExporter(
         ILoggerFactory? loggerFactory
     )
         : base( "kmz", loggerFactory )

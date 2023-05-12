@@ -23,15 +23,15 @@ using System.Collections.Generic;
 
 namespace J4JSoftware.GeoProcessor.RouteBuilder;
 
-public record DataToImportBase( IImporter2 Importer );
+public record DataToImportBase( IImporter Importer );
 
 public record DataToImport(
     string Name,
-    IEnumerable<Coordinate2> Coordinates,
-    IImporter2 Importer
+    IEnumerable<Coordinates> Coordinates,
+    IImporter Importer
 ) : DataToImportBase( Importer );
 
 public record FileToImport(
     string FilePath,
-    IImporter2 Importer
+    IImporter Importer
 ) : DataToImportBase(Importer);

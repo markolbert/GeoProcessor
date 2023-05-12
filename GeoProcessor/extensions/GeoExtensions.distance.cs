@@ -25,7 +25,7 @@ namespace J4JSoftware.GeoProcessor;
 
 public static partial class GeoExtensions
 {
-    public static double Convert( this Distance2 distance, UnitType newUnits ) =>
+    public static double Convert( this Distance distance, UnitType newUnits ) =>
         Convert( distance.Value, distance.Units, newUnits );
 
     public static double Convert(this double value, UnitType currentUnits, UnitType newUnits)
@@ -50,18 +50,18 @@ public static partial class GeoExtensions
 
     public static double GetDistance( double lat1, double long1, double lat2, double long2 )
     {
-        var ptPair = new PointPair( new Coordinate2( lat1, long1 ), new Coordinate2( lat2, long2 ) );
+        var ptPair = new PointPair( new Coordinates( lat1, long1 ), new Coordinates( lat2, long2 ) );
         return ptPair.GetDistance( UnitType.Miles ).Value;
     }
 
-    public static Distance2 GetDistance(
-        this Coordinate2 start,
-        Coordinate2 end,
+    public static Distance GetDistance(
+        this Coordinates start,
+        Coordinates end,
         UnitType units = UnitType.Kilometers
     ) =>
         GetDistance( new PointPair( start, end ), units );
 
-    public static Distance2 GetDistance( this PointPair pointPair, UnitType units = UnitType.Kilometers )
+    public static Distance GetDistance( this PointPair pointPair, UnitType units = UnitType.Kilometers )
     {
         var deltaLat = ( pointPair.Second.Latitude - pointPair.First.Latitude ) * GeoConstants.RadiansPerDegree;
         var deltaLong = ( pointPair.Second.Longitude - pointPair.First.Longitude ) * GeoConstants.RadiansPerDegree;
@@ -74,7 +74,7 @@ public static partial class GeoExtensions
 
         var h2 = 2 * Math.Asin( Math.Min( 1, Math.Sqrt( h1 ) ) );
 
-        var distance = new Distance2( UnitType.Kilometers, h2 * GeoConstants.EarthRadiusInKilometers );
+        var distance = new Distance( UnitType.Kilometers, h2 * GeoConstants.EarthRadiusInKilometers );
 
         return distance.ChangeUnits( units );
     }

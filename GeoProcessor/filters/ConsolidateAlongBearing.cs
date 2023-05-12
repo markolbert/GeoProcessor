@@ -32,7 +32,7 @@ public class ConsolidateAlongBearing : ImportFilter
 
     private double _bearingTolerance = GeoConstants.DefaultBearingToleranceDegrees;
 
-    private Distance2 _maxDistance = new( UnitType.Meters, GeoConstants.DefaultMaximumBearingDistanceMeters);
+    private Distance _maxDistance = new( UnitType.Meters, GeoConstants.DefaultMaximumBearingDistanceMeters);
 
     public ConsolidateAlongBearing(
         ILoggerFactory? loggerFactory
@@ -47,7 +47,7 @@ public class ConsolidateAlongBearing : ImportFilter
         set => _bearingTolerance = value < 0 ? GeoConstants.DefaultBearingToleranceDegrees : value;
     }
 
-    public Distance2 MaximumConsolidationDistance
+    public Distance MaximumConsolidationDistance
     {
         get => _maxDistance;
 
@@ -69,8 +69,8 @@ public class ConsolidateAlongBearing : ImportFilter
                 RouteName = rawRoute.RouteName, Description = rawRoute.Description
             };
 
-            Coordinate2? bearingOrigin = null;
-            Coordinate2? distOrigin = null;
+            Coordinates? bearingOrigin = null;
+            Coordinates? distOrigin = null;
             double? prevBearing = null;
 
             foreach( var curPoint in rawRoute )

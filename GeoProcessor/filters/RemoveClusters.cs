@@ -30,7 +30,7 @@ public class RemoveClusters : ImportFilter
 {
     public const string DefaultFilterName = "Remove Clusters";
 
-    private Distance2 _maxClusterDiameter = new( UnitType.Meters, GeoConstants.DefaultMaxClusterDiameterMeters );
+    private Distance _maxClusterDiameter = new( UnitType.Meters, GeoConstants.DefaultMaxClusterDiameterMeters );
 
     public RemoveClusters(
         ILoggerFactory? loggerFactory
@@ -39,13 +39,13 @@ public class RemoveClusters : ImportFilter
     {
     }
 
-    public Distance2 MaximumClusterDiameter
+    public Distance MaximumClusterDiameter
     {
         get => _maxClusterDiameter;
 
         set =>
             _maxClusterDiameter = value.Value <= 0
-                ? new Distance2( UnitType.Meters, GeoConstants.DefaultMaxClusterDiameterMeters )
+                ? new Distance( UnitType.Meters, GeoConstants.DefaultMaxClusterDiameterMeters )
                 : value;
     }
 
@@ -71,7 +71,7 @@ public class RemoveClusters : ImportFilter
     {
         var retVal = new ImportedRoute() { RouteName = toFilter.RouteName };
 
-        Coordinate2? clusterOrigin = null;
+        Coordinates? clusterOrigin = null;
 
         foreach( var coordinate in toFilter )
         {

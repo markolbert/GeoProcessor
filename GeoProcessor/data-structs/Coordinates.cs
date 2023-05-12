@@ -1,7 +1,7 @@
 ﻿#region copyright
 // Copyright (c) 2021, 2022, 2023 Mark A. Olbert 
 // https://www.JumpForJoySoftware.com
-// RouteProcessorAttribute2.cs
+// Coordinates.cs
 //
 // This file is part of JumpForJoy Software's GeoProcessor.
 // 
@@ -23,15 +23,24 @@ using System;
 
 namespace J4JSoftware.GeoProcessor;
 
-[AttributeUsage(AttributeTargets.Class, Inherited = false)]
-public class RouteProcessorAttribute2 : Attribute
+public class Coordinates
 {
-    public RouteProcessorAttribute2(
-        string processor
+    public Coordinates(
+        double latitude,
+        double longitude,
+        InterpolationState interpolationState = InterpolationState.NotInterpolated
     )
     {
-        Processor = processor;
+        Latitude = latitude;
+        Longitude = longitude;
+        InterpolationState = interpolationState;
     }
 
-    public string Processor { get; }
+    public double Latitude { get; }
+    public double Longitude { get; }
+    public InterpolationState InterpolationState { get; }
+
+    public double? Elevation { get; set; }
+    public DateTime? Timestamp { get; set; }
+    public string? Description { get; set; }
 }

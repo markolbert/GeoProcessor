@@ -29,7 +29,7 @@ public class SkipPoints : ImportFilter
 {
     public const string DefaultFilterName = "Skip Points";
 
-    private Distance2 _maxGap = new( UnitType.Meters, GeoConstants.DefaultMaximumOverallGapMeters );
+    private Distance _maxGap = new( UnitType.Meters, GeoConstants.DefaultMaximumOverallGapMeters );
 
     public SkipPoints(
         ILoggerFactory? loggerFactory
@@ -38,13 +38,13 @@ public class SkipPoints : ImportFilter
     {
     }
 
-    public Distance2 MaximumGap
+    public Distance MaximumGap
     {
         get => _maxGap;
 
         set =>
             _maxGap = value.Value < 0
-                ? new Distance2( UnitType.Meters, GeoConstants.DefaultMaximumOverallGapMeters )
+                ? new Distance( UnitType.Meters, GeoConstants.DefaultMaximumOverallGapMeters )
                 : value;
     }
 
@@ -54,7 +54,7 @@ public class SkipPoints : ImportFilter
 
         foreach( var rawRoute in input )
         {
-            Coordinate2? originPoint = null;
+            Coordinates? originPoint = null;
 
             var filteredRoute = new ImportedRoute()
             {

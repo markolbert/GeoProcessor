@@ -32,7 +32,7 @@ public class RouteBuilder
 {
     private readonly List<DataToImportBase> _dataSources = new();
     private readonly List<IImportFilter> _importFilters = new();
-    private readonly List<IExporter2> _exportTargets = new();
+    private readonly List<IExporter> _exportTargets = new();
 
     public RouteBuilder(
         ILoggerFactory? loggerFactory = null
@@ -48,10 +48,10 @@ public class RouteBuilder
     public ILoggerFactory? LoggerFactory { get; }
     public ILogger? Logger { get; }
 
-    public IRouteProcessor2? SnapProcessor { get; set; }
+    public IRouteProcessor? SnapProcessor { get; set; }
     public void AddDataSource( DataToImportBase dataToImport ) => _dataSources.Add( dataToImport );
     public void AddImportFilter( IImportFilter filter ) => _importFilters.Add( filter );
-    public void AddExportTarget( IExporter2 exportTarget ) => _exportTargets.Add( exportTarget );
+    public void AddExportTarget( IExporter exportTarget ) => _exportTargets.Add( exportTarget );
 
     public void Clear()
     {

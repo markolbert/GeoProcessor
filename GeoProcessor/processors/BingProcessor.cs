@@ -1,7 +1,7 @@
 ﻿#region copyright
 // Copyright (c) 2021, 2022, 2023 Mark A. Olbert 
 // https://www.JumpForJoySoftware.com
-// BingProcessor2.cs
+// BingProcessor.cs
 //
 // This file is part of JumpForJoy Software's GeoProcessor.
 // 
@@ -30,15 +30,15 @@ using Microsoft.Extensions.Logging;
 
 namespace J4JSoftware.GeoProcessor;
 
-[ RouteProcessorAttribute2( "Bing" ) ]
-public partial class BingProcessor2 : RouteProcessor2
+[ RouteProcessor( "Bing" ) ]
+public partial class BingProcessor : RouteProcessor
 {
     [GeneratedRegex(@"[^\d]*(\d+)[^\d]*(\d+)[^\d]*(\d+\.*\d*)([^\.]*)")]
     private static partial Regex MaxGapRegEx();
 
     private List<SnappedImportedRoute>? _processedChunks;
 
-    public BingProcessor2(
+    public BingProcessor(
         int maxPointsPerRequest = 100,
         ILoggerFactory? loggerFactory = null
     )
@@ -47,7 +47,7 @@ public partial class BingProcessor2 : RouteProcessor2
                 loggerFactory,
                 new InterpolatePoints( loggerFactory )
                 {
-                    MaximumPointSeparation = new Distance2( UnitType.Kilometers, 2.5 )
+                    MaximumPointSeparation = new Distance( UnitType.Kilometers, 2.5 )
                 } )
     {
     }
@@ -72,7 +72,7 @@ public partial class BingProcessor2 : RouteProcessor2
             ? gap
             : consolBearingFilter.MaximumConsolidationDistance;
 
-        var maxGap = new Distance2( UnitType.Kilometers, 2.5 );
+        var maxGap = new Distance( UnitType.Kilometers, 2.5 );
 
         if( gap > maxGap )
             gap = maxGap;
@@ -152,7 +152,7 @@ public partial class BingProcessor2 : RouteProcessor2
         return _processedChunks;
     }
 
-    private string ParseGapException(List<Coordinate2> points, string mesg)
+    private string ParseGapException(List<Coordinates> points, string mesg)
     {
         var matches = MaxGapRegEx().Matches(mesg);
 
@@ -189,7 +189,7 @@ public partial class BingProcessor2 : RouteProcessor2
         {
             var snapResult = new SnappedImportedRoute( routeChunk,
                                                        snapResponses.SelectMany( x => x.SnappedPoints.Select(
-                                                                         y => new Coordinate2(
+                                                                         y => new Coordinates(
                                                                              y.Coordinate.Latitude,
                                                                              y.Coordinate.Longitude ) ) )
                                                                     .ToList() );

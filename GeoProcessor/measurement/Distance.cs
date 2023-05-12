@@ -1,7 +1,7 @@
 ﻿#region copyright
 // Copyright (c) 2021, 2022, 2023 Mark A. Olbert 
 // https://www.JumpForJoySoftware.com
-// Distance2.cs
+// Distance.cs
 //
 // This file is part of JumpForJoy Software's GeoProcessor.
 // 
@@ -24,13 +24,13 @@ using System.Collections.Generic;
 
 namespace J4JSoftware.GeoProcessor;
 
-public record Distance2( UnitType Units, double Value ) : IComparable<Distance2>, IComparable
+public record Distance( UnitType Units, double Value ) : IComparable<Distance>, IComparable
 {
-    public Distance2 ChangeUnits( UnitType newUnits ) => new( newUnits, Value.Convert( Units, newUnits ) );
+    public Distance ChangeUnits( UnitType newUnits ) => new( newUnits, Value.Convert( Units, newUnits ) );
 
     #region IComparable interface
 
-    public int CompareTo( Distance2? other )
+    public int CompareTo( Distance? other )
     {
         if( ReferenceEquals( this, other ) )
             return 0;
@@ -50,28 +50,28 @@ public record Distance2( UnitType Units, double Value ) : IComparable<Distance2>
         if( ReferenceEquals( this, obj ) )
             return 0;
 
-        return obj is Distance2 other
+        return obj is Distance other
             ? CompareTo( other )
-            : throw new ArgumentException( $"Object must be of type {nameof( Distance2 )}" );
+            : throw new ArgumentException( $"Object must be of type {nameof( Distance )}" );
     }
 
-    public static bool operator<( Distance2? left, Distance2? right ) => Comparer<Distance2>.Default.Compare( left, right ) < 0;
+    public static bool operator<( Distance? left, Distance? right ) => Comparer<Distance>.Default.Compare( left, right ) < 0;
 
-    public static bool operator>( Distance2? left, Distance2? right ) => Comparer<Distance2>.Default.Compare( left, right ) > 0;
+    public static bool operator>( Distance? left, Distance? right ) => Comparer<Distance>.Default.Compare( left, right ) > 0;
 
-    public static bool operator<=( Distance2? left, Distance2? right ) => Comparer<Distance2>.Default.Compare( left, right ) <= 0;
+    public static bool operator<=( Distance? left, Distance? right ) => Comparer<Distance>.Default.Compare( left, right ) <= 0;
 
-    public static bool operator>=( Distance2? left, Distance2? right ) => Comparer<Distance2>.Default.Compare( left, right ) >= 0;
+    public static bool operator>=( Distance? left, Distance? right ) => Comparer<Distance>.Default.Compare( left, right ) >= 0;
 
     #endregion
 
     #region Mathematical operators
 
-    public static Distance2 operator/( Distance2 left, Distance2 right )
+    public static Distance operator/( Distance left, Distance right )
     {
         var rightConverted = right.ChangeUnits( left.Units );
 
-        return new Distance2( left.Units, left.Value / rightConverted.Value );
+        return new Distance( left.Units, left.Value / rightConverted.Value );
     }
 
     #endregion

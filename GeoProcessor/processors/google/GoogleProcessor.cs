@@ -1,7 +1,7 @@
 ﻿#region copyright
 // Copyright (c) 2021, 2022, 2023 Mark A. Olbert 
 // https://www.JumpForJoySoftware.com
-// GoogleProcessor2.cs
+// GoogleProcessor.cs
 //
 // This file is part of JumpForJoy Software's GeoProcessor.
 // 
@@ -32,14 +32,14 @@ using Microsoft.Extensions.Logging;
 
 namespace J4JSoftware.GeoProcessor;
 
-[ RouteProcessorAttribute2( "Google" ) ]
-public class GoogleProcessor2 : RouteProcessor2
+[ RouteProcessor( "Google" ) ]
+public class GoogleProcessor : RouteProcessor
 {
     private const string RequestTemplate = "https://roads.googleapis.com/v1/snapToRoads?path={points}&interpolate={interpolate}&key={apiKey}";
 
     private List<SnappedImportedRoute>? _processedChunks;
 
-    public GoogleProcessor2(
+    public GoogleProcessor(
         int maxPointsPerRequest = 100,
         ILoggerFactory? loggerFactory = null
     )
@@ -48,7 +48,7 @@ public class GoogleProcessor2 : RouteProcessor2
                 loggerFactory,
                 new InterpolatePoints( loggerFactory )
                 {
-                    MaximumPointSeparation = new Distance2( UnitType.Meters, 300 )
+                    MaximumPointSeparation = new Distance( UnitType.Meters, 300 )
                 } )
     {
     }
@@ -73,7 +73,7 @@ public class GoogleProcessor2 : RouteProcessor2
             ? gap
             : consolBearingFilter.MaximumConsolidationDistance;
 
-        var maxGap = new Distance2(UnitType.Meters, 300);
+        var maxGap = new Distance(UnitType.Meters, 300);
 
         if (gap > maxGap)
             gap = maxGap;
@@ -93,7 +93,7 @@ public class GoogleProcessor2 : RouteProcessor2
 
         foreach( var routeChunk in routeChunks )
         {
-            var pointsText = routeChunk.Aggregate<Coordinate2, StringBuilder, string>( new StringBuilder(),
+            var pointsText = routeChunk.Aggregate<Coordinates, StringBuilder, string>( new StringBuilder(),
                 ( sb, pt ) =>
                 {
                     if( sb.Length > 0 )
@@ -142,7 +142,7 @@ public class GoogleProcessor2 : RouteProcessor2
 
             var snappedRoute = new SnappedImportedRoute( routeChunk,
                                                          result.SnappedPoints
-                                                               .Select( p => new Coordinate2( p.Location.Latitude,
+                                                               .Select( p => new Coordinates( p.Location.Latitude,
                                                                             p.Location.Longitude ) )
                                                                .ToList() );
 

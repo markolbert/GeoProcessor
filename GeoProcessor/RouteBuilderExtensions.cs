@@ -36,7 +36,7 @@ public static class RouteBuilderExtensions
         bool lineStringsOnly = true
     )
     {
-        var importer = new GpxImporter2( builder.LoggerFactory ) { LineStringsOnly = lineStringsOnly };
+        var importer = new GpxImporter( builder.LoggerFactory ) { LineStringsOnly = lineStringsOnly };
 
         if( !File.Exists( filePath ) )
             builder.Logger?.LogError( "{filePath} does not exist", filePath );
@@ -48,7 +48,7 @@ public static class RouteBuilderExtensions
     public static RouteBuilder.RouteBuilder AddCoordinates(
         this RouteBuilder.RouteBuilder builder,
         string collectionName,
-        IEnumerable<Coordinate2> coordinates
+        IEnumerable<Coordinates> coordinates
     )
     {
         if (string.IsNullOrEmpty(collectionName))
@@ -67,7 +67,7 @@ public static class RouteBuilderExtensions
         int maxPtsPerRequest = 100
     )
     {
-        builder.SnapProcessor = new BingProcessor2( maxPtsPerRequest, builder.LoggerFactory ) { ApiKey = apiKey };
+        builder.SnapProcessor = new BingProcessor( maxPtsPerRequest, builder.LoggerFactory ) { ApiKey = apiKey };
         return builder;
     }
 
@@ -78,19 +78,19 @@ public static class RouteBuilderExtensions
     )
     {
         builder.SnapProcessor =
-            new GoogleProcessor2( maxPtsPerRequest, builder.LoggerFactory ) { ApiKey = apiKey };
+            new GoogleProcessor( maxPtsPerRequest, builder.LoggerFactory ) { ApiKey = apiKey };
 
         return builder;
     }
 
     public static RouteBuilder.RouteBuilder ConsolidatePoints(
         this RouteBuilder.RouteBuilder builder,
-        Distance2? minPointGap = null,
-        Distance2? maxOverallGap = null
+        Distance? minPointGap = null,
+        Distance? maxOverallGap = null
     )
     {
-        minPointGap ??= new Distance2( UnitType.Meters, GeoConstants.DefaultMinimumPointGapMeters );
-        maxOverallGap ??= new Distance2( UnitType.Meters, GeoConstants.DefaultMaximumOverallGapMeters );
+        minPointGap ??= new Distance( UnitType.Meters, GeoConstants.DefaultMinimumPointGapMeters );
+        maxOverallGap ??= new Distance( UnitType.Meters, GeoConstants.DefaultMaximumOverallGapMeters );
 
         var filter = new ConsolidatePoints( builder.LoggerFactory )
         {
@@ -105,11 +105,11 @@ public static class RouteBuilderExtensions
     public static RouteBuilder.RouteBuilder ConsolidateAlongBearing(
         this RouteBuilder.RouteBuilder builder,
         double bearingToleranceDegrees = GeoConstants.DefaultBearingToleranceDegrees,
-        Distance2? maxConsolDist = null
+        Distance? maxConsolDist = null
     )
     {
         // 2.5 km is the max distance between points for Bing
-        maxConsolDist ??= new Distance2( UnitType.Kilometers, 2.5 );
+        maxConsolDist ??= new Distance( UnitType.Kilometers, 2.5 );
 
         var filter = new ConsolidateAlongBearing( builder.LoggerFactory )
         {
@@ -124,10 +124,10 @@ public static class RouteBuilderExtensions
 
     public static RouteBuilder.RouteBuilder InterpolatePoints(
         this RouteBuilder.RouteBuilder builder,
-        Distance2? maxSeparation = null
+        Distance? maxSeparation = null
     )
     {
-        maxSeparation ??= new Distance2( UnitType.Kilometers, GeoConstants.DefaultMaxPointSeparationKm );
+        maxSeparation ??= new Distance( UnitType.Kilometers, GeoConstants.DefaultMaxPointSeparationKm );
 
         var filter = new InterpolatePoints( builder.LoggerFactory ) { MaximumPointSeparation = maxSeparation };
 
@@ -138,10 +138,10 @@ public static class RouteBuilderExtensions
 
     public static RouteBuilder.RouteBuilder MergeRoutes(
         this RouteBuilder.RouteBuilder builder,
-        Distance2? maxRouteGap = null
+        Distance? maxRouteGap = null
     )
     {
-        maxRouteGap ??= new Distance2( UnitType.Meters, GeoConstants.DefaultMaxRouteGapMeters );
+        maxRouteGap ??= new Distance( UnitType.Meters, GeoConstants.DefaultMaxRouteGapMeters );
 
         var filter = new MergeRoutes( builder.LoggerFactory ) { MaximumRouteGap = maxRouteGap };
 
@@ -152,10 +152,10 @@ public static class RouteBuilderExtensions
 
     public static RouteBuilder.RouteBuilder RemoveClusters(
         this RouteBuilder.RouteBuilder builder,
-        Distance2? maxClusterDiameter = null
+        Distance? maxClusterDiameter = null
     )
     {
-        maxClusterDiameter ??= new Distance2( UnitType.Meters, GeoConstants.DefaultMaxClusterDiameterMeters );
+        maxClusterDiameter ??= new Distance( UnitType.Meters, GeoConstants.DefaultMaxClusterDiameterMeters );
 
         var filter = new RemoveClusters( builder.LoggerFactory ) { MaximumClusterDiameter = maxClusterDiameter };
 
@@ -175,7 +175,7 @@ public static class RouteBuilderExtensions
     public static RouteBuilder.RouteBuilder ExportToGpx(
         this RouteBuilder.RouteBuilder builder,
         string filePath,
-        Distance2? maxGap = null
+        Distance? maxGap = null
     )
     {
         if( !builder.TryCreateExporter<GpxExporter>( filePath, out var exporter, maxGap ))
@@ -190,7 +190,7 @@ public static class RouteBuilderExtensions
         this RouteBuilder.RouteBuilder builder,
         string filePath,
         out IFileExporter? exporter,
-        Distance2? maxGap = null
+        Distance? maxGap = null
     )
         where TExporter : class, IFileExporter
     {
@@ -219,10 +219,10 @@ public static class RouteBuilderExtensions
     public static RouteBuilder.RouteBuilder ExportToKml(
         this RouteBuilder.RouteBuilder builder,
         string filePath,
-        Distance2? maxGap = null
+        Distance? maxGap = null
     )
     {
-        if (!builder.TryCreateExporter<KmlExporter2>(filePath, out var exporter, maxGap))
+        if (!builder.TryCreateExporter<KmlExporter>(filePath, out var exporter, maxGap))
             return builder;
 
         builder.AddExportTarget(exporter!);
@@ -233,10 +233,10 @@ public static class RouteBuilderExtensions
     public static RouteBuilder.RouteBuilder ExportToKmz(
         this RouteBuilder.RouteBuilder builder,
         string filePath,
-        Distance2? maxGap = null
+        Distance? maxGap = null
     )
     {
-        if (!builder.TryCreateExporter<KmzExporter2>(filePath, out var exporter, maxGap))
+        if (!builder.TryCreateExporter<KmzExporter>(filePath, out var exporter, maxGap))
             return builder;
 
         builder.AddExportTarget(exporter!);

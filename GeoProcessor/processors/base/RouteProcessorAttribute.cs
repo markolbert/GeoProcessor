@@ -1,7 +1,7 @@
 ﻿#region copyright
 // Copyright (c) 2021, 2022, 2023 Mark A. Olbert 
 // https://www.JumpForJoySoftware.com
-// IExporter2.cs
+// RouteProcessorAttribute.cs
 //
 // This file is part of JumpForJoy Software's GeoProcessor.
 // 
@@ -19,19 +19,19 @@
 // with GeoProcessor. If not, see <https://www.gnu.org/licenses/>.
 #endregion
 
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Threading;
-using System.Threading.Tasks;
+using System;
 
 namespace J4JSoftware.GeoProcessor;
 
-public interface IExporter2 : IMessageBasedTask
+[AttributeUsage(AttributeTargets.Class, Inherited = false)]
+public class RouteProcessorAttribute : Attribute
 {
-    ReadOnlyCollection<IImportFilter> ImportFilters { get; }
-    void ClearImportFilters();
-    bool AddFilter( IImportFilter filter );
-    bool AddFilters( IEnumerable<IImportFilter> filters );
+    public RouteProcessorAttribute(
+        string processor
+    )
+    {
+        Processor = processor;
+    }
 
-    Task<bool> ExportAsync( List<ImportedRoute> routes, CancellationToken ctx = default );
+    public string Processor { get; }
 }

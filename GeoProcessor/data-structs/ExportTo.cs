@@ -21,8 +21,8 @@
 
 namespace J4JSoftware.GeoProcessor.RouteBuilder;
 
-public record ExportToBase(IExporter2 Exporter);
+public record ExportToBase(IExporter Exporter);
 
-public record ExportTo( IExporter2 Exporter, IExportTarget Target ) : ExportToBase( Exporter );
+public record ExportTo( IExporter Exporter, IExportTarget Target ) : ExportToBase( Exporter );
 
-public record ExportToFile(string FilePath, IExporter2 Exporter) : ExportToBase(Exporter);
+public record ExportToFile(string FilePath, IExporter Exporter) : ExportToBase(Exporter);

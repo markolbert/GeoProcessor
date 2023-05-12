@@ -54,7 +54,7 @@ public class DataImporter : Importer
             return retVal;
         }
 
-        var route = new ImportedRoute( new List<Coordinate2>( dataToImport.Coordinates ) )
+        var route = new ImportedRoute( new List<Coordinates>( dataToImport.Coordinates ) )
         {
             RouteName = dataToImport.Name
         };

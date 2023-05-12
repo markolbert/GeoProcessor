@@ -1,7 +1,7 @@
 ﻿#region copyright
 // Copyright (c) 2021, 2022, 2023 Mark A. Olbert 
 // https://www.JumpForJoySoftware.com
-// IImporter2.cs
+// IImporter.cs
 //
 // This file is part of JumpForJoy Software's GeoProcessor.
 // 
@@ -26,7 +26,7 @@ using System.Threading.Tasks;
 
 namespace J4JSoftware.GeoProcessor;
 
-public interface IImporter2 : IMessageBasedTask
+public interface IImporter : IMessageBasedTask
 {
     Task<List<ImportedRoute>> ImportAsync(DataToImportBase toImport, CancellationToken ctx = default);
 }

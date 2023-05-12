@@ -30,7 +30,7 @@ public class MergeRoutes : ImportFilter
 {
     public const string DefaultFilterName = "Merge Routes";
 
-    private Distance2 _maxRouteGap = new( UnitType.Meters, GeoConstants.DefaultMaxRouteGapMeters );
+    private Distance _maxRouteGap = new( UnitType.Meters, GeoConstants.DefaultMaxRouteGapMeters );
 
     public MergeRoutes(
         ILoggerFactory? loggerFactory
@@ -39,13 +39,13 @@ public class MergeRoutes : ImportFilter
     {
     }
 
-    public Distance2 MaximumRouteGap
+    public Distance MaximumRouteGap
     {
         get => _maxRouteGap;
 
         set =>
             _maxRouteGap = value.Value <= 0
-                ? new Distance2( UnitType.Meters, GeoConstants.DefaultMaxRouteGapMeters )
+                ? new Distance( UnitType.Meters, GeoConstants.DefaultMaxRouteGapMeters )
                 : value;
     }
 

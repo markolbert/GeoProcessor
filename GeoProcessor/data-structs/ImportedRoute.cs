@@ -28,25 +28,25 @@ public class ImportedRoute : IImportedRoute
 {
     public ImportedRoute()
     {
-        Points = new List<Coordinate2>();
+        Points = new List<Coordinates>();
     }
 
     public ImportedRoute(
-        List<Coordinate2> points
+        List<Coordinates> points
     )
     {
         Points = points;
     }
 
-    public ImportedRoute Copy() => new( new List<Coordinate2>( Points ) ) { RouteName = RouteName };
+    public ImportedRoute Copy() => new( new List<Coordinates>( Points ) ) { RouteName = RouteName };
 
     public string? RouteName { get; set; }
     public string? Description { get; set; }
 
     public int NumPoints => Points.Count;
-    public List<Coordinate2> Points { get; }
+    public List<Coordinates> Points { get; }
 
-    public IEnumerator<Coordinate2> GetEnumerator() => ( (IEnumerable<Coordinate2>) Points ).GetEnumerator();
+    public IEnumerator<Coordinates> GetEnumerator() => ( (IEnumerable<Coordinates>) Points ).GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

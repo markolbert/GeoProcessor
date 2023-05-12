@@ -27,7 +27,7 @@ using Microsoft.Extensions.Logging;
 
 namespace J4JSoftware.GeoProcessor;
 
-public abstract class Importer : MessageBasedTask, IImporter2
+public abstract class Importer : MessageBasedTask, IImporter
 {
     protected Importer(
         string? mesgPrefix = null,
