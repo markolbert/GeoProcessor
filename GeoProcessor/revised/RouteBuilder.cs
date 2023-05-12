@@ -39,10 +39,6 @@ public class RouteBuilder
         SnapProcessor = null;
     }
 
-    public Color RouteColor { get; internal set; } = Color.Blue;
-    public Color RouteHighlightColor { get; internal set; } = Color.Red;
-    public int RouteWidth { get; internal set; } = 5;
-
     public Func<StatusInformation, Task>? StatusReporter { get; internal set; }
     public int StatusInterval { get; internal set; } = GeoConstants.DefaultStatusInterval;
     public Func<ProcessingMessage, Task>? MessageReporter { get; internal set; }

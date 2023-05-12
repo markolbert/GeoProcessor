@@ -152,33 +152,6 @@ public static class RouteBuilderExtensions
         return builder;
     }
 
-    public static RouteBuilder.RouteBuilder RouteColor(
-        this RouteBuilder.RouteBuilder builder,
-        Color color
-    )
-    {
-        builder.RouteColor = color;
-        return builder;
-    }
-
-    public static RouteBuilder.RouteBuilder RouteHighlightColor(
-        this RouteBuilder.RouteBuilder builder,
-        Color color
-    )
-    {
-        builder.RouteHighlightColor = color;
-        return builder;
-    }
-
-    public static RouteBuilder.RouteBuilder RouteWidth(
-        this RouteBuilder.RouteBuilder builder,
-        int width
-    )
-    {
-        builder.RouteWidth = width < GeoConstants.MinimumRouteWidth ? GeoConstants.MinimumRouteWidth : width;
-        return builder;
-    }
-
     public static RouteBuilder.RouteBuilder ExportToGpx(
         this RouteBuilder.RouteBuilder builder,
         string filePath,
@@ -217,6 +190,9 @@ public static class RouteBuilderExtensions
         if( maxGap != null )
             exporter.AddFilter( new SkipPoints( builder.LoggerFactory ) { MaximumGap = maxGap } );
 
+        if( !exporter.FilePath.Equals( filePath, StringComparison.OrdinalIgnoreCase ) )
+            builder.Logger?.LogWarning( "Changed file extension to {ext}", exporter.FileType );
+
         return true;
     }
 
@@ -227,6 +203,20 @@ public static class RouteBuilderExtensions
     )
     {
         if (!builder.TryCreateExporter<KmlExporter2>(filePath, out var exporter, maxGap))
+            return builder;
+
+        builder.AddExportTarget(exporter!);
+
+        return builder;
+    }
+
+    public static RouteBuilder.RouteBuilder ExportToKmz(
+        this RouteBuilder.RouteBuilder builder,
+        string filePath,
+        Distance2? maxGap = null
+    )
+    {
+        if (!builder.TryCreateExporter<KmzExporter2>(filePath, out var exporter, maxGap))
             return builder;
 
         builder.AddExportTarget(exporter!);
