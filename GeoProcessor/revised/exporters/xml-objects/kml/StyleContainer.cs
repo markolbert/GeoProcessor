@@ -6,8 +6,11 @@ namespace J4JSoftware.GeoProcessor.Kml;
 
 public class StyleContainer
 {
-    [XmlAttribute("id")]
+    [ XmlAttribute( "id" ) ]
     public string Id { get; set; }
 
-    public LineStyle LineStyle { get; set; }
+    public LineStyle? LineStyle { get; set; }
+    private bool ShouldSerializeLineStyle() => LineStyle != null;
+    public IconStyle? IconStyle { get; set; }
+    private bool ShouldSerializeIconStyle() => IconStyle != null;
 }

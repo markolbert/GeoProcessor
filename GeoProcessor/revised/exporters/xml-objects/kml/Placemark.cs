@@ -20,5 +20,9 @@ public class Placemark
     public bool Visibility { get; set; }
 
     [XmlElement("LineString")]
-    public LineString LineString { get; set; }
+    public LineString? LineString { get; set; }
+    private bool ShouldSerializeLineString() => LineString != null;
+
+    public Point? Point { get; set; }
+    private bool ShouldSerializePoint() => Point != null;
 }
