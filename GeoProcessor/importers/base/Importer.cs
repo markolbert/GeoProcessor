@@ -48,5 +48,5 @@ public abstract class Importer : MessageBasedTask, IImporter
         return retVal;
     }
 
-    protected abstract Task<List<ImportedRoute>> ImportInternalAsync( DataToImportBase toImport, CancellationToken ctx );
+    protected abstract Task<List<ImportedRoute>?> ImportInternalAsync( DataToImportBase toImport, CancellationToken ctx );
 }

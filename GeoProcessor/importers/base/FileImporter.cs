@@ -20,16 +20,20 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml.Linq;
+using System.Xml;
+using System.Xml.Serialization;
+using J4JSoftware.GeoProcessor.RouteBuilder;
 using Microsoft.Extensions.Logging;
 
 namespace J4JSoftware.GeoProcessor;
 
-public abstract class FileImporter : Importer, IFileImporter
+public abstract class FileImporter<TDoc> : Importer, IFileImporter
+    where TDoc : class
 {
     protected FileImporter(
         string? mesgPrefix = null,
@@ -52,21 +56,62 @@ public abstract class FileImporter : Importer, IFileImporter
     public string FileType { get; }
     public bool LineStringsOnly { get; set; }
 
-    protected async Task<XDocument?> OpenXmlFileAsync( string filePath, CancellationToken ctx )
+#pragma warning disable CS1998
+    protected override async Task<List<ImportedRoute>?> ImportInternalAsync(
+#pragma warning restore CS1998
+        DataToImportBase toImport,
+        CancellationToken ctx
+    )
     {
-        XDocument? retVal;
+        if (toImport is not FileToImport fileToImport)
+        {
+            Logger?.LogError("Expected a {correct} but got a {incorrect} instead",
+                             typeof(FileToImport),
+                             toImport.GetType());
 
-        try
-        {
-            using var readStream = File.OpenText(filePath);
-            retVal = await XDocument.LoadAsync(readStream, LoadOptions.None, ctx);
-        }
-        catch (Exception e)
-        {
-            Logger?.LogError("Could not load file '{path}', exception was '{mesg}'", filePath, e.Message);
             return null;
         }
 
-        return retVal;
+        TDoc? xmlDoc;
+
+        try
+        {
+            var streamReader = GetStreamReader( fileToImport.FilePath );
+            if( streamReader == null )
+                return null;
+
+            var xmlReader = XmlReader.Create(streamReader);
+            var serializer = new XmlSerializer( typeof( TDoc ) );
+            xmlDoc = serializer.Deserialize( xmlReader ) as TDoc;
+        }
+        catch (Exception ex)
+        {
+            Logger?.LogError("Exception encountered deserializing '{file}', message was {mesg}",
+                             fileToImport.FilePath,
+                             ex.Message);
+            return null;
+        }
+
+        if( xmlDoc != null )
+            return ProcessXmlDoc( xmlDoc );
+
+        Logger?.LogError( "Could not deserialize '{file}' to {xType}", fileToImport.FilePath, typeof( TDoc ) );
+        return null;
     }
+
+    protected virtual StreamReader? GetStreamReader( string filePath )
+    {
+        try
+        {
+            return new StreamReader( filePath );
+        }
+        catch( Exception ex )
+        {
+            Logger?.LogError( "Could not open file '{file}' to import, message was '{mesg}'", filePath, ex.Message );
+        }
+
+        return null;
+    }
+
+    protected abstract List<ImportedRoute>? ProcessXmlDoc( TDoc xmlDoc );
 }

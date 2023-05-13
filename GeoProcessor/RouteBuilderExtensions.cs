@@ -45,6 +45,21 @@ public static class RouteBuilderExtensions
         return builder;
     }
 
+    public static RouteBuilder.RouteBuilder AddKmlFile(
+        this RouteBuilder.RouteBuilder builder,
+        string filePath,
+        bool lineStringsOnly = true
+    )
+    {
+        var importer = new KmlImporter( builder.LoggerFactory ) { LineStringsOnly = lineStringsOnly };
+
+        if (!File.Exists(filePath))
+            builder.Logger?.LogError("{filePath} does not exist", filePath);
+        else builder.AddDataSource(new FileToImport(filePath, importer));
+
+        return builder;
+    }
+
     public static RouteBuilder.RouteBuilder AddCoordinates(
         this RouteBuilder.RouteBuilder builder,
         string collectionName,
