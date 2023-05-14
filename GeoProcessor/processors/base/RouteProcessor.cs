@@ -34,13 +34,11 @@ public abstract class RouteProcessor : MessageBasedTask, IRouteProcessor
     protected RouteProcessor(
         int maxPtsPerRequest,
         string? mesgPrefix = null,
-        ILoggerFactory? loggerFactory = null,
-        params IImportFilter[] requiredImportFilters
+        ILoggerFactory? loggerFactory = null
     )
         : base( mesgPrefix, loggerFactory )
     {
         MaxPointsInRequest = maxPtsPerRequest;
-        ImportFilters = requiredImportFilters.ToList();
 
         var type = GetType();
         var procAttr = type.GetCustomAttribute<RouteProcessorAttribute>();
@@ -59,11 +57,13 @@ public abstract class RouteProcessor : MessageBasedTask, IRouteProcessor
     }
 
     public string ProcessorName { get; }
-    public List<IImportFilter> ImportFilters { get; private set; }
+    public List<IImportFilter> ImportFilters { get; private set; } = new();
     public string ApiKey { get; set; } = string.Empty;
     public TimeSpan RequestTimeout { get; set; } = GeoConstants.DefaultRequestTimeout;
 
     public int MaxPointsInRequest { get; }
+    public Distance MinimumPointSeparation { get; set; } = Distance.Zero;
+    public Distance MaximumOverallPointGap { get; set; } = Distance.Zero;
 
     public async Task<List<ImportedRoute>> ProcessRoute(
         List<IImportedRoute> toProcess,
