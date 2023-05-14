@@ -44,7 +44,7 @@ public class KmlImporter : FileImporter<Root>
 
         foreach( var folder in xmlDoc.Document.Folders )
         {
-            var importedRoute = new ImportedRoute( new List<Coordinates>() )
+            var importedRoute = new ImportedRoute( new Points() )
             {
                 RouteName = folder.Name
             };
@@ -67,7 +67,7 @@ public class KmlImporter : FileImporter<Root>
         return retVal;
     }
 
-    private List<Coordinates>? ParseCoordinatesBlock( string routeName, string text )
+    private List<Point>? ParseCoordinatesBlock( string routeName, string text )
     {
         // coordinate tuples are supposed to be separated by spaces (with no
         // spaces within the tuple), but many programs appear to use a newline
@@ -94,7 +94,7 @@ public class KmlImporter : FileImporter<Root>
             return null;
         }
 
-        var retVal = new List<Coordinates>();
+        var retVal = new List<Point>();
 
         for( var idx = 0; idx < lines.Length; idx++ )
         {
@@ -106,7 +106,7 @@ public class KmlImporter : FileImporter<Root>
         return retVal;
     }
 
-    private Coordinates? ParseCoordinates( string line, int lineNum, string routeName )
+    private Point? ParseCoordinates( string line, int lineNum, string routeName )
     {
         var textParts = line.Split( ',' );
 
@@ -128,8 +128,8 @@ public class KmlImporter : FileImporter<Root>
             // NO ONE WORKS WITH GEO COORDINATES THAT WAY!!!!
             return valueParts.Length switch
             {
-                2 => new Coordinates( valueParts[ 1 ], valueParts[ 0 ] ),
-                3 => new Coordinates( valueParts[ 1 ], valueParts[ 0 ] ) { Elevation = valueParts[ 2 ] },
+                2 => new Point( valueParts[ 1 ], valueParts[ 0 ] ),
+                3 => new Point( valueParts[ 1 ], valueParts[ 0 ] ) { Elevation = valueParts[ 2 ] },
                 _ => null // shouldn't ever get here
             };
 

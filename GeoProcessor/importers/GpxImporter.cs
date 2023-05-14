@@ -42,14 +42,14 @@ public class GpxImporter : FileImporter<Root>
 
         foreach( var track in xmlDoc.Tracks )
         {
-            var importedRoute = new ImportedRoute( new List<Coordinates>() )
+            var importedRoute = new ImportedRoute( new Points() )
             {
                 RouteName = track.Name, Description = track.Description
             };
 
             foreach( var trackPoint in track.TrackPoints )
             {
-                var coordinate = new Coordinates( trackPoint.Latitude, trackPoint.Longitude )
+                var coordinate = new Point( trackPoint.Latitude, trackPoint.Longitude )
                 {
                     Elevation = trackPoint.Elevation,
                     Timestamp = trackPoint.Timestamp,

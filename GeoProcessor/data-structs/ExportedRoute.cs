@@ -26,15 +26,15 @@ namespace J4JSoftware.GeoProcessor;
 public class ExportedRoute
 {
     public ExportedRoute( 
-        List<Coordinates>? coordinates = null
+        List<Point>? coordinates = null
         )
     {
-        Points = coordinates ?? new List<Coordinates>();
+        Points = coordinates ?? new List<Point>();
     }
 
     public string? RouteName { get; set; }
     public string? Description { get; set; }
 
-    public List<Coordinates> Points { get; }
+    public List<Point> Points { get; }
     public SnapProcessStatus Status { get; set; } = SnapProcessStatus.NoResultsReturned;
 }

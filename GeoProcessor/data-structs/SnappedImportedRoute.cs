@@ -21,31 +21,40 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace J4JSoftware.GeoProcessor;
 
-public class SnappedImportedRoute : IImportedRouteChunk
+public class SnappedImportedRoute : IImportedRouteChunk, IEnumerable<Point>
 {
     public SnappedImportedRoute(
         ImportedRouteChunk unprocessedRouteChunk,
-        List<Coordinates> processedPoints
+        List<Point> processedPoints
     )
     {
         SourceRoute = unprocessedRouteChunk;
         ProcessedPoints = processedPoints;
     }
 
-    public int NumPoints => ProcessedPoints.Count;
     public string? RouteName => SourceRoute.RouteName;
     public string? Description => SourceRoute.Description;
+
     public int RouteId => ((ImportedRouteChunk)SourceRoute).RouteId;
     public int ChunkSize => ((ImportedRouteChunk)SourceRoute).ChunkSize;
     public int ChunkNum => ((ImportedRouteChunk) SourceRoute).ChunkNum;
     public IImportedRoute SourceRoute { get; }
-    public List<Coordinates> ProcessedPoints { get; }
+    public List<Point> ProcessedPoints { get; }
 
-    public IEnumerator<Coordinates> GetEnumerator() => ProcessedPoints.GetEnumerator();
+    public int NumPoints(Distance? minSeparation, Distance? maxOverallGap) =>
+        ProcessedPoints.Count;
+
+    public bool Any(Distance? minSeparation = null, Distance? maxOverallGap = null) =>
+        ProcessedPoints.Any();
+
+    public IEnumerable<Point> GetFilteredPoints(Distance? minSeparation = null, Distance? maxOverallGap = null) =>
+        ProcessedPoints;
+
+    public IEnumerator<Point> GetEnumerator() => ProcessedPoints.GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
 }

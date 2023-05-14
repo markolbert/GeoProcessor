@@ -65,8 +65,8 @@ public class ConsolidatePoints : ImportFilter
 
         foreach( var rawRoute in input )
         {
-            Coordinates? prevPoint = null;
-            Coordinates? originPoint = null;
+            Point? prevPoint = null;
+            Point? originPoint = null;
 
             var filteredRoute = new ImportedRoute()
             {

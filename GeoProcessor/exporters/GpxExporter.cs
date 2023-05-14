@@ -36,7 +36,7 @@ public class GpxExporter : FileExporter<Root>
     }
     protected override void InitializeColorPicker() => RouteColorPicker = GeoExtensions.RouteColorPicker;
 
-    protected override Root GetRootObject(List<IImportedRoute> routes)
+    protected override Root GetRootObject(List<SnappedImportedRoute> routes)
     {
         var retVal = new Root()
         {

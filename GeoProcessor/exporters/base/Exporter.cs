@@ -60,7 +60,7 @@ public abstract class Exporter : MessageBasedTask, IExporter
     public bool AddFilters( IEnumerable<IImportFilter> filters ) =>
         filters.Aggregate( true, ( current, filter ) => current & AddFilter( filter ) );
 
-    public async Task<bool> ExportAsync( List<ImportedRoute> routes, CancellationToken ctx = default )
+    public async Task<bool> ExportAsync( List<SnappedImportedRoute> routes, CancellationToken ctx = default )
     {
         var filters = AdjustImportFilters();
         var toProcess = routes.Cast<IImportedRoute>().ToList();
@@ -80,5 +80,5 @@ public abstract class Exporter : MessageBasedTask, IExporter
 
     protected virtual List<IImportFilter> AdjustImportFilters()=> _importFilters;
 
-    protected abstract Task<bool> ExportInternalAsync( List<IImportedRoute> routes, CancellationToken ctx );
+    protected abstract Task<bool> ExportInternalAsync( List<SnappedImportedRoute> routes, CancellationToken ctx );
 }

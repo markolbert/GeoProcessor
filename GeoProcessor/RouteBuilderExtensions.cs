@@ -63,11 +63,11 @@ public static class RouteBuilderExtensions
     public static RouteBuilder.RouteBuilder AddCoordinates(
         this RouteBuilder.RouteBuilder builder,
         string collectionName,
-        IEnumerable<Coordinates> coordinates
+        IEnumerable<Point> coordinates
     )
     {
         if (string.IsNullOrEmpty(collectionName))
-            collectionName = "Coordinate Collection";
+            collectionName = "Coordinate Points";
 
         builder.AddDataSource( new DataToImport( collectionName,
                                                  coordinates,

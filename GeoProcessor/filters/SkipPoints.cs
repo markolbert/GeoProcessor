@@ -54,7 +54,7 @@ public class SkipPoints : ImportFilter
 
         foreach( var rawRoute in input )
         {
-            Coordinates? originPoint = null;
+            Point? originPoint = null;
 
             var filteredRoute = new ImportedRoute()
             {

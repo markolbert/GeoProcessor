@@ -93,7 +93,7 @@ public class GoogleProcessor : RouteProcessor
 
         foreach( var routeChunk in routeChunks )
         {
-            var pointsText = routeChunk.Aggregate<Coordinates, StringBuilder, string>( new StringBuilder(),
+            var pointsText = routeChunk.Aggregate<Point, StringBuilder, string>( new StringBuilder(),
                 ( sb, pt ) =>
                 {
                     if( sb.Length > 0 )
@@ -142,7 +142,7 @@ public class GoogleProcessor : RouteProcessor
 
             var snappedRoute = new SnappedImportedRoute( routeChunk,
                                                          result.SnappedPoints
-                                                               .Select( p => new Coordinates( p.Location.Latitude,
+                                                               .Select( p => new Point( p.Location.Latitude,
                                                                             p.Location.Longitude ) )
                                                                .ToList() );
 

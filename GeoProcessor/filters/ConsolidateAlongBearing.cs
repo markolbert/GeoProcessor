@@ -69,8 +69,8 @@ public class ConsolidateAlongBearing : ImportFilter
                 RouteName = rawRoute.RouteName, Description = rawRoute.Description
             };
 
-            Coordinates? bearingOrigin = null;
-            Coordinates? distOrigin = null;
+            Point? bearingOrigin = null;
+            Point? distOrigin = null;
             double? prevBearing = null;
 
             foreach( var curPoint in rawRoute )

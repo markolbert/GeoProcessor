@@ -42,14 +42,9 @@ public partial class BingProcessor : RouteProcessor
         int maxPointsPerRequest = 100,
         ILoggerFactory? loggerFactory = null
     )
-        : base( maxPointsPerRequest,
-                null,
-                loggerFactory,
-                new InterpolatePoints( loggerFactory )
-                {
-                    MaximumPointSeparation = new Distance( UnitType.Kilometers, 2.5 )
-                } )
+        : base(maxPointsPerRequest, null, loggerFactory)
     {
+        MaximumOverallPointGap = new Distance(UnitType.Kilometers, 2.5);
     }
 
     protected override List<IImportFilter> AdjustImportFilters()
@@ -152,7 +147,7 @@ public partial class BingProcessor : RouteProcessor
         return _processedChunks;
     }
 
-    private string ParseGapException(List<Coordinates> points, string mesg)
+    private string ParseGapException(List<Point> points, string mesg)
     {
         var matches = MaxGapRegEx().Matches(mesg);
 
@@ -189,7 +184,7 @@ public partial class BingProcessor : RouteProcessor
         {
             var snapResult = new SnappedImportedRoute( routeChunk,
                                                        snapResponses.SelectMany( x => x.SnappedPoints.Select(
-                                                                         y => new Coordinates(
+                                                                         y => new Point(
                                                                              y.Coordinate.Latitude,
                                                                              y.Coordinate.Longitude ) ) )
                                                                     .ToList() );

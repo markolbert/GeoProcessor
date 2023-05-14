@@ -58,11 +58,15 @@ public class ImportedRouteChunk : IImportedRouteChunk
         set => throw new InvalidOperationException($"Can't set the description on a {typeof(ImportedRouteChunk)}");
     }
 
-    public int NumPoints => SourceRoute.Count();
+    public int NumPoints(Distance? minSeparation = null, Distance? maxOverallGap = null) =>
+        GetFilteredPoints(minSeparation,maxOverallGap).Count();
 
-    public IEnumerator<Coordinates> GetEnumerator() =>
-        SourceRoute.Skip( ChunkNum * ChunkSize )
-                    .Take( ChunkSize ).GetEnumerator();
+    public bool Any(Distance? minSeparation = null, Distance? maxOverallGap = null) =>
+        GetFilteredPoints(minSeparation, maxOverallGap).Any();
 
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    public IEnumerable<Point> GetFilteredPoints(Distance? minSeparation = null, Distance? maxOverallGap = null)
+    {
+        var srcEnumerable = SourceRoute.GetFilteredPoints(minSeparation, maxOverallGap);
+        return srcEnumerable.Skip(ChunkNum*ChunkSize).Take(ChunkSize);
+    }
 }

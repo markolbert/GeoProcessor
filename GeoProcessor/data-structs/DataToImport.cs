@@ -27,7 +27,7 @@ public record DataToImportBase( IImporter Importer );
 
 public record DataToImport(
     string Name,
-    IEnumerable<Coordinates> Coordinates,
+    IEnumerable<Point> Points,
     IImporter Importer
 ) : DataToImportBase( Importer );
 

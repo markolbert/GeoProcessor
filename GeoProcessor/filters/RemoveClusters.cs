@@ -71,7 +71,7 @@ public class RemoveClusters : ImportFilter
     {
         var retVal = new ImportedRoute() { RouteName = toFilter.RouteName };
 
-        Coordinates? clusterOrigin = null;
+        Point? clusterOrigin = null;
 
         foreach( var coordinate in toFilter )
         {

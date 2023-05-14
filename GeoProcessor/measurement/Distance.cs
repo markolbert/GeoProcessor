@@ -26,6 +26,10 @@ namespace J4JSoftware.GeoProcessor;
 
 public record Distance( UnitType Units, double Value ) : IComparable<Distance>, IComparable
 {
+    public static Distance Invalid { get; } = new(UnitType.Kilometers, double.NaN);
+    public static Distance Zero { get; } = new(UnitType.Kilometers, 0);
+    public static Distance Infinity { get; } = new(UnitType.Kilometers, double.PositiveInfinity);
+
     public Distance ChangeUnits( UnitType newUnits ) => new( newUnits, Value.Convert( Units, newUnits ) );
 
     #region IComparable interface

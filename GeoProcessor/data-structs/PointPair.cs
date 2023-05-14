@@ -21,4 +21,4 @@
 
 namespace J4JSoftware.GeoProcessor;
 
-public record PointPair( Coordinates First, Coordinates Second );
+public record PointPair( Point First, Point Second );

@@ -52,21 +52,30 @@ public class MergedImportedRoute : IImportedRoute
         }
     }
 
+    int IImportedRoute.NumPoints(Distance? minSeparation, Distance? maxOverallGap)
+    {
+        throw new System.NotImplementedException();
+    }
+
     public IImportedRoute RouteA { get; }
     public IImportedRoute RouteB { get;}
     public RouteConnectionType ConnectionType { get; }
 
-    public int NumPoints => this.Count();
+    public int NumPoints(Distance? minSeparation = null, Distance? maxOverallGap = null) =>
+        GetFilteredPoints(minSeparation, maxOverallGap).Count();
 
-    public IEnumerator<Coordinates> GetEnumerator()
+    public bool Any(Distance? minSeparation = null, Distance? maxOverallGap = null) =>
+        GetFilteredPoints(minSeparation, maxOverallGap).Any();
+
+    public IEnumerable<Point> GetFilteredPoints(Distance? minSeparation = null, Distance? maxOverallGap = null)
     {
-        IEnumerable<Coordinates>? toAdd;
+        IEnumerable<Point>? toAdd;
 
         switch (ConnectionType)
         {
             case RouteConnectionType.StartToStart:
             case RouteConnectionType.EndToEnd:
-                var reversed = RouteB.ToList();
+                var reversed = RouteB.GetFilteredPoints(minSeparation, maxOverallGap).ToList();
                 reversed.Reverse();
                 toAdd = reversed;
 
@@ -74,7 +83,7 @@ public class MergedImportedRoute : IImportedRoute
 
             case RouteConnectionType.StartToEnd:
             case RouteConnectionType.EndToStart:
-                toAdd = RouteB;
+                toAdd = RouteB.GetFilteredPoints(minSeparation, maxOverallGap);
                 break;
 
             default:
@@ -87,12 +96,12 @@ public class MergedImportedRoute : IImportedRoute
         {
             case RouteConnectionType.StartToStart:
             case RouteConnectionType.StartToEnd:
-                foreach( var point in toAdd )
+                foreach (var point in toAdd)
                 {
                     yield return point;
                 }
 
-                foreach (var point in RouteA)
+                foreach (var point in RouteA.GetFilteredPoints(minSeparation, maxOverallGap))
                 {
                     yield return point;
                 }
@@ -101,7 +110,7 @@ public class MergedImportedRoute : IImportedRoute
 
             case RouteConnectionType.EndToStart:
             case RouteConnectionType.EndToEnd:
-                foreach (var point in RouteA)
+                foreach (var point in RouteA.GetFilteredPoints(minSeparation, maxOverallGap))
                 {
                     yield return point;
                 }
@@ -114,6 +123,4 @@ public class MergedImportedRoute : IImportedRoute
                 break;
         }
     }
-
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

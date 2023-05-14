@@ -23,9 +23,10 @@ using System.Collections.Generic;
 
 namespace J4JSoftware.GeoProcessor;
 
-public interface IImportedRoute : IEnumerable<Coordinates>
+public interface IImportedRoute : IFilteredEnumerable
 {
-    int NumPoints { get; }
     string? RouteName { get; }
     string? Description { get; }
+
+    int NumPoints(Distance? minSeparation = null, Distance? maxOverallGap = null);
 }

@@ -56,7 +56,7 @@ public class InterpolatePoints : ImportFilter
 
         foreach (var rawRoute in input)
         {
-            Coordinates? prevPoint = null;
+            Point? prevPoint = null;
 
             _filteredRoute = new ImportedRoute() { RouteName = rawRoute.RouteName, Description = rawRoute.Description };
 
@@ -123,7 +123,7 @@ public class InterpolatePoints : ImportFilter
                     ? InterpolationState.End
                     : InterpolationState.Intermediate;
 
-            var interpolated = new Coordinates( ptPair.First.Latitude + idx * deltaLat,
+            var interpolated = new Point( ptPair.First.Latitude + idx * deltaLat,
                                                 ptPair.First.Longitude + idx * deltaLong,
                                                 interpolationState )
             {

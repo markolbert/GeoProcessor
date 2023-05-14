@@ -25,8 +25,8 @@ namespace J4JSoftware.GeoProcessor;
 
 public static partial class GeoExtensions
 {
-    public static Coordinates Start( this IImportedRoute route ) => route.First();
-    public static Coordinates End( this IImportedRoute route ) => route.Last();
+    public static Point Start( this IImportedRoute route ) => route.First();
+    public static Point End( this IImportedRoute route ) => route.Last();
 
     public static Distance StartToStart(
         this IImportedRoute route1,

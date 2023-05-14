@@ -21,6 +21,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace J4JSoftware.GeoProcessor;
 
@@ -28,25 +29,29 @@ public class ImportedRoute : IImportedRoute
 {
     public ImportedRoute()
     {
-        Points = new List<Coordinates>();
+        Points = new Points();
     }
 
     public ImportedRoute(
-        List<Coordinates> points
+        Points points
     )
     {
         Points = points;
     }
 
-    public ImportedRoute Copy() => new( new List<Coordinates>( Points ) ) { RouteName = RouteName };
+    public ImportedRoute Copy() => new( new Points( Points ) ) { RouteName = RouteName };
 
     public string? RouteName { get; set; }
     public string? Description { get; set; }
 
-    public int NumPoints => Points.Count;
-    public List<Coordinates> Points { get; }
+    public int NumPoints(Distance? minSeparation = null, Distance? maxOverallGap = null) =>
+        Points.GetFilteredPoints(minSeparation, maxOverallGap).Count();
 
-    public IEnumerator<Coordinates> GetEnumerator() => ( (IEnumerable<Coordinates>) Points ).GetEnumerator();
+    public Points Points { get; }
 
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    public bool Any(Distance? minSeparation = null, Distance? maxOverallGap = null) =>
+        Points.Any(minSeparation, maxOverallGap);
+
+    public IEnumerable<Point> GetFilteredPoints(Distance? minSeparation = null, Distance? maxOverallGap = null) =>
+        Points.GetFilteredPoints(minSeparation, maxOverallGap);
 }

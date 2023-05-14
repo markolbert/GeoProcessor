@@ -50,13 +50,13 @@ public static partial class GeoExtensions
 
     public static double GetDistance( double lat1, double long1, double lat2, double long2 )
     {
-        var ptPair = new PointPair( new Coordinates( lat1, long1 ), new Coordinates( lat2, long2 ) );
+        var ptPair = new PointPair( new Point( lat1, long1 ), new Point( lat2, long2 ) );
         return ptPair.GetDistance( UnitType.Miles ).Value;
     }
 
     public static Distance GetDistance(
-        this Coordinates start,
-        Coordinates end,
+        this Point start,
+        Point end,
         UnitType units = UnitType.Kilometers
     ) =>
         GetDistance( new PointPair( start, end ), units );
