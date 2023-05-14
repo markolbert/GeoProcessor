@@ -1,7 +1,7 @@
 ﻿#region copyright
 // Copyright (c) 2021, 2022, 2023 Mark A. Olbert 
 // https://www.JumpForJoySoftware.com
-// Coordinates.cs
+// Point.cs
 //
 // This file is part of JumpForJoy Software's GeoProcessor.
 // 
@@ -23,9 +23,9 @@ using System;
 
 namespace J4JSoftware.GeoProcessor;
 
-public class Coordinates
+public class Point
 {
-    public Coordinates(
+    public Point(
         double latitude,
         double longitude,
         InterpolationState interpolationState = InterpolationState.NotInterpolated
@@ -36,6 +36,20 @@ public class Coordinates
         InterpolationState = interpolationState;
     }
 
+    public Point Copy() => (Point) MemberwiseClone();
+
+    public Points? Points { get; private set; }
+    public int Index { get; private set; }
+
+    public void AddToCollection(Points points, int index)
+    {
+        Points = points;
+        Index = index;
+
+        GapFromPrior = index == 0 ? Distance.Invalid : Gap();
+        BearingFromPrior = index == 0 ? double.NaN : Bearing();
+    }
+
     public double Latitude { get; }
     public double Longitude { get; }
     public InterpolationState InterpolationState { get; }
@@ -43,4 +57,35 @@ public class Coordinates
     public double? Elevation { get; set; }
     public DateTime? Timestamp { get; set; }
     public string? Description { get; set; }
+
+    public bool PassesFilter { get; set; }
+
+    public Distance GapFromPrior { get; private set; } = Distance.Invalid;
+    public double BearingFromPrior { get; private set; }
+
+    public Distance Gap(int offset = -1)
+    {
+        if (Points == null)
+            return Distance.Invalid;
+
+        var baseIndex = Index + offset;
+        if (baseIndex < 0 || baseIndex >= Points.Count)
+            return Distance.Invalid;
+
+        var ptPair = new PointPair(Points[baseIndex]!, Points[Index]!);
+        return ptPair.GetDistance();
+    }
+
+    public double Bearing(int offset=-1)
+    {
+        if (Points == null)
+            return double.NaN;
+
+        var baseIndex = Index + offset;
+        if (baseIndex < 0 || baseIndex >= Points.Count)
+            return double.NaN;
+
+        var ptPair = new PointPair(Points[baseIndex]!, Points[Index]!);
+        return ptPair.GetBearing();
+    }
 }
