@@ -28,5 +28,5 @@ namespace J4JSoftware.GeoProcessor;
 
 public interface IImporter : IMessageBasedTask
 {
-    Task<List<ImportedRoute>> ImportAsync(DataToImportBase toImport, CancellationToken ctx = default);
+    Task<List<Route>?> ImportAsync( DataToImportBase toImport, CancellationToken ctx = default );
 }

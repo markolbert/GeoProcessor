@@ -54,10 +54,9 @@ public abstract class FileImporter<TDoc> : Importer, IFileImporter
     }
 
     public string FileType { get; }
-    public bool LineStringsOnly { get; set; }
 
 #pragma warning disable CS1998
-    protected override async Task<List<ImportedRoute>?> ImportInternalAsync(
+    protected override async Task<List<Route>?> ImportInternalAsync(
 #pragma warning restore CS1998
         DataToImportBase toImport,
         CancellationToken ctx
@@ -113,5 +112,5 @@ public abstract class FileImporter<TDoc> : Importer, IFileImporter
         return null;
     }
 
-    protected abstract List<ImportedRoute>? ProcessXmlDoc( TDoc xmlDoc );
+    protected abstract List<Route>? ProcessXmlDoc( TDoc xmlDoc );
 }

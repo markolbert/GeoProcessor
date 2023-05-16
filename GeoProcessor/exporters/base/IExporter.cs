@@ -28,10 +28,7 @@ namespace J4JSoftware.GeoProcessor;
 
 public interface IExporter : IMessageBasedTask
 {
-    ReadOnlyCollection<IImportFilter> ImportFilters { get; }
-    void ClearImportFilters();
-    bool AddFilter( IImportFilter filter );
-    bool AddFilters( IEnumerable<IImportFilter> filters );
+    Distance MinimumPointSeparation { get; set; }
 
-    Task<bool> ExportAsync( List<ImportedRoute> routes, CancellationToken ctx = default );
+    Task<bool> ExportAsync( List<SnappedRoute> routes, CancellationToken ctx = default );
 }

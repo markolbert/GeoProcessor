@@ -37,7 +37,7 @@ public abstract class Importer : MessageBasedTask, IImporter
     {
     }
 
-    public async Task<List<ImportedRoute>> ImportAsync( DataToImportBase toImport, CancellationToken ctx = default )
+    public async Task<List<Route>?> ImportAsync( DataToImportBase toImport, CancellationToken ctx = default )
     {
         await OnProcessingStarted();
 
@@ -48,5 +48,5 @@ public abstract class Importer : MessageBasedTask, IImporter
         return retVal;
     }
 
-    protected abstract Task<List<ImportedRoute>?> ImportInternalAsync( DataToImportBase toImport, CancellationToken ctx );
+    protected abstract Task<List<Route>?> ImportInternalAsync( DataToImportBase toImport, CancellationToken ctx );
 }

@@ -37,10 +37,10 @@ public class RemoveSinglePointRoutes : ImportFilter
     {
     }
 
-    public override List<IImportedRoute> Filter( List<IImportedRoute> input )
+    public override List<Route> Filter( List<Route> input )
     {
         if( input.Any() )
-            return input.Where( x => x.NumPoints > 1 ).ToList();
+            return input.Where( x => x.Points.Count > 1 ).ToList();
 
         Logger?.LogInformation( "Nothing to filter" );
         return input;

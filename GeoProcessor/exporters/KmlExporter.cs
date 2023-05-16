@@ -52,7 +52,7 @@ public class KmlExporter : FileExporter<Root>
 
     protected override void InitializeColorPicker() => RouteColorPicker = GeoExtensions.RouteColorPicker;
 
-    protected override Root GetRootObject( List<IImportedRoute> routes )
+    protected override Root GetRootObject( List<SnappedRoute> routes )
     {
         var retVal = new Root()
         {
@@ -116,11 +116,12 @@ public class KmlExporter : FileExporter<Root>
         return retVal;
     }
 
-    private LineString CreateLineString( IImportedRoute route ) =>
+    private LineString CreateLineString( SnappedRoute route ) =>
         new()
         {
             Tessellate = true,
-            CoordinatesText = route.Aggregate( new StringBuilder(),
+            CoordinatesText = route.SnappedPoints
+                                   .Aggregate( new StringBuilder(),
                                                ( sb, c ) =>
                                                {
                                                    if( sb.Length > 0 )

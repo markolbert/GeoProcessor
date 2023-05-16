@@ -48,21 +48,21 @@ public class SkipPoints : ImportFilter
                 : value;
     }
 
-    public override List<IImportedRoute> Filter( List<IImportedRoute> input )
+    public override List<Route> Filter( List<Route> input )
     {
-        var retVal = new List<IImportedRoute>();
+        var retVal = new List<Route>();
 
         foreach( var rawRoute in input )
         {
             Point? originPoint = null;
 
-            var filteredRoute = new ImportedRoute()
+            var filteredRoute = new Route
             {
                 RouteName = rawRoute.RouteName, 
                 Description = rawRoute.Description
             };
 
-            foreach( var curPoint in rawRoute )
+            foreach( var curPoint in rawRoute.Points )
             {
                 if( originPoint == null )
                 {

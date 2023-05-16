@@ -63,10 +63,10 @@ public abstract class FileExporter<TDoc> : Exporter, IFileExporter
             : Path.Combine( dirPath, $"{noExt}.{extension}" );
     }
 
-    public Func<IImportedRoute, int, Color>? RouteColorPicker { get; set; }
-    public Func<IImportedRoute, int, int>? RouteWidthPicker { get; set; }
+    public Func<SnappedRoute, int, Color>? RouteColorPicker { get; set; }
+    public Func<SnappedRoute, int, int>? RouteWidthPicker { get; set; }
 
-    protected override async Task<bool> ExportInternalAsync( List<SnappedImportedRoute> routes, CancellationToken ctx )
+    public override async Task<bool> ExportAsync( List<SnappedRoute> routes, CancellationToken ctx = default )
     {
         if( string.IsNullOrEmpty( FilePath ) )
         {
@@ -106,7 +106,7 @@ public abstract class FileExporter<TDoc> : Exporter, IFileExporter
     protected virtual void InitializeColorPicker() => RouteColorPicker ??= (_, _) => GeoConstants.DefaultRouteColor;
     protected virtual void InitializeWidthPicker() => RouteWidthPicker ??= GeoExtensions.RouteWidthPicker;
 
-    protected abstract TDoc GetRootObject( List<SnappedImportedRoute> routes );
+    protected abstract TDoc GetRootObject( List<SnappedRoute> routes );
 
     protected virtual async Task OutputMemoryStream( MemoryStream memoryStream ) =>
         await File.WriteAllBytesAsync( FilePath, memoryStream.ToArray() );

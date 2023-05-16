@@ -36,8 +36,6 @@ public partial class BingProcessor : RouteProcessor
     [GeneratedRegex(@"[^\d]*(\d+)[^\d]*(\d+)[^\d]*(\d+\.*\d*)([^\.]*)")]
     private static partial Regex MaxGapRegEx();
 
-    private List<SnappedImportedRoute>? _processedChunks;
-
     public BingProcessor(
         int maxPointsPerRequest = 100,
         ILoggerFactory? loggerFactory = null
@@ -47,104 +45,70 @@ public partial class BingProcessor : RouteProcessor
         MaximumOverallPointGap = new Distance(UnitType.Kilometers, 2.5);
     }
 
-    protected override List<IImportFilter> AdjustImportFilters()
+    protected override async Task<List<Point>?> ProcessRouteChunkAsync( List<Point> srcPoints, CancellationToken ctx )
     {
-        var currentFilters = base.AdjustImportFilters();
-
-        // ensure max gap values are consistent
-        var interpolateFilter = currentFilters.FirstOrDefault( x => x.FilterName == InterpolatePoints.DefaultFilterName )
-            as InterpolatePoints;
-
-        var consolBearingFilter = currentFilters.FirstOrDefault( x => x.FilterName == ConsolidateAlongBearing.DefaultFilterName ) 
-            as ConsolidateAlongBearing;
-
-        if( interpolateFilter == null || consolBearingFilter == null )
-            return currentFilters;
-
-        var gap = interpolateFilter.MaximumPointSeparation;
-
-        gap = consolBearingFilter.MaximumConsolidationDistance > gap
-            ? gap
-            : consolBearingFilter.MaximumConsolidationDistance;
-
-        var maxGap = new Distance( UnitType.Kilometers, 2.5 );
-
-        if( gap > maxGap )
-            gap = maxGap;
-
-        interpolateFilter.MaximumPointSeparation = gap;
-        consolBearingFilter.MaximumConsolidationDistance = gap;
-
-        return currentFilters;
-    }
-
-    protected override async Task<List<SnappedImportedRoute>> ProcessRouteChunksAsync(
-        List<ImportedRouteChunk> routeChunks,
-        CancellationToken ctx
-    )
-    {
-        _processedChunks = new List<SnappedImportedRoute>();
-
-        foreach( var routeChunk in routeChunks )
+        var request = new SnapToRoadRequest
         {
-            var request = new SnapToRoadRequest
-            {
-                BingMapsKey = ApiKey,
-                IncludeSpeedLimit = false,
-                IncludeTruckSpeedLimit = false,
-                Interpolate = true,
-                SpeedUnit = SpeedUnitType.MPH,
-                TravelMode = TravelModeType.Driving,
-                Points = routeChunk.Select(p => new BingMapsRESTToolkit.Coordinate(p.Latitude, p.Longitude))
+            BingMapsKey = ApiKey,
+            IncludeSpeedLimit = false,
+            IncludeTruckSpeedLimit = false,
+            Interpolate = true,
+            SpeedUnit = SpeedUnitType.MPH,
+            TravelMode = TravelModeType.Driving,
+            Points = srcPoints.Select( p => new Coordinate( p.Latitude, p.Longitude ) )
                                    .ToList()
-            };
+        };
 
-            Response? result = null;
+        Response? result;
 
-            try
-            {
-                result = await request.Execute().WaitAsync(RequestTimeout, ctx);
-            }
-            catch ( TimeoutException )
-            {
-                await HandleTimeoutExceptionAsync();
-                continue;
-            }
-            catch( Exception ex )
-            {
-                var mesg = ex.Message.Contains("distance between point")
-                    ? ParseGapException(routeChunk.ToList(), ex.Message)
-                    : ex.Message;
+        try
+        {
+            result = await request.Execute().WaitAsync( RequestTimeout, ctx );
+        }
+        catch( TimeoutException )
+        {
+            await HandleTimeoutExceptionAsync();
+            return null;
+        }
+        catch( Exception ex )
+        {
+            var mesg = ex.Message.Contains( "distance between point" )
+                ? ParseGapException( srcPoints, ex.Message )
+                : ex.Message;
 
-                await HandleOtherRequestExceptionAsync( mesg );
-                continue;
-            }
-
-            if( result == null )
-            {
-                await HandleOtherRequestExceptionAsync( "No response received from Bing Maps" );
-                continue;
-            }
-
-            if (result.StatusCode != 200)
-            {
-                await HandleInvalidStatusCodeAsync(result.StatusDescription);
-
-                foreach( var error in result.ErrorDetails )
-                {
-                    await HandleInvalidStatusCodeAsync( error );
-                }
-
-                continue;
-            }
-
-            foreach (var resourceSet in result.ResourceSets)
-            {
-                await ProcessResourceSetAsync(resourceSet, routeChunk);
-            }
+            await HandleOtherRequestExceptionAsync( mesg );
+            return null;
         }
 
-        return _processedChunks;
+        if( result == null )
+        {
+            await HandleOtherRequestExceptionAsync( "No response received from Bing Maps" );
+            return null;
+        }
+
+        if ( result.StatusCode != 200 )
+        {
+            await HandleInvalidStatusCodeAsync( result.StatusDescription );
+
+            foreach( var error in result.ErrorDetails )
+            {
+                await HandleInvalidStatusCodeAsync( error );
+            }
+
+            return null;
+        }
+
+        var retVal = new List<Point>();
+
+        foreach ( var resourceSet in result.ResourceSets )
+        {
+            var points = await ProcessResourceSetAsync( resourceSet );
+
+            if( points != null && points.Any() )
+                retVal.AddRange( points );
+        }
+
+        return retVal;
     }
 
     private string ParseGapException(List<Point> points, string mesg)
@@ -167,29 +131,28 @@ public partial class BingProcessor : RouteProcessor
             $"The gap ({gap.Value}) between point {pt1Idx:n0} ({points[pt1Idx].Latitude}, {points[pt1Idx].Longitude}) and {pt2Idx:n0} ({points[pt2Idx].Latitude}, {points[pt2Idx].Longitude}) exceeds {match.Groups[3].Value} {match.Groups[4].Value.Trim()}";
     }
 
-    private async Task ProcessResourceSetAsync( ResourceSet resourceSet, ImportedRouteChunk routeChunk )
+    private async Task<List<Point>?> ProcessResourceSetAsync( ResourceSet resourceSet )
     {
         var snapResponses = resourceSet.Resources
                                        .Where( r => r is SnapToRoadResponse )
                                        .Cast<SnapToRoadResponse>()
                                        .ToList();
 
-        if( !snapResponses.Any() )
-            await SendMessage( ExpandedPhase,
-                               "Snap to request did not return usable results",
-                               false,
-                               true,
-                               LogLevel.Error );
-        else
-        {
-            var snapResult = new SnappedImportedRoute( routeChunk,
-                                                       snapResponses.SelectMany( x => x.SnappedPoints.Select(
-                                                                         y => new Point(
-                                                                             y.Coordinate.Latitude,
-                                                                             y.Coordinate.Longitude ) ) )
-                                                                    .ToList() );
+        if( snapResponses.Any() )
+            return snapResponses.SelectMany( x => x.SnappedPoints.Select(
+                                                 y => new Point
+                                                 {
+                                                     Latitude = y.Coordinate.Latitude,
+                                                     Longitude = y.Coordinate.Longitude
+                                                 } ) )
+                                .ToList();
 
-            _processedChunks!.Add( snapResult );
-        }
+        await SendMessage( ExpandedPhase,
+                           "Snap to request did not return usable results",
+                           false,
+                           true,
+                           LogLevel.Error );
+
+        return null;
     }
 }

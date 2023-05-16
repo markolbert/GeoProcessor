@@ -58,13 +58,13 @@ public class ConsolidateAlongBearing : ImportFilter
         }
     }
 
-    public override List<IImportedRoute> Filter( List<IImportedRoute> input )
+    public override List<Route> Filter( List<Route> input )
     {
-        var retVal = new List<IImportedRoute>();
+        var retVal = new List<Route>();
 
         foreach( var rawRoute in input )
         {
-            var filteredRoute = new ImportedRoute()
+            var filteredRoute = new Route
             {
                 RouteName = rawRoute.RouteName, Description = rawRoute.Description
             };
@@ -73,7 +73,7 @@ public class ConsolidateAlongBearing : ImportFilter
             Point? distOrigin = null;
             double? prevBearing = null;
 
-            foreach( var curPoint in rawRoute )
+            foreach( var curPoint in rawRoute.Points )
             {
                 if( distOrigin == null )
                 {

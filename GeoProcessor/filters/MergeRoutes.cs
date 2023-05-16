@@ -20,6 +20,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 
@@ -49,18 +50,18 @@ public class MergeRoutes : ImportFilter
                 : value;
     }
 
-    public override List<IImportedRoute> Filter( List<IImportedRoute> input )
+    public override List<Route> Filter( List<Route> input )
     {
         if( input.Count <= 1 )
             return input;
 
-        var filteredInput = input.Where( x => x.NumPoints > 1 )
+        var filteredInput = input.Where( x => x.Points.Count > 1 )
                                  .ToList();
 
         if( filteredInput.Count != input.Count )
             Logger?.LogTrace( "Ignoring routes with less than 2 points" );
 
-        var retVal = new List<IImportedRoute>();
+        var retVal = new List<Route>();
 
         var connections = GetConnections(filteredInput);
         var prevConnections = 0;
@@ -92,9 +93,9 @@ public class MergeRoutes : ImportFilter
                 //match2 |= FoundMatch(filteredInput[adjacent.ConnectedRouteIndex], "Took a short hike");
 
                 // create a merged route using the two routes, honoring the connection
-                var mergedRoute = new MergedImportedRoute( filteredInput[ curSet.RouteIndex ],
-                                                    filteredInput[ adjacent.ConnectedRouteIndex ],
-                                                    adjacent.Type );
+                var mergedRoute = CreateMergedRoute( filteredInput[ curSet.RouteIndex ],
+                                                     filteredInput[ adjacent.ConnectedRouteIndex ],
+                                                     adjacent.Type );
 
                 // remove the two routes from the input set
                 foreach( var toRemove in new[] { curSet.RouteIndex, adjacent.ConnectedRouteIndex }
@@ -118,10 +119,73 @@ public class MergeRoutes : ImportFilter
         return retVal;
     }
 
+    private Route CreateMergedRoute( Route routeA, Route routeB, RouteConnectionType adjacentType )
+    {
+        var retVal = new Route
+        {
+            RouteName = ( routeA.RouteName ?? string.Empty )
+              + "->"
+              + ( routeB.RouteName ?? string.Empty )
+              + $" {adjacentType}",
+            Description = ( routeA.Description ?? string.Empty )
+              + "->"
+              + ( routeB.Description ?? string.Empty )
+              + $" {adjacentType}"
+        };
+
+        IEnumerable<Point>? toAdd;
+
+        switch (adjacentType)
+        {
+            case RouteConnectionType.StartToStart:
+            case RouteConnectionType.EndToEnd:
+                var reversed = routeB.Points.ToList();
+                reversed.Reverse();
+                toAdd = reversed;
+
+                break;
+
+            case RouteConnectionType.StartToEnd:
+            case RouteConnectionType.EndToStart:
+                toAdd = routeB.Points;
+                break;
+
+            default:
+                // shouldn't ever get here
+                throw new InvalidEnumArgumentException(
+                    $"Unsupported {typeof(RouteConnectionType)} value '{adjacentType}'");
+        }
+
+        switch (adjacentType)
+        {
+            case RouteConnectionType.StartToStart:
+            case RouteConnectionType.StartToEnd:
+                retVal.Points.AddRange( toAdd );
+                retVal.Points.AddRange(routeA.Points);
+
+                break;
+
+            case RouteConnectionType.EndToStart:
+            case RouteConnectionType.EndToEnd:
+                retVal.Points.AddRange(routeA.Points);
+                retVal.Points.AddRange(toAdd);
+
+                break;
+
+            default:
+                // shouldn't ever get here
+                throw new InvalidEnumArgumentException(
+                    $"Unsupported {typeof(RouteConnectionType)} value '{adjacentType}'");
+        }
+
+        return retVal;
+    }
+
+    // for debugging purposes
     //private bool FoundMatch( IImportedRoute route, string toMatch ) =>
     //    route.Any( x => x.Description?.Contains( toMatch ) ?? false );
 
-    private static List<RouteConnections> GetConnections( List<IImportedRoute> routes )
+    private static List<RouteConnections> GetConnections( List<Route> routes )
     {
         var retVal = new List<RouteConnections>();
 

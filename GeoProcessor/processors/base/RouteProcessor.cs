@@ -65,69 +65,52 @@ public abstract class RouteProcessor : MessageBasedTask, IRouteProcessor
     public Distance MinimumPointSeparation { get; set; } = Distance.Zero;
     public Distance MaximumOverallPointGap { get; set; } = Distance.Zero;
 
-    public async Task<List<ImportedRoute>> ProcessRoute(
-        List<IImportedRoute> toProcess,
-        CancellationToken ctx = default
-    )
+    public async Task<List<SnappedRoute>> ProcessRoute(List<Route> toProcess, CancellationToken ctx = default)
     {
         await OnProcessingStarted();
 
-        ImportFilters = AdjustImportFilters();
+        //ImportFilters = AdjustImportFilters();
 
-        foreach( var filter in ImportFilters.Where( x => x.Category != ImportFilterCategory.PostSnapping )
-                                            .OrderBy( x => x.Category )
-                                            .ThenBy( x => x.Priority ) )
+        foreach (var filter in ImportFilters.Where(x => x.Category != ImportFilterCategory.PostSnapping)
+                                            .OrderBy(x => x.Category)
+                                            .ThenBy(x => x.Priority))
         {
-            Logger?.LogInformation( "Executing {filter} filter...", filter.FilterName );
-            toProcess = filter.Filter( toProcess );
+            Logger?.LogInformation("Executing {filter} filter...", filter.FilterName);
+            toProcess = filter.Filter(toProcess);
         }
 
         Logger?.LogInformation("Filtering complete");
 
-        var routeChunks = GetRouteChunks( toProcess );
-        var processedChunks = await ProcessRouteChunksAsync(routeChunks, ctx);
+        var chunkInfo = new RouteChunkInfo(MaxPointsInRequest, MaximumOverallPointGap);
+        var retVal = new List<SnappedRoute>();
+
+        foreach( var route in toProcess )
+        {
+            var snappedRoute = new SnappedRoute() { RouteName = route.RouteName, Description = route.Description };
+
+            foreach( var chunkPoints in route.GetRouteChunks( chunkInfo ) )
+            {
+                var snappedPoints = await ProcessRouteChunkAsync( chunkPoints, ctx );
+
+                if( snappedPoints != null && snappedPoints.Any() )
+                    snappedRoute.SnappedPoints.AddRange( snappedPoints );
+            }
+
+            if( snappedRoute.SnappedPoints.Any() )
+                retVal.Add( snappedRoute );
+        }
 
         await OnProcessingEnded();
-
-        return processedChunks.MergeProcessedRouteChunks( Logger );
-    }
-
-    protected virtual List<IImportFilter> AdjustImportFilters()
-    {
-        return ImportFilters.Distinct().ToList();
-    }
-
-    private List<ImportedRouteChunk> GetRouteChunks( List<IImportedRoute> routes )
-    {
-        var retVal = new List<ImportedRouteChunk>();
-
-        // split route into chunks if point count exceeds chunk size
-        for( var idx = 0; idx < routes.Count; idx++ )
-        {
-            var route = routes[ idx ];
-
-            var numChunks = MaxPointsInRequest <= 0
-                ? 1
-                : (int) Math.Ceiling( route.NumPoints / (double) MaxPointsInRequest );
-
-            if( numChunks == 1 )
-                retVal.Add( new ImportedRouteChunk( route, idx, MaxPointsInRequest, 0 ) );
-            else
-            {
-                for( var chunkNum = 0; chunkNum < numChunks; chunkNum++ )
-                {
-                    retVal.Add( new ImportedRouteChunk( route, idx, MaxPointsInRequest, chunkNum ) );
-                }
-            }
-        }
 
         return retVal;
     }
 
-    protected abstract Task<List<SnappedImportedRoute>> ProcessRouteChunksAsync(
-        List<ImportedRouteChunk> routeChunks,
-        CancellationToken ctx
-    );
+    //protected virtual List<IImportFilter> AdjustImportFilters()
+    //{
+    //    return ImportFilters.Distinct().ToList();
+    //}
+
+    protected abstract Task<List<Point>?> ProcessRouteChunkAsync( List<Point> routeChunk, CancellationToken ctx );
 
     protected async Task HandleTimeoutExceptionAsync()
     {

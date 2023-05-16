@@ -32,11 +32,10 @@ public static class RouteBuilderExtensions
 {
     public static RouteBuilder.RouteBuilder AddGpxFile(
         this RouteBuilder.RouteBuilder builder,
-        string filePath,
-        bool lineStringsOnly = true
+        string filePath
     )
     {
-        var importer = new GpxImporter( builder.LoggerFactory ) { LineStringsOnly = lineStringsOnly };
+        var importer = new GpxImporter( builder.LoggerFactory );
 
         if( !File.Exists( filePath ) )
             builder.Logger?.LogError( "{filePath} does not exist", filePath );
@@ -48,14 +47,17 @@ public static class RouteBuilderExtensions
     public static RouteBuilder.RouteBuilder AddKmlFile(
         this RouteBuilder.RouteBuilder builder,
         string filePath,
-        bool lineStringsOnly = true
+        bool ignoreGarminDetails = true
     )
     {
-        var importer = new KmlImporter( builder.LoggerFactory ) { LineStringsOnly = lineStringsOnly };
+        var importer = new KmlImporter( builder.LoggerFactory )
+        {
+            IgnoreGarminDetails = ignoreGarminDetails
+        };
 
-        if (!File.Exists(filePath))
-            builder.Logger?.LogError("{filePath} does not exist", filePath);
-        else builder.AddDataSource(new FileToImport(filePath, importer));
+        if( !File.Exists( filePath ) )
+            builder.Logger?.LogError( "{filePath} does not exist", filePath );
+        else builder.AddDataSource( new FileToImport( filePath, importer ) );
 
         return builder;
     }
@@ -137,19 +139,19 @@ public static class RouteBuilderExtensions
         return builder;
     }
 
-    public static RouteBuilder.RouteBuilder InterpolatePoints(
-        this RouteBuilder.RouteBuilder builder,
-        Distance? maxSeparation = null
-    )
-    {
-        maxSeparation ??= new Distance( UnitType.Kilometers, GeoConstants.DefaultMaxPointSeparationKm );
+    //public static RouteBuilder.RouteBuilder InterpolatePoints(
+    //    this RouteBuilder.RouteBuilder builder,
+    //    Distance? maxSeparation = null
+    //)
+    //{
+    //    maxSeparation ??= new Distance( UnitType.Kilometers, GeoConstants.DefaultMaxPointSeparationKm );
 
-        var filter = new InterpolatePoints( builder.LoggerFactory ) { MaximumPointSeparation = maxSeparation };
+    //    var filter = new InterpolatePoints( builder.LoggerFactory ) { MaximumPointSeparation = maxSeparation };
 
-        builder.AddImportFilter( filter );
+    //    builder.AddImportFilter( filter );
 
-        return builder;
-    }
+    //    return builder;
+    //}
 
     public static RouteBuilder.RouteBuilder MergeRoutes(
         this RouteBuilder.RouteBuilder builder,
@@ -205,7 +207,7 @@ public static class RouteBuilderExtensions
         this RouteBuilder.RouteBuilder builder,
         string filePath,
         out IFileExporter? exporter,
-        Distance? maxGap = null
+        Distance? minSeparation = null
     )
         where TExporter : class, IFileExporter
     {
@@ -222,8 +224,8 @@ public static class RouteBuilderExtensions
 
         exporter.FilePath = filePath;
 
-        if( maxGap != null )
-            exporter.AddFilter( new SkipPoints( builder.LoggerFactory ) { MaximumGap = maxGap } );
+        if( minSeparation != null )
+            exporter.MinimumPointSeparation = minSeparation;
 
         if( !exporter.FilePath.Equals( filePath, StringComparison.OrdinalIgnoreCase ) )
             builder.Logger?.LogWarning( "Changed file extension to {ext}", exporter.FileType );

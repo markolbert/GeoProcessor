@@ -63,7 +63,7 @@ public class RouteBuilder
     public int StatusInterval { get; internal set; } = GeoConstants.DefaultStatusInterval;
     public Func<ProcessingMessage, Task>? MessageReporter { get; internal set; }
 
-    public async Task<List<ImportedRoute>?> BuildAsync( CancellationToken ctx = default )
+    public async Task<List<SnappedRoute>?> BuildAsync( CancellationToken ctx = default )
     {
         if( !_dataSources.Any() )
         {
@@ -77,7 +77,7 @@ public class RouteBuilder
             return null;
         }
 
-        var importedRoutes = new List<IImportedRoute>();
+        var importedRoutes = new List<Route>();
 
         foreach( var curImport in _dataSources )
         {
@@ -85,7 +85,10 @@ public class RouteBuilder
             curImport.Importer.StatusReporter = StatusReporter;
             curImport.Importer.StatusInterval = StatusInterval;
 
-            importedRoutes.AddRange( await curImport.Importer.ImportAsync( curImport, ctx ) );
+            var curRoutes = await curImport.Importer.ImportAsync( curImport, ctx );
+
+            if( curRoutes != null )
+                importedRoutes.AddRange( curRoutes );
         }
 
         SnapProcessor.ImportFilters.AddRange( _importFilters );
@@ -94,8 +97,6 @@ public class RouteBuilder
 
         foreach (var exportTarget in _exportTargets)
         {
-            exportTarget.AddFilters( _importFilters.Where( x => x.Category == ImportFilterCategory.PostSnapping ) );
-
             await exportTarget.ExportAsync(retVal, ctx);
         }
 

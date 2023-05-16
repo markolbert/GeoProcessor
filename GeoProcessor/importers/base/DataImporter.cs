@@ -37,27 +37,25 @@ public class DataImporter : Importer
     }
 
 #pragma warning disable CS1998
-    protected override async Task<List<ImportedRoute>> ImportInternalAsync(
+    protected override async Task<List<Route>?> ImportInternalAsync(
         DataToImportBase toImport,
         CancellationToken ctx
     )
 #pragma warning restore CS1998
     {
-        var retVal = new List<ImportedRoute>();
-
         if( toImport is not DataToImport dataToImport )
         {
             Logger?.LogError( "Expected a {correct} but got a {incorrect} instead",
                               typeof( DataToImport ),
                               toImport.GetType() );
 
-            return retVal;
+            return null;
         }
 
-        var route = new ImportedRoute( new Points( dataToImport.Points ) )
-        {
-            RouteName = dataToImport.Name
-        };
+        var retVal = new List<Route>();
+
+        var route = new Route { RouteName = dataToImport.Name };
+        route.Points.AddRange( dataToImport.Points );
 
         retVal.Add( route );
 

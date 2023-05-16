@@ -37,10 +37,10 @@ public class RemoveGarminMessagePoints : ImportFilter
     {
     }
 
-    public override List<IImportedRoute> Filter( List<IImportedRoute> input )
+    public override List<Route> Filter( List<Route> input )
     {
         if( input.Any() )
-            return input.Where( route => route.All( x => x.Description == null ) ).ToList();
+            return input.Where( route => route.Points.All( x => x.Description == null ) ).ToList();
 
         Logger?.LogInformation( "Nothing to filter" );
         return input;

@@ -49,7 +49,7 @@ public class RemoveClusters : ImportFilter
                 : value;
     }
 
-    public override List<IImportedRoute> Filter( List<IImportedRoute> input )
+    public override List<Route> Filter( List<Route> input )
     {
         if( !input.Any() )
         {
@@ -57,7 +57,7 @@ public class RemoveClusters : ImportFilter
             return input;
         }
 
-        var retVal = new List<IImportedRoute>();
+        var retVal = new List<Route>();
 
         foreach( var route in input )
         {
@@ -67,28 +67,28 @@ public class RemoveClusters : ImportFilter
         return retVal;
     }
 
-    private IImportedRoute FilterRoute( IImportedRoute toFilter )
+    private Route FilterRoute( Route toFilter )
     {
-        var retVal = new ImportedRoute() { RouteName = toFilter.RouteName };
+        var retVal = new Route() { RouteName = toFilter.RouteName };
 
         Point? clusterOrigin = null;
 
-        foreach( var coordinate in toFilter )
+        foreach( var point in toFilter.Points )
         {
             if( clusterOrigin == null )
             {
-                clusterOrigin = coordinate;
-                retVal.Points.Add( coordinate );
+                clusterOrigin = point;
+                retVal.Points.Add( point );
 
                 continue;
             }
 
-            var ptPair = new PointPair( clusterOrigin, coordinate );
+            var ptPair = new PointPair( clusterOrigin, point );
             if( ptPair.GetDistance() <= MaximumClusterDiameter )
                 continue;
 
-            retVal.Points.Add( coordinate );
-            clusterOrigin = coordinate;
+            retVal.Points.Add( point );
+            clusterOrigin = point;
         }
 
         return retVal;

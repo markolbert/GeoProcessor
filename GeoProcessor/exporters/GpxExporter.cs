@@ -34,9 +34,10 @@ public class GpxExporter : FileExporter<Root>
         : base( "gpx", loggerFactory )
     {
     }
+
     protected override void InitializeColorPicker() => RouteColorPicker = GeoExtensions.RouteColorPicker;
 
-    protected override Root GetRootObject(List<SnappedImportedRoute> routes)
+    protected override Root GetRootObject(List<SnappedRoute> routes)
     {
         var retVal = new Root()
         {
@@ -52,7 +53,8 @@ public class GpxExporter : FileExporter<Root>
             var track = new Track { Description = route.Description, Name = route.RouteName };
             tracks.Add( track );
 
-            track.TrackPoints = route.Select( x => new TrackPoint
+            track.TrackPoints = route.SnappedPoints
+                                     .Select( x => new TrackPoint
                                       {
                                           Latitude = x.Latitude,
                                           Longitude = x.Longitude,

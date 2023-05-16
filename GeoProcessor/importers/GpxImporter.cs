@@ -36,27 +36,29 @@ public class GpxImporter : FileImporter<Root>
     {
     }
 
-    protected override List<ImportedRoute> ProcessXmlDoc( Root xmlDoc )
+    protected override List<Route> ProcessXmlDoc( Root xmlDoc )
     {
-        var retVal = new List<ImportedRoute>();
+        var retVal = new List<Route>();
 
         foreach( var track in xmlDoc.Tracks )
         {
-            var importedRoute = new ImportedRoute( new Points() )
+            var importedRoute = new Route()
             {
                 RouteName = track.Name, Description = track.Description
             };
 
             foreach( var trackPoint in track.TrackPoints )
             {
-                var coordinate = new Point( trackPoint.Latitude, trackPoint.Longitude )
+                var point = new Point
                 {
+                    Latitude = trackPoint.Latitude,
+                    Longitude = trackPoint.Longitude,
                     Elevation = trackPoint.Elevation,
                     Timestamp = trackPoint.Timestamp,
                     Description = string.IsNullOrEmpty( trackPoint.Description ) ? null : trackPoint.Description
                 };
 
-                importedRoute.Points.Add( coordinate );
+                importedRoute.Points.Add( point );
             }
 
             if( importedRoute.Points.Any() )

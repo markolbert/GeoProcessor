@@ -24,5 +24,4 @@ namespace J4JSoftware.GeoProcessor;
 public interface IFileImporter : IImporter
 {
     string FileType { get; }
-    bool LineStringsOnly { get; set; }
 }

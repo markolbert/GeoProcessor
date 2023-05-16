@@ -19,27 +19,25 @@
 // with GeoProcessor. If not, see <https://www.gnu.org/licenses/>.
 #endregion
 
+using System.Collections.Generic;
 using System.Linq;
 
 namespace J4JSoftware.GeoProcessor;
 
 public static partial class GeoExtensions
 {
-    public static Point Start( this IImportedRoute route ) => route.First();
-    public static Point End( this IImportedRoute route ) => route.Last();
+    public static Point Start( this Route route ) => route.Points.First();
+    public static Point End( this Route route ) => route.Points.Last();
 
-    public static Distance StartToStart(
-        this IImportedRoute route1,
-        IImportedRoute route2
-    ) =>
+    public static Distance StartToStart( this Route route1, Route route2 ) =>
         new PointPair( route1.Start(), route2.Start() ).GetDistance();
 
-    public static Distance StartToEnd( this IImportedRoute route1, IImportedRoute route2 ) =>
+    public static Distance StartToEnd( this Route route1, Route route2 ) =>
         new PointPair( route1.Start(), route2.End() ).GetDistance();
 
-    public static Distance EndToStart( this IImportedRoute route1, IImportedRoute route2) =>
+    public static Distance EndToStart( this Route route1, Route route2) =>
         new PointPair( route1.End(), route2.Start() ).GetDistance();
 
-    public static Distance EndToEnd( this IImportedRoute route1, IImportedRoute route2 ) =>
+    public static Distance EndToEnd( this Route route1, Route route2 ) =>
         new PointPair( route1.End(), route2.End() ).GetDistance();
 }
