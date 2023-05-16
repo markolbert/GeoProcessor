@@ -139,20 +139,6 @@ public static class RouteBuilderExtensions
         return builder;
     }
 
-    //public static RouteBuilder.RouteBuilder InterpolatePoints(
-    //    this RouteBuilder.RouteBuilder builder,
-    //    Distance? maxSeparation = null
-    //)
-    //{
-    //    maxSeparation ??= new Distance( UnitType.Kilometers, GeoConstants.DefaultMaxPointSeparationKm );
-
-    //    var filter = new InterpolatePoints( builder.LoggerFactory ) { MaximumPointSeparation = maxSeparation };
-
-    //    builder.AddImportFilter( filter );
-
-    //    return builder;
-    //}
-
     public static RouteBuilder.RouteBuilder MergeRoutes(
         this RouteBuilder.RouteBuilder builder,
         Distance? maxRouteGap = null

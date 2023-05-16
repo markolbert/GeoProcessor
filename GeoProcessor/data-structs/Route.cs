@@ -73,7 +73,8 @@ public class Route
             var interpolated = new Point
             {
                 Latitude = ptPair.First.Latitude + idx * deltaLat,
-                Longitude = ptPair.First.Longitude + idx * deltaLong
+                Longitude = ptPair.First.Longitude + idx * deltaLong,
+                Interpolated = true
             };
 
             if( deltaElevation.HasValue )
