@@ -44,6 +44,11 @@ public class Placemark
     public LineString? LineString { get; set; }
     private bool ShouldSerializeLineString() => LineString != null;
 
+    [XmlElement("Point")]
     public Point? Point { get; set; }
     private bool ShouldSerializePoint() => Point != null;
+
+    [XmlElement("ExtendedData")]
+    public ExtendedData? ExtendedData { get; set; }
+    private bool ShouldSerializeExtendedData() => ExtendedData != null;
 }
