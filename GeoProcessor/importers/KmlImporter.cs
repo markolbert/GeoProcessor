@@ -19,6 +19,7 @@
 // with GeoProcessor. If not, see <https://www.gnu.org/licenses/>.
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using J4JSoftware.GeoProcessor.Kml;
@@ -38,21 +39,53 @@ public class KmlImporter : FileImporter<Root>
     {
     }
 
-    protected override List<ImportedRoute> ProcessXmlDoc( Root xmlDoc )
+    // Garmin includes a LOT of additional/redundant information in addition
+    // to the simple track points we need. Those details can cause problems
+    // processing a Garmin-generated file, so set this to true to ignore them.
+    public bool IgnoreGarminDetails { get; set; }
+
+    protected override List<Route> ProcessXmlDoc( Root xmlDoc )
     {
-        var retVal = new List<ImportedRoute>();
+        var retVal = new List<Route>();
 
         foreach( var folder in xmlDoc.Document.Folders )
         {
-            var importedRoute = new ImportedRoute( new Points() )
+            // this is bizarrely complicated...but it works, and nothing else
+            // I tried did, so change only at your own risk!! :)
+            if( IgnoreGarminDetails )
             {
-                RouteName = folder.Name
-            };
+                // assume we won't skip this folder, and attempt to disprove
+                // that assertion
+                var skip = false;
+
+                foreach( var placemark in folder.Placemarks )
+                {
+                    // if a placemark has no extended data it's not a candidate
+                    // for tagging a folder as "should be skipped". If it has extended
+                    // data, we need to check the Text Data element's value
+                    var textElement = placemark.ExtendedData?.DataElements
+                                               .FirstOrDefault(
+                                                    x => x.Name.Equals( "text", StringComparison.OrdinalIgnoreCase ) );
+
+                    // if the Text Data element exists and it's not empty/null, we need to 
+                    // skip this folder
+                    if( textElement == null || string.IsNullOrEmpty( textElement.Value ) )
+                        continue;
+
+                    skip = true;
+                    break;
+                }
+
+                if( skip )
+                    continue;
+            }
+
+            var importedRoute = new Route() { RouteName = folder.Name };
 
             foreach( var placemark in folder.Placemarks.Where(x=>x.LineString != null  ) )
             {
                 var coordinates = ParseCoordinatesBlock( folder.Name ?? "Unnamed route",
-                                                    placemark.LineString!.CoordinatesText );
+                                                         placemark.LineString?.CoordinatesText );
 
                 if( coordinates == null )
                     continue;
@@ -67,8 +100,11 @@ public class KmlImporter : FileImporter<Root>
         return retVal;
     }
 
-    private List<Point>? ParseCoordinatesBlock( string routeName, string text )
+    private List<Point>? ParseCoordinatesBlock( string routeName, string? text )
     {
+        if( string.IsNullOrEmpty( text ) )
+            return null;
+
         // coordinate tuples are supposed to be separated by spaces (with no
         // spaces within the tuple), but many programs appear to use a newline
         // character instead. Test for all the various kinds of separators.
@@ -76,7 +112,7 @@ public class KmlImporter : FileImporter<Root>
         var lineSeparator = ' ';
 
         foreach( var sepInfo in CoordinateSeparators.Select(
-                    ( x) => new { NumLines = text.Split( x ).Length, LineSeparator = x } ) )
+                    ( x ) => new { NumLines = text.Split( x ).Length, LineSeparator = x } ) )
         {
             if( sepInfo.NumLines <= maxLines )
                 continue;
@@ -123,13 +159,17 @@ public class KmlImporter : FileImporter<Root>
         }
 
         if( valueParts.Length is 2 or 3 )
+
             // whatever idiot thought it would be a good idea to put geo coordinates in
             // longitude, latitude, elevation order should be strung up by his or her thumbs!!
             // NO ONE WORKS WITH GEO COORDINATES THAT WAY!!!!
             return valueParts.Length switch
             {
-                2 => new Point( valueParts[ 1 ], valueParts[ 0 ] ),
-                3 => new Point( valueParts[ 1 ], valueParts[ 0 ] ) { Elevation = valueParts[ 2 ] },
+                2 => new Point { Latitude = valueParts[ 1 ], Longitude = valueParts[ 0 ] },
+                3 => new Point
+                {
+                    Latitude = valueParts[ 1 ], Longitude = valueParts[ 0 ], Elevation = valueParts[ 2 ]
+                },
                 _ => null // shouldn't ever get here
             };
 
