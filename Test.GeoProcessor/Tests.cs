@@ -35,8 +35,8 @@ public class Tests : TestBase
 {
     [ Theory ]
     [ InlineData( "Sherman Pass.gpx", SnapperType.Bing, FileType.Gpx, FileType.Kml, FileType.Kmz ) ]
-    [InlineData("Sherman Pass.kml", SnapperType.Bing, FileType.Gpx, FileType.Kml, FileType.Kmz)]
-    public async Task TestBuilder( string importFile, SnapperType snapperType, params FileType[] exportTypes  )
+    [ InlineData( "Sherman Pass.kml", SnapperType.Bing, FileType.Gpx, FileType.Kml, FileType.Kmz ) ]
+    public async Task TestBuilder( string importFile, SnapperType snapperType, params FileType[] exportTypes )
     {
         exportTypes.Length.Should().BeGreaterOrEqualTo( 1 );
 
@@ -44,7 +44,7 @@ public class Tests : TestBase
             .Should()
             .BeTrue();
 
-        var importPath = Path.Combine( Environment.CurrentDirectory, importType.ToString() , importFile );
+        var importPath = Path.Combine( Environment.CurrentDirectory, importType.ToString(), importFile );
         File.Exists( importPath )
             .Should()
             .BeTrue();
@@ -61,7 +61,7 @@ public class Tests : TestBase
             exportFiles[ idx ].Should().NotBeNullOrEmpty();
         }
 
-        Directory.CreateDirectory( Path.GetDirectoryName(exportFiles[0] )! );
+        Directory.CreateDirectory( Path.GetDirectoryName( exportFiles[ 0 ] )! );
 
         foreach( var exportFile in exportFiles )
         {
@@ -92,12 +92,12 @@ public class Tests : TestBase
         switch( importType )
         {
             case FileType.Gpx:
-                routeBuilder = routeBuilder.AddGpxFile(importPath)
+                routeBuilder = routeBuilder.AddGpxFile( importPath )
                                            .RemoveGarminMessagePoints();
                 break;
 
             case FileType.Kml:
-                routeBuilder = routeBuilder.AddKmlFile(importPath)
+                routeBuilder = routeBuilder.AddKmlFile( importPath )
                                            .RemoveGarminMessagePoints();
                 break;
 
