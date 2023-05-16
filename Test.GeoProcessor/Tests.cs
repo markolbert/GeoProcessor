@@ -126,13 +126,13 @@ public class Tests : TestBase
             }
         }
 
+        routeBuilder.SnapProcessor.Should().NotBeNull();
+
         var result = await routeBuilder.BuildAsync();
 
-        result.Should().NotBeNull();
-        result!.Count.Should().BeGreaterThan( 0 );
-
-        routeBuilder.SnapProcessor.Should().NotBeNull();
-        routeBuilder.SnapProcessor!.ProblemMessages.Should().BeEmpty();
+        result.Succeeded.Should().BeTrue();
+        result.SnappedRoutes.Should().NotBeNullOrEmpty();
+        result.Problems.Should().BeNullOrEmpty();
     }
 
     [ Theory ]
