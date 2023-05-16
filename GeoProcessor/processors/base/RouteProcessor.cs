@@ -62,14 +62,11 @@ public abstract class RouteProcessor : MessageBasedTask, IRouteProcessor
     public TimeSpan RequestTimeout { get; set; } = GeoConstants.DefaultRequestTimeout;
 
     public int MaxPointsInRequest { get; }
-    public Distance MinimumPointSeparation { get; set; } = Distance.Zero;
     public Distance MaximumOverallPointGap { get; set; } = Distance.Zero;
 
-    public async Task<List<SnappedRoute>> ProcessRoute(List<Route> toProcess, CancellationToken ctx = default)
+    public async Task<RouteProcessorResult> ProcessRoute(List<Route> toProcess, CancellationToken ctx = default)
     {
         await OnProcessingStarted();
-
-        //ImportFilters = AdjustImportFilters();
 
         foreach (var filter in ImportFilters.Where(x => x.Category != ImportFilterCategory.PostSnapping)
                                             .OrderBy(x => x.Category)
@@ -82,7 +79,9 @@ public abstract class RouteProcessor : MessageBasedTask, IRouteProcessor
         Logger?.LogInformation("Filtering complete");
 
         var chunkInfo = new RouteChunkInfo(MaxPointsInRequest, MaximumOverallPointGap);
-        var retVal = new List<SnappedRoute>();
+
+        var retVal = new RouteProcessorResult() { FilteredRoutes = toProcess };
+        var snappedRoutes = new List<SnappedRoute>();
 
         foreach( var route in toProcess )
         {
@@ -97,18 +96,16 @@ public abstract class RouteProcessor : MessageBasedTask, IRouteProcessor
             }
 
             if( snappedRoute.SnappedPoints.Any() )
-                retVal.Add( snappedRoute );
+                snappedRoutes.Add( snappedRoute );
         }
 
         await OnProcessingEnded();
 
+        if( snappedRoutes.Any() )
+            retVal.SnappedRoutes = snappedRoutes;
+
         return retVal;
     }
-
-    //protected virtual List<IImportFilter> AdjustImportFilters()
-    //{
-    //    return ImportFilters.Distinct().ToList();
-    //}
 
     protected abstract Task<List<Point>?> ProcessRouteChunkAsync( List<Point> routeChunk, CancellationToken ctx );
 

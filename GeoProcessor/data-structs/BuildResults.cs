@@ -1,7 +1,7 @@
 ﻿#region copyright
 // Copyright (c) 2021, 2022, 2023 Mark A. Olbert 
 // https://www.JumpForJoySoftware.com
-// IRouteProcessor.cs
+// BuildResults.cs
 //
 // This file is part of JumpForJoy Software's GeoProcessor.
 // 
@@ -19,19 +19,12 @@
 // with GeoProcessor. If not, see <https://www.gnu.org/licenses/>.
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace J4JSoftware.GeoProcessor;
 
-public interface IRouteProcessor : IMessageBasedTask
+public class BuildResults : RouteProcessorResult
 {
-    string ProcessorName { get; }
-    string ApiKey { get; set; }
-    TimeSpan RequestTimeout { get; set; }
-    List<IImportFilter> ImportFilters { get; }
-
-    Task<RouteProcessorResult> ProcessRoute(List<Route> routes, CancellationToken ctx = default);
+    public override bool Succeeded => ImportedRoutes != null && base.Succeeded;
+    public List<Route>? ImportedRoutes { get; set; }
 }

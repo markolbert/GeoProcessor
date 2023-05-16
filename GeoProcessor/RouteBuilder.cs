@@ -53,31 +53,27 @@ public class RouteBuilder
     public void AddImportFilter( IImportFilter filter ) => _importFilters.Add( filter );
     public void AddExportTarget( IExporter exportTarget ) => _exportTargets.Add( exportTarget );
 
-    public void Clear()
-    {
-        _dataSources.Clear();
-        SnapProcessor = null;
-    }
-
     public Func<StatusInformation, Task>? StatusReporter { get; internal set; }
     public int StatusInterval { get; internal set; } = GeoConstants.DefaultStatusInterval;
     public Func<ProcessingMessage, Task>? MessageReporter { get; internal set; }
 
-    public async Task<List<SnappedRoute>?> BuildAsync( CancellationToken ctx = default )
+    public async Task<BuildResults> BuildAsync( CancellationToken ctx = default )
     {
+        var retVal = new BuildResults();
+
         if( !_dataSources.Any() )
         {
             await SendMessage( "Startup", "Nothing to process" );
-            return null;
+            return retVal;
         }
 
         if( SnapProcessor == null )
         {
             await SendMessage( "Startup", "No route processor defined" );
-            return null;
+            return retVal;
         }
 
-        var importedRoutes = new List<Route>();
+        retVal.ImportedRoutes = new List<Route>();
 
         foreach( var curImport in _dataSources )
         {
@@ -88,16 +84,22 @@ public class RouteBuilder
             var curRoutes = await curImport.Importer.ImportAsync( curImport, ctx );
 
             if( curRoutes != null )
-                importedRoutes.AddRange( curRoutes );
+                retVal.ImportedRoutes.AddRange( curRoutes );
         }
 
         SnapProcessor.ImportFilters.AddRange( _importFilters );
 
-        var retVal = await SnapProcessor.ProcessRoute( importedRoutes, ctx );
+        var temp = await SnapProcessor.ProcessRoute( retVal.ImportedRoutes, ctx );
+        retVal.FilteredRoutes = temp.FilteredRoutes;
+        retVal.SnappedRoutes = temp.SnappedRoutes;
+        retVal.Problems = temp.Problems;
+
+        if( !retVal.Succeeded )
+            return retVal;
 
         foreach (var exportTarget in _exportTargets)
         {
-            await exportTarget.ExportAsync(retVal, ctx);
+            await exportTarget.ExportAsync(retVal.SnappedRoutes!, ctx);
         }
 
         return retVal;
