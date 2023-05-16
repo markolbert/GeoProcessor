@@ -40,4 +40,8 @@
 		<None Include="$(ProjectDir)kml\**" CopyToOutputDirectory="PreserveNewest" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\GeoProcessor\GeoProcessor.csproj" />
+	</ItemGroup>
+
 </Project>
