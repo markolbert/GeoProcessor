@@ -9,4 +9,5 @@ public class Point
     public double? Elevation { get; set; }
     public DateTime? Timestamp { get; set; }
     public string? Description { get; set; }
+    public bool Interpolated { get; set; }
 }
