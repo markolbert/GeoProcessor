@@ -8,6 +8,7 @@
 *.xls
 Test.GeoProcessor/gpx/
 Test.GeoProcessor/kml/
+Test.GeoProcessor/kmz/
 Directory.Build.props
 
 # Inno setup install packages
