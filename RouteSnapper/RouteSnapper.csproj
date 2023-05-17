@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<RootNamespace>J4JSoftware.RouteSnapper</RootNamespace>
+		<AssemblyName>J4JSoftware.RouteSnapperLib</AssemblyName>
+		<Nullable>enable</Nullable>
+		<Authors>Mark A. Olbert</Authors>
+		<Company>Jump for Joy Software</Company>
+		<Product>J4JSoftware Route Snapping Library</Product>
+		<Description>a library for processing GPX, KML and KMZ files, and snapping GPS tracks to roadways</Description>
+		<Copyright>© Mark A. Olbert all rights reserved</Copyright>
+		<RepositoryUrl>https://github.com/markolbert/RouteSnapper</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<VersionPrefix>2.0.0</VersionPrefix>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="BingMapsRESTToolkit" Version="1.1.4" />
+		<PackageReference Include="GoogleApi" Version="4.5.4" />
+		<PackageReference Include="J4JSoftware.VisualUtilities" Version="2.1.1" />
+	</ItemGroup>
+
+</Project>
