@@ -31,7 +31,7 @@ public abstract class MessageBasedTask : IMessageBasedTask
 {
     private readonly List<string> _problems = new();
 
-    private int _statusInterval = GeoConstants.DefaultStatusInterval;
+    private int _statusInterval = GeoConstants.DefaultProgressInterval;
     private int _itemsProcessedSinceLastUpdate;
     private int _itemsProcessed;
 
@@ -55,14 +55,14 @@ public abstract class MessageBasedTask : IMessageBasedTask
     protected string ExpandedPhase =>
         string.IsNullOrEmpty( Phase ) ? $"{MessagePrefix}:" : $"{MessagePrefix}:{Phase}:";
 
-    public Func<StatusInformation, Task>? StatusReporter { get; set; }
+    public Func<ProgressInformation, Task>? StatusReporter { get; set; }
 
-    public Func<ProcessingMessage, Task>? MessageReporter { get; set; }
+    public Func<StatusReport, Task>? MessageReporter { get; set; }
 
     public int StatusInterval
     {
         get => _statusInterval;
-        set => _statusInterval = value < 0 ? GeoConstants.DefaultStatusInterval : value;
+        set => _statusInterval = value < 0 ? GeoConstants.DefaultProgressInterval : value;
     }
 
     public ReadOnlyCollection<string> ProblemMessages => _problems.AsReadOnly();
@@ -116,7 +116,7 @@ public abstract class MessageBasedTask : IMessageBasedTask
     )
     {
         if( MessageReporter != null )
-            await MessageReporter( new ProcessingMessage( phase, message ) );
+            await MessageReporter( new StatusReport( phase, message ) );
 
         if( log )
             Logger?.Log( logLevel, message );
@@ -135,7 +135,7 @@ public abstract class MessageBasedTask : IMessageBasedTask
     )
     {
         if( StatusReporter != null )
-            await StatusReporter( new StatusInformation( phase, mesg, itemsToProcess, itemsProcessed ) );
+            await StatusReporter( new ProgressInformation( phase, mesg, itemsToProcess, itemsProcessed ) );
 
         if( log )
             Logger?.Log( logLevel,

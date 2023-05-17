@@ -48,14 +48,14 @@ public class RouteBuilder
     public ILoggerFactory? LoggerFactory { get; }
     public ILogger? Logger { get; }
 
-    public IRouteProcessor? SnapProcessor { get; set; }
-    public void AddDataSource( DataToImportBase dataToImport ) => _dataSources.Add( dataToImport );
-    public void AddImportFilter( IImportFilter filter ) => _importFilters.Add( filter );
-    public void AddExportTarget( IExporter exportTarget ) => _exportTargets.Add( exportTarget );
+    public IRouteProcessor? SnapProcessor { get; internal set; }
+    internal void AddDataSource( DataToImportBase dataToImport ) => _dataSources.Add( dataToImport );
+    internal void AddImportFilter( IImportFilter filter ) => _importFilters.Add( filter );
+    internal void AddExportTarget( IExporter exportTarget ) => _exportTargets.Add( exportTarget );
 
-    public Func<StatusInformation, Task>? StatusReporter { get; internal set; }
-    public int StatusInterval { get; internal set; } = GeoConstants.DefaultStatusInterval;
-    public Func<ProcessingMessage, Task>? MessageReporter { get; internal set; }
+    public Func<ProgressInformation, Task>? ProgressReporter { get; internal set; }
+    public int ProgressInterval { get; internal set; } = GeoConstants.DefaultProgressInterval;
+    public Func<StatusReport, Task>? StatusReporter { get; internal set; }
 
     public async Task<BuildResults> BuildAsync( CancellationToken ctx = default )
     {
@@ -77,9 +77,9 @@ public class RouteBuilder
 
         foreach( var curImport in _dataSources )
         {
-            curImport.Importer.MessageReporter = MessageReporter;
-            curImport.Importer.StatusReporter = StatusReporter;
-            curImport.Importer.StatusInterval = StatusInterval;
+            curImport.Importer.MessageReporter = StatusReporter;
+            curImport.Importer.StatusReporter = ProgressReporter;
+            curImport.Importer.StatusInterval = ProgressInterval;
 
             var curRoutes = await curImport.Importer.ImportAsync( curImport, ctx );
 
@@ -107,8 +107,8 @@ public class RouteBuilder
 
     private async Task SendMessage( string phase, string message, bool log = true, LogLevel logLevel = LogLevel.Warning )
     {
-        if( MessageReporter != null )
-            await MessageReporter( new ProcessingMessage( phase, message ) );
+        if( StatusReporter != null )
+            await StatusReporter( new StatusReport( phase, message ) );
 
         if( log )
             Logger?.Log( logLevel, message );
@@ -123,8 +123,8 @@ public class RouteBuilder
         LogLevel logLevel = LogLevel.Warning
     )
     {
-        if( StatusReporter != null )
-            await StatusReporter( new StatusInformation( phase, mesg, totalPoints, processedPts ) );
+        if( ProgressReporter != null )
+            await ProgressReporter( new ProgressInformation( phase, mesg, totalPoints, processedPts ) );
 
         if( log )
             Logger?.Log( logLevel, "{phase}{mesg}: {processed} of {total} processed", phase, mesg, processedPts, totalPoints );

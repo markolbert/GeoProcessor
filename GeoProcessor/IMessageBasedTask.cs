@@ -27,8 +27,8 @@ namespace J4JSoftware.GeoProcessor;
 
 public interface IMessageBasedTask
 {
-    Func<StatusInformation, Task>? StatusReporter { get; set; }
-    Func<ProcessingMessage, Task>? MessageReporter { get; set; }
+    Func<ProgressInformation, Task>? StatusReporter { get; set; }
+    Func<StatusReport, Task>? MessageReporter { get; set; }
     int StatusInterval { get; set; }
     ReadOnlyCollection<string> ProblemMessages { get; }
 }

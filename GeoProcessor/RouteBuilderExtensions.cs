@@ -173,12 +173,12 @@ public static class RouteBuilderExtensions
 
     public static RouteBuilder.RouteBuilder RemoveClusters(
         this RouteBuilder.RouteBuilder builder,
-        Distance? maxClusterDiameter = null
+        Distance? maxClusterRadius = null
     )
     {
-        maxClusterDiameter ??= new Distance( UnitType.Meters, GeoConstants.DefaultMaxClusterDiameterMeters );
+        maxClusterRadius ??= new Distance( UnitType.Meters, GeoConstants.DefaultMaxClusterDiameterMeters );
 
-        var filter = new RemoveClusters( builder.LoggerFactory ) { MaximumClusterDiameter = maxClusterDiameter };
+        var filter = new RemoveClusters( builder.LoggerFactory ) { MaximumClusterRadius = maxClusterRadius };
 
         builder.AddImportFilter( filter );
 
@@ -265,27 +265,27 @@ public static class RouteBuilderExtensions
         return builder;
     }
 
+    public static RouteBuilder.RouteBuilder SendProgressReportsTo(
+        this RouteBuilder.RouteBuilder builder,
+        Func<ProgressInformation, Task> progressReporter
+    )
+    {
+        builder.ProgressReporter = progressReporter;
+        return builder;
+    }
+
+    public static RouteBuilder.RouteBuilder ProgressInterval( this RouteBuilder.RouteBuilder builder, int interval )
+    {
+        builder.ProgressInterval = interval < 0 ? GeoConstants.DefaultProgressInterval : interval;
+        return builder;
+    }
+
     public static RouteBuilder.RouteBuilder SendStatusReportsTo(
         this RouteBuilder.RouteBuilder builder,
-        Func<StatusInformation, Task> statusReporter
+        Func<StatusReport, Task> statusReporter
     )
     {
         builder.StatusReporter = statusReporter;
-        return builder;
-    }
-
-    public static RouteBuilder.RouteBuilder StatusInterval( this RouteBuilder.RouteBuilder builder, int interval )
-    {
-        builder.StatusInterval = interval < 0 ? GeoConstants.DefaultStatusInterval : interval;
-        return builder;
-    }
-
-    public static RouteBuilder.RouteBuilder SendMessagesTo(
-        this RouteBuilder.RouteBuilder builder,
-        Func<ProcessingMessage, Task> mesgReporter
-    )
-    {
-        builder.MessageReporter = mesgReporter;
         return builder;
     }
 }

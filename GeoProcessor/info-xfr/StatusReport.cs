@@ -1,7 +1,7 @@
 ﻿#region copyright
 // Copyright (c) 2021, 2022, 2023 Mark A. Olbert 
 // https://www.JumpForJoySoftware.com
-// ProcessingMessage.cs
+// StatusReport.cs
 //
 // This file is part of JumpForJoy Software's GeoProcessor.
 // 
@@ -21,4 +21,4 @@
 
 namespace J4JSoftware.GeoProcessor;
 
-public record ProcessingMessage( string Phase, string Message );
+public record StatusReport( string Phase, string Message );
