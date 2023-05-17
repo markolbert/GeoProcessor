@@ -33,7 +33,7 @@ public class LineStyle
     public string ColorMode { get; set; }
 
     [XmlElement("width")]
-    public int Width { get; set; }
+    public double Width { get; set; }
 
     [XmlElement("labelVisibility", Namespace = "http://www.google.com/kml/ext/2.2")]
     public bool LabelVisibility { get; set; }
