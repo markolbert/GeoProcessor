@@ -37,7 +37,7 @@ public class KmzExporter : KmlExporter
 
     protected override async Task OutputMemoryStream( MemoryStream memoryStream )
     {
-        var entryPath = ChangeFileExtension( FilePath, "kml" );
+        var entryPath = GeoExtensions.ChangeFileExtension( FilePath, "kml" );
 
         await using var zipFile = new FileStream( FilePath, FileMode.Create );
         using var archive = new ZipArchive( zipFile, ZipArchiveMode.Create, true );

@@ -50,17 +50,7 @@ public abstract class FileExporter<TDoc> : Exporter, IFileExporter
     public string FilePath
     {
         get => _filePath;
-        set => _filePath = ChangeFileExtension( value, FileType );
-    }
-
-    protected string ChangeFileExtension( string filePath, string extension )
-    {
-        var dirPath = Path.GetDirectoryName( filePath ) ?? string.Empty;
-        var noExt = Path.GetFileNameWithoutExtension( filePath );
-
-        return string.IsNullOrEmpty( extension )
-            ? Path.Combine( dirPath, noExt )
-            : Path.Combine( dirPath, $"{noExt}.{extension}" );
+        set => _filePath = GeoExtensions.ChangeFileExtension( value, FileType );
     }
 
     public Func<SnappedRoute, int, Color>? RouteColorPicker { get; set; }

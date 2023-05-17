@@ -20,33 +20,21 @@
 #endregion
 
 using System.Drawing;
-using System.Reflection;
+using System.IO;
 // ReSharper disable NotAccessedPositionalProperty.Local
 
 namespace J4JSoftware.GeoProcessor;
 
 public static partial class GeoExtensions
 {
-    private record MeasurementInfo( MeasurementSystem System, double ScaleFactor );
-
-    private static MeasurementInfo GetMeasurementInfo( UnitType unitType )
+    public static string ChangeFileExtension( string filePath, string extension )
     {
-        var curField = typeof( UnitType ).GetField( unitType.ToString() );
+        var dirPath = Path.GetDirectoryName( filePath ) ?? string.Empty;
+        var noExt = Path.GetFileNameWithoutExtension( filePath );
 
-        MeasurementInfo retVal;
-
-        if (curField == null)
-            retVal = new MeasurementInfo( MeasurementSystem.Metric, 1 );
-        else
-        {
-            var attr = curField.GetCustomAttribute<MeasurementSystemAttribute>();
-
-            retVal = attr == null
-                ? new MeasurementInfo( MeasurementSystem.Metric, 1 )
-                : new MeasurementInfo( attr.MeasurementSystem, attr.ScaleFactor );
-        }
-
-        return retVal;
+        return string.IsNullOrEmpty( extension )
+            ? Path.Combine( dirPath, noExt )
+            : Path.Combine( dirPath, $"{noExt}.{extension}" );
     }
 
     public static Color RouteColorPicker( SnappedRoute route, int routeIndex )
