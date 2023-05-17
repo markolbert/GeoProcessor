@@ -20,11 +20,14 @@
 #endregion
 
 using System;
+using System.Reflection;
 
 namespace J4JSoftware.GeoProcessor;
 
 public static partial class GeoExtensions
 {
+    private record MeasurementInfo(MeasurementSystem System, double ScaleFactor);
+
     public static double Convert( this Distance distance, UnitType newUnits ) =>
         Convert( distance.Value, distance.Units, newUnits );
 
@@ -46,6 +49,26 @@ public static partial class GeoExtensions
         var convertedNormalized = value * curInfo.ScaleFactor * systemFactor;
 
         return convertedNormalized / newInfo.ScaleFactor;
+    }
+
+    private static MeasurementInfo GetMeasurementInfo(UnitType unitType)
+    {
+        var curField = typeof(UnitType).GetField(unitType.ToString());
+
+        MeasurementInfo retVal;
+
+        if (curField == null)
+            retVal = new MeasurementInfo(MeasurementSystem.Metric, 1);
+        else
+        {
+            var attr = curField.GetCustomAttribute<MeasurementSystemAttribute>();
+
+            retVal = attr == null
+                ? new MeasurementInfo(MeasurementSystem.Metric, 1)
+                : new MeasurementInfo(attr.MeasurementSystem, attr.ScaleFactor);
+        }
+
+        return retVal;
     }
 
     public static double GetDistance( double lat1, double long1, double lat2, double long2 )
