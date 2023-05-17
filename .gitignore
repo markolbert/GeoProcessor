@@ -10,6 +10,7 @@ Test.GeoProcessor/gpx/
 Test.GeoProcessor/kml/
 Test.GeoProcessor/kmz/
 Directory.Build.props
+adobe/
 
 # Inno setup install packages
 /InnoSetup/*.exe
