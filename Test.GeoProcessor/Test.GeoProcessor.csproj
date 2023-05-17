@@ -38,6 +38,7 @@
 	<ItemGroup>
 		<None Include="$(ProjectDir)gpx\**" CopyToOutputDirectory="PreserveNewest" />
 		<None Include="$(ProjectDir)kml\**" CopyToOutputDirectory="PreserveNewest" />
+		<None Include="$(ProjectDir)kmz\**" CopyToOutputDirectory="PreserveNewest" />
 	</ItemGroup>
 
 	<ItemGroup>
