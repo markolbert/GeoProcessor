@@ -62,6 +62,24 @@ public static class RouteBuilderExtensions
         return builder;
     }
 
+    public static RouteBuilder.RouteBuilder AddKmzFile(
+        this RouteBuilder.RouteBuilder builder,
+        string filePath,
+        bool ignoreGarminDetails = true
+    )
+    {
+        var importer = new KmzImporter(builder.LoggerFactory)
+        {
+            IgnoreGarminDetails = ignoreGarminDetails
+        };
+
+        if (!File.Exists(filePath))
+            builder.Logger?.LogError("{filePath} does not exist", filePath);
+        else builder.AddDataSource(new FileToImport(filePath, importer));
+
+        return builder;
+    }
+
     public static RouteBuilder.RouteBuilder AddCoordinates(
         this RouteBuilder.RouteBuilder builder,
         string collectionName,
