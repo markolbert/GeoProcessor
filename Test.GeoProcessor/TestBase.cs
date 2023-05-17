@@ -76,14 +76,14 @@ public class TestBase
 
     }
 
-    protected Task LogMessage( ProcessingMessage mesg )
+    protected Task LogMessage( StatusReport mesg )
     {
         Logger?.LogInformation("{phase} {mesg}", mesg.Phase, mesg.Message );
 
         return Task.CompletedTask;
     }
 
-    protected Task LogStatus( StatusInformation info )
+    protected Task LogStatus( ProgressInformation info )
     {
         if( info.TotalToProcess <= 0 )
             Logger?.LogInformation( "{phase} processed {items} items", info.Phase, info.Processed );

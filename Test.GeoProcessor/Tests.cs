@@ -73,8 +73,8 @@ public class Tests : TestBase
         routeBuilder = routeBuilder!.MergeRoutes()
                                     .RemoveClusters()
                                     .ConsolidateAlongBearing()
-                                    .SendStatusReportsTo( LogStatus )
-                                    .SendMessagesTo( LogMessage );
+                                    .SendProgressReportsTo( LogStatus )
+                                    .SendStatusReportsTo( LogMessage );
 
         switch( snapperType )
         {
