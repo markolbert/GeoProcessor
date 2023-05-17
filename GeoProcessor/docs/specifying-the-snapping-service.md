@@ -12,5 +12,3 @@ The library currently supports two snapping services, Bing Maps and Google Maps.
 [return to configuration](overview.md#configuration-via-extension-methods)
 
 [return to overview](overview.md#j4jsoftwaregeoprocessor-overview)
-
-[return to readme](readme.md)

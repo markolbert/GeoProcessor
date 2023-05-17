@@ -29,5 +29,3 @@ public class BuildResults
 |`Problems`|`List<string>?`|problems encountered during the snapping process|
 
 [return to overview](overview.md#j4jsoftwaregeoprocessor-overview)
-
-[return to readme](readme.md)

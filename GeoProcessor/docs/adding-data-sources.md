@@ -16,5 +16,3 @@ Gpx, kml and kmz files can contain multiple tracks or routes. These are preserve
 [return to configuration](overview.md#configuration-via-extension-methods)
 
 [return to overview](overview.md#j4jsoftwaregeoprocessor-overview)
-
-[return to readme](readme.md)

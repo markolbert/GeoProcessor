@@ -14,5 +14,3 @@ The library can export snapped routes to several geolocation formats.
 [return to configuration](overview.md#configuration-via-extension-methods)
 
 [return to overview](overview.md#j4jsoftwaregeoprocessor-overview)
-
-[return to readme](readme.md)
