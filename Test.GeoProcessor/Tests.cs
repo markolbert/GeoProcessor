@@ -36,6 +36,7 @@ public class Tests : TestBase
     [ Theory ]
     [ InlineData( "Sherman Pass.gpx", SnapperType.Bing, FileType.Gpx, FileType.Kml, FileType.Kmz ) ]
     [ InlineData( "Sherman Pass.kml", SnapperType.Bing, FileType.Gpx, FileType.Kml, FileType.Kmz ) ]
+    [InlineData("Route 36 and the Coast.kmz", SnapperType.Bing, FileType.Gpx, FileType.Kml, FileType.Kmz)]
     public async Task TestBuilder( string importFile, SnapperType snapperType, params FileType[] exportTypes )
     {
         exportTypes.Length.Should().BeGreaterOrEqualTo( 1 );
@@ -98,6 +99,11 @@ public class Tests : TestBase
 
             case FileType.Kml:
                 routeBuilder = routeBuilder.AddKmlFile( importPath )
+                                           .RemoveGarminMessagePoints();
+                break;
+
+            case FileType.Kmz:
+                routeBuilder = routeBuilder.AddKmzFile(importPath)
                                            .RemoveGarminMessagePoints();
                 break;
 
