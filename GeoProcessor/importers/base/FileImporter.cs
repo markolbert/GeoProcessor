@@ -55,12 +55,7 @@ public abstract class FileImporter<TDoc> : Importer, IFileImporter
 
     public string FileType { get; }
 
-#pragma warning disable CS1998
-    protected override async Task<List<Route>?> ImportInternalAsync(
-#pragma warning restore CS1998
-        DataToImportBase toImport,
-        CancellationToken ctx
-    )
+    protected override async Task<List<Route>?> ImportInternalAsync( DataToImportBase toImport, CancellationToken ctx )
     {
         if (toImport is not FileToImport fileToImport)
         {
@@ -75,7 +70,7 @@ public abstract class FileImporter<TDoc> : Importer, IFileImporter
 
         try
         {
-            var streamReader = GetStreamReader( fileToImport.FilePath );
+            var streamReader = await GetStreamReaderAsync( fileToImport.FilePath );
             if( streamReader == null )
                 return null;
 
@@ -98,7 +93,9 @@ public abstract class FileImporter<TDoc> : Importer, IFileImporter
         return null;
     }
 
-    protected virtual StreamReader? GetStreamReader( string filePath )
+#pragma warning disable CS1998
+    protected virtual async Task<StreamReader?> GetStreamReaderAsync( string filePath )
+#pragma warning restore CS1998
     {
         try
         {

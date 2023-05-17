@@ -106,33 +106,24 @@ public class KmlImporter : FileImporter<Root>
             return null;
 
         // coordinate tuples are supposed to be separated by spaces (with no
-        // spaces within the tuple), but many programs appear to use a newline
-        // character instead. Test for all the various kinds of separators.
-        var maxLines = -1;
-        var lineSeparator = ' ';
+        // spaces within the tuple), but, at least in the Windows environment,
+        // in practice they're separated by newline characters. Even maps.google.com
+        // generates files using newline separators
+        var lines = text.Split( '\n' )
+                        .Select( x => x.Trim() )
+                        .Where( x => !string.IsNullOrEmpty( x ) )
+                        .ToList();
 
-        foreach( var sepInfo in CoordinateSeparators.Select(
-                    ( x ) => new { NumLines = text.Split( x ).Length, LineSeparator = x } ) )
-        {
-            if( sepInfo.NumLines <= maxLines )
-                continue;
-
-            maxLines = sepInfo.NumLines;
-            lineSeparator = sepInfo.LineSeparator;
-        }
-
-        var lines = text.Split( lineSeparator );
         if( !lines.Any() )
         {
-            Logger?.LogError( "Could not parse lines in coordinate text area using '{lineSep} ' for route '{route}'",
-                              lineSeparator,
+            Logger?.LogError( "Could not parse lines in coordinate text area using newline separators for route '{route}'",
                               routeName );
             return null;
         }
 
         var retVal = new List<Point>();
 
-        for( var idx = 0; idx < lines.Length; idx++ )
+        for( var idx = 0; idx < lines.Count; idx++ )
         {
             var coordinates = ParseCoordinates( lines[ idx ], idx, routeName );
             if( coordinates != null )
