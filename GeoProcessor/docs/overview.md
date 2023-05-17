@@ -14,6 +14,7 @@ It is copyright 2023 Mark A. Olbert and licensed under the GPL v3.
   - [Specifying Outputs](specifying-outputs.md)
   - [Specifying the Snapping Service](specifying-the-snapping-service.md)
   - [Logging and Messaging](logging-and-messaging.md)
+- [Example](example.md)
 
 ## Overview
 
